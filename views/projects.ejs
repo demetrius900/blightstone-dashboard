@@ -1,0 +1,882 @@
+<%- contentFor('html_attribute') %>
+
+<%- contentFor('extra_css') %>
+
+<style>
+/* Team Member Assignment Cards */
+.team-members-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 0.75rem;
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 0.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #f9fafb;
+}
+
+.team-member-card {
+    position: relative;
+}
+
+.team-member-checkbox {
+    display: none;
+}
+
+.team-member-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: #ffffff;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.team-member-label:hover {
+    border-color: #3b82f6;
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);
+    transform: translateY(-1px);
+}
+
+.team-member-checkbox:checked + .team-member-label {
+    border-color: #3b82f6;
+    background: #eff6ff;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+}
+
+.member-avatar img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.member-info {
+    flex: 1;
+}
+
+.member-name {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #1f2937;
+    line-height: 1.2;
+}
+
+.member-role {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-top: 0.125rem;
+}
+
+.check-indicator {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    width: 20px;
+    height: 20px;
+    background: #3b82f6;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.2s ease;
+}
+
+.team-member-checkbox:checked + .team-member-label .check-indicator {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.check-indicator i {
+    color: white;
+    font-size: 0.75rem;
+}
+
+/* Dark mode */
+[data-bs-theme="dark"] .team-members-container {
+    background: #374151;
+    border-color: #4b5563;
+}
+
+[data-bs-theme="dark"] .team-member-label {
+    background: #1f2937;
+    border-color: #4b5563;
+}
+
+[data-bs-theme="dark"] .team-member-checkbox:checked + .team-member-label {
+    background: rgba(59, 130, 246, 0.1);
+}
+
+[data-bs-theme="dark"] .member-name {
+    color: #f3f4f6;
+}
+
+[data-bs-theme="dark"] .member-role {
+    color: #9ca3af;
+}
+</style>
+
+<%- contentFor('body_attribute') %>
+
+<%- contentFor('content') %>
+
+<!-- Start Content-->
+<div class="container-fluid">
+
+    <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column">
+        <div class="flex-grow-1">
+            <h4 class="fs-18 fw-semibold m-0">Project Management</h4>
+        </div>
+
+        <div class="text-end">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProjectModal">
+                <i class="mdi mdi-plus me-2"></i>Create New Project
+            </button>
+        </div>
+    </div>
+
+
+
+    <!-- Projects Grid -->
+    <div class="row" id="projectsGrid">
+        <div class="col-12">
+            <div class="text-center py-5">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2">Loading projects...</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- container-fluid -->
+
+<!-- Add Project Modal -->
+<div class="modal fade" id="addProjectModal" tabindex="-1" aria-labelledby="addProjectModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addProjectModalLabel">Create New Project</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="addProjectForm">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="projectName" class="form-label">Project Name *</label>
+                            <input type="text" class="form-control" id="projectName" name="name" placeholder="e.g., TechGear Store, FitnessPro Brand, MobileApp v2.0" required>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label for="projectDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="projectDescription" name="description" rows="3" placeholder="Describe the project goals, target audience, and key objectives..."></textarea>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="projectType" class="form-label">Project Type</label>
+                            <select class="form-select" id="projectType" name="type">
+                                <option value="">Select Type</option>
+                                <option value="Ecommerce Store">Ecommerce Store</option>
+                                <option value="Dropshipping Brand">Dropshipping Brand</option>
+                                <option value="Software Development">Software Development</option>
+                                <option value="Mobile App">Mobile App</option>
+                                <option value="Marketing Campaign">Marketing Campaign</option>
+                                <option value="Product Launch">Product Launch</option>
+                                <option value="Brand Development">Brand Development</option>
+                                <option value="Website/Platform">Website/Platform</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="projectPriority" class="form-label">Priority</label>
+                            <select class="form-select" id="projectPriority" name="priority" required>
+                                <option value="Medium" selected>Medium</option>
+                                <option value="High">High</option>
+                                <option value="Low">Low</option>
+                            </select>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">Assign Team Members</label>
+                            <div id="teamMembersList" class="team-members-container">
+                                <!-- Will be populated with team member cards -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <span id="addProjectBtnText">Create Project</span>
+                        <span id="addProjectSpinner" class="spinner-border spinner-border-sm d-none ms-2" role="status"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Project Modal -->
+<div class="modal fade" id="editProjectModal" tabindex="-1" aria-labelledby="editProjectModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editProjectModalLabel">Edit Project</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="editProjectForm">
+                <input type="hidden" id="editProjectId" name="id">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="editProjectName" class="form-label">Project Name *</label>
+                            <input type="text" class="form-control" id="editProjectName" name="name" required>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label for="editProjectDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="editProjectDescription" name="description" rows="3"></textarea>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="editProjectType" class="form-label">Project Type</label>
+                            <select class="form-select" id="editProjectType" name="type">
+                                <option value="">Select Type</option>
+                                <option value="Ecommerce Store">Ecommerce Store</option>
+                                <option value="Dropshipping Brand">Dropshipping Brand</option>
+                                <option value="Software Development">Software Development</option>
+                                <option value="Mobile App">Mobile App</option>
+                                <option value="Marketing Campaign">Marketing Campaign</option>
+                                <option value="Product Launch">Product Launch</option>
+                                <option value="Brand Development">Brand Development</option>
+                                <option value="Website/Platform">Website/Platform</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="editProjectStatus" class="form-label">Status</label>
+                            <select class="form-select" id="editProjectStatus" name="status" required>
+                                <option value="Planning">Planning</option>
+                                <option value="Active">Active</option>
+                                <option value="On Hold">On Hold</option>
+                                <option value="Completed">Completed</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="editProjectPriority" class="form-label">Priority</label>
+                            <select class="form-select" id="editProjectPriority" name="priority" required>
+                                <option value="High">High</option>
+                                <option value="Medium">Medium</option>
+                                <option value="Low">Low</option>
+                            </select>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">Team Members</label>
+                            <div id="editTeamMembersList" class="team-members-container">
+                                <!-- Will be populated with team member cards -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <span id="editProjectBtnText">Update Project</span>
+                        <span id="editProjectSpinner" class="spinner-border spinner-border-sm d-none ms-2" role="status"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Project Modal -->
+<div class="modal fade" id="deleteProjectModal" tabindex="-1" aria-labelledby="deleteProjectModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteProjectModalLabel">Delete Project</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-3">
+                    <i class="mdi mdi-alert-circle-outline text-danger" style="font-size: 48px;"></i>
+                </div>
+                <p class="text-center">Are you sure you want to delete this project? This will also delete all associated tasks and cannot be undone.</p>
+                <div class="alert alert-danger">
+                    <strong>Project:</strong> <span id="deleteProjectName"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteProject">
+                    <span id="deleteProjectBtnText">Delete Project</span>
+                    <span id="deleteProjectSpinner" class="spinner-border spinner-border-sm d-none ms-2" role="status"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- contentFor('extra_javascript') %>
+
+<script>
+// Project Management System
+let projects = [];
+let teamMembers = [];
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('📁 Project Management loaded');
+    loadProjects();
+    loadTeamMembers();
+    setupEventListeners();
+});
+
+// Setup event listeners
+function setupEventListeners() {
+    // Add project form
+    document.getElementById('addProjectForm').addEventListener('submit', handleAddProject);
+    
+    // Edit project form
+    document.getElementById('editProjectForm').addEventListener('submit', handleEditProject);
+    
+    // Delete confirmation
+    document.getElementById('confirmDeleteProject').addEventListener('click', handleDeleteProject);
+}
+
+// Load projects
+async function loadProjects() {
+    try {
+        // Mock data for ecommerce/dropshipping projects
+        projects = [
+            {
+                id: '1',
+                name: 'TechGear Store',
+                description: 'Premium electronics dropshipping store targeting tech enthusiasts',
+                type: 'Ecommerce Store',
+                status: 'Active',
+                priority: 'High',
+                start_date: '2024-01-01',
+                end_date: '2024-03-15',
+                team_members: ['1', '2', '3'],
+                tasks_count: 23,
+                completed_tasks: 18,
+                created_at: '2024-01-01'
+            },
+            {
+                id: '2',
+                name: 'FitnessPro Brand',
+                description: 'Fitness equipment and supplements brand development',
+                type: 'Dropshipping Brand',
+                status: 'Active',
+                priority: 'High',
+                start_date: '2024-01-15',
+                end_date: '2024-04-30',
+                team_members: ['2', '4', '5'],
+                tasks_count: 31,
+                completed_tasks: 12,
+                created_at: '2024-01-15'
+            },
+            {
+                id: '3',
+                name: 'Mobile Shopping App',
+                description: 'Native mobile app for seamless shopping experience',
+                type: 'Mobile App',
+                status: 'Planning',
+                priority: 'Medium',
+                start_date: '2024-02-01',
+                end_date: '2024-06-30',
+                team_members: ['1', '5'],
+                tasks_count: 8,
+                completed_tasks: 2,
+                created_at: '2024-01-20'
+            },
+            {
+                id: '4',
+                name: 'Q1 Social Media Campaign',
+                description: 'Instagram and TikTok marketing campaign for product launches',
+                type: 'Marketing Campaign',
+                status: 'Active',
+                priority: 'High',
+                start_date: '2024-01-01',
+                end_date: '2024-03-31',
+                team_members: ['2', '4'],
+                tasks_count: 15,
+                completed_tasks: 15,
+                created_at: '2024-01-01'
+            },
+            {
+                id: '5',
+                name: 'Supply Chain Optimization',
+                description: 'Streamline supplier relationships and fulfillment processes',
+                type: 'Software Development',
+                status: 'Completed',
+                priority: 'Medium',
+                start_date: '2023-11-01',
+                end_date: '2024-01-31',
+                team_members: ['1', '3'],
+                tasks_count: 12,
+                completed_tasks: 12,
+                created_at: '2023-11-01'
+            }
+        ];
+        
+        renderProjects();
+        console.log('✅ Projects loaded:', projects.length);
+    } catch (error) {
+        console.error('Error loading projects:', error);
+        showError('Failed to load projects');
+    }
+}
+
+// Load team members for dropdowns
+async function loadTeamMembers() {
+    try {
+        teamMembers = [
+            { id: '1', name: 'John Smith', role: 'CEO/Founder' },
+            { id: '2', name: 'Sarah Johnson', role: 'Media Buyer' },
+            { id: '3', name: 'Mike Chen', role: 'Store Manager' },
+            { id: '4', name: 'Emma Davis', role: 'Product Research' },
+            { id: '5', name: 'Alex Rodriguez', role: 'Creative Designer' }
+        ];
+        
+        populateTeamDropdowns();
+    } catch (error) {
+        console.error('Error loading team members:', error);
+    }
+}
+
+// Render projects grid
+function renderProjects() {
+    const grid = document.getElementById('projectsGrid');
+    
+    if (projects.length === 0) {
+        grid.innerHTML = `
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <i class="mdi mdi-folder-plus-outline fs-48 text-muted"></i>
+                    <h4 class="mt-3">No Projects Yet</h4>
+                    <p class="text-muted">Create your first project to get started</p>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProjectModal">
+                        <i class="mdi mdi-plus me-2"></i>Create Project
+                    </button>
+                </div>
+            </div>
+        `;
+        return;
+    }
+    
+    grid.innerHTML = projects.map(project => {
+        const progress = project.tasks_count > 0 ? Math.round((project.completed_tasks / project.tasks_count) * 100) : 0;
+        const teamMemberNames = project.team_members.map(id => {
+            const member = teamMembers.find(m => m.id === id);
+            return member ? member.name : 'Unknown';
+        }).join(', ');
+        
+        return `
+            <div class="col-md-6 col-xl-4 mb-4">
+                <div class="card h-100" style="cursor: pointer;" onclick="openProject('${project.id}')">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h5 class="card-title mb-1">${project.name}</h5>
+                                <span class="badge ${getProjectTypeBadge(project.type)}">${project.type}</span>
+                            </div>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-light" data-bs-toggle="dropdown" onclick="event.stopPropagation()">
+                                    <i class="mdi mdi-dots-vertical"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#" onclick="editProject('${project.id}')">
+                                        <i class="mdi mdi-pencil me-2"></i>Edit
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="viewProjectTasks('${project.id}')">
+                                        <i class="mdi mdi-format-list-checks me-2"></i>View Tasks
+                                    </a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item text-danger" href="#" onclick="deleteProject('${project.id}')">
+                                        <i class="mdi mdi-delete me-2"></i>Delete
+                                    </a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <p class="text-muted mb-3">${project.description}</p>
+                        
+                        <div class="row text-center mb-3">
+                            <div class="col-4">
+                                <h6 class="mb-0">${project.tasks_count}</h6>
+                                <small class="text-muted">Tasks</small>
+                            </div>
+                            <div class="col-4">
+                                <h6 class="mb-0">${progress}%</h6>
+                                <small class="text-muted">Complete</small>
+                            </div>
+                            <div class="col-4">
+                                <h6 class="mb-0">${project.team_members.length}</h6>
+                                <small class="text-muted">Team</small>
+                            </div>
+                        </div>
+                        
+                        <div class="progress mb-3" style="height: 6px;">
+                            <div class="progress-bar ${getProgressBarClass(progress)}" style="width: ${progress}%"></div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge ${getStatusBadgeClass(project.status)}">${project.status}</span>
+                            <span class="badge ${getPriorityBadgeClass(project.priority)}">${project.priority}</span>
+                        </div>
+                        
+                        <div class="mt-3">
+                            <small class="text-muted">Team: ${teamMemberNames}</small>
+                        </div>
+                        
+                        ${project.end_date ? `
+                            <div class="mt-2">
+                                <small class="text-muted">Due: ${formatDate(project.end_date)}</small>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// Open project detail page
+function openProject(projectId) {
+    console.log('Opening project:', projectId);
+    
+    // Store current project in localStorage for the detail page
+    const project = projects.find(p => p.id === projectId);
+    if (project) {
+        localStorage.setItem('projects', JSON.stringify(projects));
+        console.log('Project found, navigating...');
+        window.location.href = `/project-detail?id=${projectId}`;
+    } else {
+        console.error('Project not found:', projectId);
+        showError('Project not found');
+    }
+}
+
+// Handle add project
+async function handleAddProject(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(e.target);
+    const projectData = Object.fromEntries(formData.entries());
+    
+    if (!projectData.name) {
+        showError('Please enter a project name');
+        return;
+    }
+    
+    try {
+        showLoading('addProject');
+        
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        const newProject = {
+            id: Date.now().toString(),
+            ...projectData,
+            status: 'Planning',
+            team_members: Array.from(document.getElementById('projectTeam').selectedOptions).map(opt => opt.value),
+            tasks_count: 0,
+            completed_tasks: 0,
+            created_at: new Date().toISOString().split('T')[0]
+        };
+        
+        projects.unshift(newProject);
+        renderProjects();
+        
+        // Close modal and reset form
+        bootstrap.Modal.getInstance(document.getElementById('addProjectModal')).hide();
+        e.target.reset();
+        
+        showSuccess(`Project "${projectData.name}" created successfully!`);
+        
+    } catch (error) {
+        console.error('Error creating project:', error);
+        showError('Failed to create project');
+    } finally {
+        hideLoading('addProject');
+    }
+}
+
+// Handle edit project
+async function handleEditProject(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(e.target);
+    const projectData = Object.fromEntries(formData.entries());
+    const projectId = projectData.id;
+    
+    try {
+        showLoading('editProject');
+        
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        const projectIndex = projects.findIndex(p => p.id === projectId);
+        if (projectIndex !== -1) {
+            projects[projectIndex] = {
+                ...projects[projectIndex],
+                ...projectData,
+                team_members: Array.from(document.getElementById('editProjectTeam').selectedOptions).map(opt => opt.value)
+            };
+            
+                renderProjects();
+            
+            // Close modal
+            bootstrap.Modal.getInstance(document.getElementById('editProjectModal')).hide();
+            
+            showSuccess('Project updated successfully!');
+        }
+    } catch (error) {
+        console.error('Error updating project:', error);
+        showError('Failed to update project');
+    } finally {
+        hideLoading('editProject');
+    }
+}
+
+// Handle delete project
+async function handleDeleteProject() {
+    const modal = document.getElementById('deleteProjectModal');
+    const projectId = modal.dataset.projectId;
+    if (!projectId) return;
+    
+    try {
+        showLoading('deleteProject');
+        
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        projects = projects.filter(p => p.id !== projectId);
+        renderProjects();
+        
+        // Close modal
+        bootstrap.Modal.getInstance(modal).hide();
+        
+        showSuccess('Project deleted successfully!');
+    } catch (error) {
+        console.error('Error deleting project:', error);
+        showError('Failed to delete project');
+    } finally {
+        hideLoading('deleteProject');
+        delete modal.dataset.projectId;
+    }
+}
+
+// Edit project - show modal
+function editProject(projectId) {
+    const project = projects.find(p => p.id === projectId);
+    if (!project) return;
+    
+    // Populate edit form
+    document.getElementById('editProjectId').value = project.id;
+    document.getElementById('editProjectName').value = project.name;
+    document.getElementById('editProjectDescription').value = project.description || '';
+    document.getElementById('editProjectType').value = project.type || '';
+    document.getElementById('editProjectStatus').value = project.status;
+    document.getElementById('editProjectPriority').value = project.priority;
+    document.getElementById('editProjectStartDate').value = project.start_date || '';
+    document.getElementById('editProjectEndDate').value = project.end_date || '';
+    
+    // Select team members
+    const teamSelect = document.getElementById('editProjectTeam');
+    Array.from(teamSelect.options).forEach(option => {
+        option.selected = project.team_members.includes(option.value);
+    });
+    
+    // Show modal
+    new bootstrap.Modal(document.getElementById('editProjectModal')).show();
+}
+
+// Delete project - show modal
+function deleteProject(projectId) {
+    const project = projects.find(p => p.id === projectId);
+    if (!project) return;
+    
+    document.getElementById('deleteProjectName').textContent = project.name;
+    document.getElementById('deleteProjectModal').dataset.projectId = projectId;
+    
+    new bootstrap.Modal(document.getElementById('deleteProjectModal')).show();
+}
+
+// View project tasks (redirect to tasks page with filter)
+function viewProjectTasks(projectId) {
+    const project = projects.find(p => p.id === projectId);
+    if (project) {
+        // Store project filter in session storage
+        sessionStorage.setItem('projectFilter', projectId);
+        sessionStorage.setItem('projectName', project.name);
+        
+        // Redirect to tasks page
+        window.location.href = '/todolist';
+    }
+}
+
+// Populate team dropdowns
+function populateTeamDropdowns() {
+    const selectors = ['#projectTeam', '#editProjectTeam'];
+    
+    selectors.forEach(selector => {
+        const select = document.querySelector(selector);
+        if (select) {
+            select.innerHTML = teamMembers.map(member => 
+                `<option value="${member.id}">${member.name} (${member.role})</option>`
+            ).join('');
+        }
+    });
+}
+
+// Utility functions for styling
+function getProjectTypeBadge(type) {
+    const badges = {
+        'Ecommerce Store': 'bg-primary-subtle text-primary',
+        'Dropshipping Brand': 'bg-success-subtle text-success',
+        'Software Development': 'bg-info-subtle text-info',
+        'Mobile App': 'bg-warning-subtle text-warning',
+        'Marketing Campaign': 'bg-danger-subtle text-danger',
+        'Product Launch': 'bg-secondary-subtle text-secondary'
+    };
+    return badges[type] || 'bg-light-subtle text-dark';
+}
+
+function getStatusBadgeClass(status) {
+    switch(status) {
+        case 'Active': return 'bg-success-subtle text-success';
+        case 'Planning': return 'bg-warning-subtle text-warning';
+        case 'Completed': return 'bg-primary-subtle text-primary';
+        case 'On Hold': return 'bg-secondary-subtle text-secondary';
+        case 'Cancelled': return 'bg-danger-subtle text-danger';
+        default: return 'bg-light-subtle text-dark';
+    }
+}
+
+function getPriorityBadgeClass(priority) {
+    switch(priority) {
+        case 'High': return 'bg-danger-subtle text-danger';
+        case 'Medium': return 'bg-warning-subtle text-warning';
+        case 'Low': return 'bg-success-subtle text-success';
+        default: return 'bg-light-subtle text-dark';
+    }
+}
+
+function getProgressBarClass(progress) {
+    if (progress >= 80) return 'bg-success';
+    if (progress >= 50) return 'bg-warning';
+    return 'bg-danger';
+}
+
+function formatDate(dateString) {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString();
+}
+
+// Utility functions
+function showLoading(action) {
+    const button = document.getElementById(`${action}BtnText`);
+    const spinner = document.getElementById(`${action}Spinner`);
+    
+    if (button) {
+        switch(action) {
+            case 'addProject': button.textContent = 'Creating...'; break;
+            case 'editProject': button.textContent = 'Updating...'; break;
+            case 'deleteProject': button.textContent = 'Deleting...'; break;
+        }
+    }
+    if (spinner) spinner.classList.remove('d-none');
+}
+
+function hideLoading(action) {
+    const button = document.getElementById(`${action}BtnText`);
+    const spinner = document.getElementById(`${action}Spinner`);
+    
+    if (button) {
+        switch(action) {
+            case 'addProject': button.textContent = 'Create Project'; break;
+            case 'editProject': button.textContent = 'Update Project'; break;
+            case 'deleteProject': button.textContent = 'Delete Project'; break;
+        }
+    }
+    if (spinner) spinner.classList.add('d-none');
+}
+
+function showSuccess(message) {
+    const toast = document.createElement('div');
+    toast.className = 'toast-notification bg-success text-white p-3 rounded position-fixed';
+    toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999;';
+    toast.innerHTML = `
+        <div class="d-flex align-items-center">
+            <i class="mdi mdi-check-circle me-2"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 4000);
+}
+
+function showError(message) {
+    const toast = document.createElement('div');
+    toast.className = 'toast-notification bg-danger text-white p-3 rounded position-fixed';
+    toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999;';
+    toast.innerHTML = `
+        <div class="d-flex align-items-center">
+            <i class="mdi mdi-alert-circle me-2"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 4000);
+}
+
+// Initialize projects on page load
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Projects page loaded, loading projects...');
+    loadProjects();
+    loadTeamMembers();
+});
+
+// Team member assignment functionality
+function loadTeamMembers() {
+    // Get team members from HRM
+    const teamMembers = JSON.parse(localStorage.getItem('users') || '[]');
+    
+    renderTeamMemberCards('teamMembersList', teamMembers);
+    renderTeamMemberCards('editTeamMembersList', teamMembers);
+}
+
+function renderTeamMemberCards(containerId, members) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    
+    container.innerHTML = members.map(member => `
+        <div class="team-member-card" data-user-id="${member.id}">
+            <input type="checkbox" class="team-member-checkbox" name="team_members" value="${member.id}" id="${containerId}_${member.id}">
+            <label for="${containerId}_${member.id}" class="team-member-label">
+                <div class="member-avatar">
+                    <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(member.name)}&background=3b82f6&color=fff&size=32" alt="${member.name}">
+                </div>
+                <div class="member-info">
+                    <div class="member-name">${member.name}</div>
+                    <div class="member-role">${member.role}</div>
+                </div>
+                <div class="check-indicator">
+                    <i class="mdi mdi-check"></i>
+                </div>
+            </label>
+        </div>
+    `).join('');
+}
+
+console.log('📊 Projects page script loaded!');
+</script>

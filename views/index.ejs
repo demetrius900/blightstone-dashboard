@@ -1,0 +1,446 @@
+<%- contentFor('html_attribute') %>
+
+<%- contentFor('extra_css') %>
+
+<%- contentFor('body_attribute') %>
+
+<%- contentFor('content') %>
+
+<div class="container-fluid">
+    <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column">
+        <div class="flex-grow-1">
+            <h4 class="fs-18 fw-semibold m-0">Project Dashboard</h4>
+        </div>
+    </div>
+
+    <!-- Start Main Widgets -->
+    <div class="row">
+        <div class="col-md-6 col-lg-4 col-xl">
+            <div class="card">
+                <div class="card-body">
+                    <div class="widget-first">
+
+                        <div class="d-flex align-items-center mb-2">
+                            <div
+                                class="p-2 border border-primary border-opacity-10 bg-primary-subtle rounded-2 me-2">
+                                <div class="bg-primary rounded-circle widget-size text-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                        viewBox="0 0 24 24">
+                                        <path fill="#ffffff"
+                                            d="M10 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2h-8l-2-2z" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <p class="mb-0 text-dark fs-15">Active Projects</p>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h3 class="mb-0 fs-22 text-dark me-3" id="activeProjects">-</h3>
+                            <div class="text-center">
+                                <span class="text-primary fs-14"><i
+                                        class="mdi mdi-trending-up fs-14"></i> <span id="newProjects">-</span> new</span>
+                                <p class="text-dark fs-13 mb-0">This month</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4 col-xl">
+            <div class="card">
+                <div class="card-body">
+                    <div class="widget-first">
+
+                        <div class="d-flex align-items-center mb-2">
+                            <div
+                                class="p-2 border border-secondary border-opacity-10 bg-secondary-subtle rounded-2 me-2">
+                                <div class="bg-secondary rounded-circle widget-size text-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                        viewBox="0 0 24 24">
+                                        <path fill="#ffffff"
+                                            d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <p class="mb-0 text-dark fs-15">Tasks Completed</p>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h3 class="mb-0 fs-22 text-dark me-3" id="completedTasks">-</h3>
+                            <div class="text-center">
+                                <span class="text-success fs-14"><i
+                                        class="mdi mdi-trending-up fs-14"></i> <span id="completionRate">-</span>%</span>
+                                <p class="text-dark fs-13 mb-0">This week</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4 col-xl">
+            <div class="card">
+                <div class="card-body">
+                    <div class="widget-first">
+
+                        <div class="d-flex align-items-center mb-2">
+                            <div
+                                class="p-2 border border-danger border-opacity-10 bg-danger-subtle rounded-2 me-2">
+                                <div class="bg-danger rounded-circle widget-size text-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                        viewBox="0 0 24 24">
+                                        <path fill="#ffffff"
+                                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <p class="mb-0 text-dark fs-15">Pending Tasks</p>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h3 class="mb-0 fs-22 text-dark me-3" id="pendingTasks">-</h3>
+                            <div class="text-center">
+                                <span class="text-warning fs-14"><i
+                                        class="mdi mdi-clock fs-14"></i> <span id="dueSoon">-</span> due soon</span>
+                                <p class="text-dark fs-13 mb-0">This week</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4 col-xl">
+            <div class="card">
+                <div class="card-body">
+                    <div class="widget-first">
+
+                        <div class="d-flex align-items-center mb-2">
+                            <div
+                                class="p-2 border border-warning border-opacity-10 bg-warning-subtle rounded-2 me-2">
+                                <div class="bg-warning rounded-circle widget-size text-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                        viewBox="0 0 24 24">
+                                        <path fill="#ffffff"
+                                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <p class="mb-0 text-dark fs-15">Team Members</p>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h3 class="mb-0 fs-22 text-dark me-3" id="teamMembers">-</h3>
+                            <div class="text-center">
+                                <span class="text-info fs-14"><i
+                                        class="mdi mdi-account-plus fs-14"></i> <span id="activeMembers">-</span> active</span>
+                                <p class="text-dark fs-13 mb-0">Online now</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- End Main Widgets -->
+
+    <!-- start row -->
+    <div class="row">
+
+        <div class="col-md-12 col-xl-8">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex align-items-center">
+                        <h5 class="card-title mb-0">Recent Tasks</h5>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-centered table-nowrap mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Task</th>
+                                    <th>Project</th>
+                                    <th>Assigned To</th>
+                                    <th>Due Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Design new landing page</td>
+                                    <td>Website Redesign</td>
+                                    <td>John Doe</td>
+                                    <td>Dec 15, 2024</td>
+                                    <td><span class="badge bg-warning-subtle text-warning">In Progress</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Update user documentation</td>
+                                    <td>Product Launch</td>
+                                    <td>Jane Smith</td>
+                                    <td>Dec 12, 2024</td>
+                                    <td><span class="badge bg-success-subtle text-success">Completed</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Review marketing materials</td>
+                                    <td>Q4 Campaign</td>
+                                    <td>Mike Johnson</td>
+                                    <td>Dec 18, 2024</td>
+                                    <td><span class="badge bg-primary-subtle text-primary">Pending</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Setup database backup</td>
+                                    <td>Infrastructure</td>
+                                    <td>Sarah Wilson</td>
+                                    <td>Dec 10, 2024</td>
+                                    <td><span class="badge bg-success-subtle text-success">Completed</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12 col-xl-4">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex align-items-center">
+                        <h5 class="card-title mb-0">Quick Actions</h5>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="todolist" class="btn btn-primary">
+                            <i class="mdi mdi-plus me-2"></i>Add New Task
+                        </a>
+                        <a href="projects" class="btn btn-outline-primary">
+                            <i class="mdi mdi-folder-plus me-2"></i>Create Project
+                        </a>
+                        <a href="hrm" class="btn btn-outline-primary">
+                            <i class="mdi mdi-account-plus me-2"></i>Add Team Member
+                        </a>
+                        <a href="calendar" class="btn btn-outline-primary">
+                            <i class="mdi mdi-calendar-plus me-2"></i>Schedule Meeting
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- end row -->
+
+</div>
+<!-- container-fluid -->
+
+<%- contentFor('extra_javascript') %>
+
+<script>
+// Ecommerce Dashboard Analytics
+let dashboardData = {
+    projects: [
+        {
+            id: '1',
+            name: 'TechGear Store',
+            status: 'Active',
+            created_at: '2024-01-01'
+        },
+        {
+            id: '2',
+            name: 'FitnessPro Brand',
+            status: 'Active',
+            created_at: '2024-01-15'
+        },
+        {
+            id: '3',
+            name: 'Mobile Shopping App',
+            status: 'Planning',
+            created_at: '2024-02-01'
+        },
+        {
+            id: '4',
+            name: 'Q1 Social Media Campaign',
+            status: 'Active',
+            created_at: '2024-01-01'
+        },
+        {
+            id: '5',
+            name: 'Supply Chain Optimization',
+            status: 'Completed',
+            created_at: '2023-11-01'
+        }
+    ],
+    tasks: [
+        {
+            id: '1',
+            title: 'Launch Facebook ad campaign for tech gadgets',
+            status: 'In Progress',
+            priority: 'High',
+            due_date: '2024-12-15',
+            created_at: '2024-12-01'
+        },
+        {
+            id: '2',
+            title: 'Source fitness equipment suppliers',
+            status: 'Completed',
+            priority: 'Medium',
+            due_date: '2024-12-12',
+            created_at: '2024-12-01'
+        },
+        {
+            id: '3',
+            title: 'Design product mockups for mobile app',
+            status: 'Pending',
+            priority: 'High',
+            due_date: '2024-12-18',
+            created_at: '2024-12-05'
+        },
+        {
+            id: '4',
+            title: 'Optimize store conversion rate',
+            status: 'In Progress',
+            priority: 'Medium',
+            due_date: '2024-12-20',
+            created_at: '2024-12-03'
+        },
+        {
+            id: '5',
+            title: 'Create TikTok video content',
+            status: 'Pending',
+            priority: 'High',
+            due_date: '2024-12-22',
+            created_at: '2024-12-06'
+        },
+        {
+            id: '6',
+            title: 'Analyze competitor pricing strategies',
+            status: 'Completed',
+            priority: 'Medium',
+            due_date: '2024-12-10',
+            created_at: '2024-12-02'
+        },
+        {
+            id: '7',
+            title: 'Set up email marketing automation',
+            status: 'In Progress',
+            priority: 'High',
+            due_date: '2024-12-25',
+            created_at: '2024-12-01'
+        },
+        {
+            id: '8',
+            title: 'Update product descriptions for SEO',
+            status: 'Pending',
+            priority: 'Low',
+            due_date: '2024-12-30',
+            created_at: '2024-12-04'
+        }
+    ],
+    teamMembers: [
+        { id: '1', name: 'John Smith', role: 'CEO/Founder', status: 'Active' },
+        { id: '2', name: 'Sarah Johnson', role: 'Media Buyer', status: 'Active' },
+        { id: '3', name: 'Mike Chen', role: 'Store Manager', status: 'Active' },
+        { id: '4', name: 'Emma Davis', role: 'Product Research', status: 'Active' },
+        { id: '5', name: 'Alex Rodriguez', role: 'Creative Designer', status: 'Active' }
+    ]
+};
+
+// Initialize dashboard on page load
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('📊 Ecommerce Dashboard loaded');
+    updateDashboardStats();
+    
+    // Update every 30 seconds (simulate real-time)
+    setInterval(updateDashboardStats, 30000);
+});
+
+function updateDashboardStats() {
+    try {
+        // Project Statistics
+        const activeProjects = dashboardData.projects.filter(p => p.status === 'Active').length;
+        const newProjectsThisMonth = dashboardData.projects.filter(p => {
+            const projectDate = new Date(p.created_at);
+            const thisMonth = new Date();
+            return projectDate.getMonth() === thisMonth.getMonth() && 
+                   projectDate.getFullYear() === thisMonth.getFullYear();
+        }).length;
+        
+        document.getElementById('activeProjects').textContent = activeProjects;
+        document.getElementById('newProjects').textContent = newProjectsThisMonth;
+        
+        // Task Statistics
+        const completedTasks = dashboardData.tasks.filter(t => t.status === 'Completed').length;
+        const totalTasks = dashboardData.tasks.length;
+        const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+        
+        document.getElementById('completedTasks').textContent = completedTasks;
+        document.getElementById('completionRate').textContent = completionRate;
+        
+        // Pending Tasks
+        const pendingTasks = dashboardData.tasks.filter(t => t.status === 'Pending').length;
+        const dueSoonTasks = dashboardData.tasks.filter(t => {
+            if (!t.due_date) return false;
+            const dueDate = new Date(t.due_date);
+            const today = new Date();
+            const daysDiff = (dueDate - today) / (1000 * 60 * 60 * 24);
+            return daysDiff <= 7 && daysDiff >= 0; // Due within 7 days
+        }).length;
+        
+        document.getElementById('pendingTasks').textContent = pendingTasks;
+        document.getElementById('dueSoon').textContent = dueSoonTasks;
+        
+        // Team Member Statistics
+        const totalMembers = dashboardData.teamMembers.length;
+        const activeMembers = dashboardData.teamMembers.filter(m => m.status === 'Active').length;
+        
+        document.getElementById('teamMembers').textContent = totalMembers;
+        document.getElementById('activeMembers').textContent = activeMembers;
+        
+        console.log('✅ Dashboard stats updated:', {
+            activeProjects,
+            completedTasks,
+            completionRate: completionRate + '%',
+            pendingTasks,
+            totalMembers
+        });
+        
+    } catch (error) {
+        console.error('❌ Error updating dashboard stats:', error);
+    }
+}
+
+// Utility function to add subtle animations
+function animateNumber(elementId, newValue) {
+    const element = document.getElementById(elementId);
+    if (!element) return;
+    
+    const currentValue = parseInt(element.textContent) || 0;
+    const increment = newValue > currentValue ? 1 : -1;
+    
+    if (currentValue !== newValue) {
+        element.style.transform = 'scale(1.1)';
+        setTimeout(() => {
+            element.style.transform = 'scale(1)';
+        }, 200);
+    }
+    
+    element.textContent = newValue;
+}
+
+// Export for debugging
+window.dashboard = {
+    data: dashboardData,
+    updateStats: updateDashboardStats
+};
+
+console.log('✅ Ecommerce Dashboard Analytics initialized');
+</script>

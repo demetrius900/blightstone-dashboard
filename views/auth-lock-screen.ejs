@@ -1,0 +1,203 @@
+<%- contentFor('extra_css') %>
+
+<%- contentFor('content') %>
+
+<div class="account-page">
+    <div class="container-fluid p-0">
+
+        <div class="row align-items-center g-0 px-3 py-3 vh-100">
+            <div class="col-xl-5">
+                <div class="row">
+                    <div class="col-md-8 mx-auto">
+
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="mb-0 p-0 p-lg-3">
+
+                                    <div class="mb-0 border-0 p-md-4 p-lg-0">
+                                        <div class="mb-4 p-0 text-lg-start text-center">
+                                            <div class="auth-brand">
+                                                <a href="/" class="logo">
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <span style="font-size: 24px; color: #3b82f6;">🗲</span>
+                                                        <span style="font-size: 20px; font-weight: 700; color: #1f2937;">Blightstone</span>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="auth-title-section mb-4 text-lg-start text-center">
+                                            <h3 class="text-dark fw-semibold mb-3">Welcome Back</h3>
+                                            <p class="text-muted fs-14 mb-0">Enter your password to continue</p>
+                                        </div>
+
+                                        <div class="d-flex gap-2 align-items-center mb-3" id="userInfo">
+                                            <div class="lh-1"> 
+                                                <span class=""> 
+                                                    <img id="userAvatar" src="https://ui-avatars.com/api/?name=User&background=3b82f6&color=fff&size=32" alt="" class="avatar avatar-sm rounded-circle me-1"> 
+                                                </span> 
+                                            </div> 
+                                            <div> 
+                                                <p class="mb-0 text-dark fw-medium" id="userEmail">user@blightstone.com</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="pt-0">
+                                            <form id="lockForm" class="mt-4 mb-3">
+                                                <div class="form-group mb-3">
+                                                    <label for="password" class="form-label">Password</label>
+                                                    <input class="form-control" type="password" id="password" name="password" required placeholder="Enter your password">
+                                                    <div id="passwordError" class="text-danger mt-1" style="display: none;"></div>
+                                                </div>
+
+                                                <div class="form-check mb-3">
+                                                    <input type="checkbox" class="form-check-input" id="checkbox-signin">
+                                                    <label class="form-check-label" for="checkbox-signin">Remember this device</label>
+                                                </div>
+                                                
+                                                <div class="form-group mb-0 row">
+                                                    <div class="col-12">
+                                                        <div class="d-grid">
+                                                            <button class="btn btn-primary" type="submit" id="unlockBtn">
+                                                                <span id="unlockBtnText">Unlock</span>
+                                                                <span id="unlockSpinner" class="spinner-border spinner-border-sm d-none ms-2"></span>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+
+                                            <div class="text-center text-muted">
+                                                <p class="mb-0">
+                                                    <a class="text-primary fw-medium" href="/auth-login">Sign in with different account</a>
+                                                </p>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-7 d-none d-xl-inline-block">
+                <div class="account-page-bg rounded-4">
+                    <div class="auth-user-review text-center">
+                        <div id="carouselExampleFade" class="carousel slide carousel-fade" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+
+                                <div class="carousel-item active">
+                                    <p class="prelead mb-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill="#ffffff" d="M4.583 17.321C3.553 16.227 3 15 3 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621c.537-.278 1.24-.375 1.929-.311c1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 0 1-3.5 3.5a3.87 3.87 0 0 1-2.748-1.179m10 0C13.553 16.227 13 15 13 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621c.537-.278 1.24-.375 1.929-.311c1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 0 1-3.5 3.5a3.87 3.87 0 0 1-2.748-1.179"/></svg> 
+                                            Blightstone transformed how we manage our ecommerce projects. The creative tracker alone saved us countless hours.
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill="#ffffff" d="M19.417 6.679C20.447 7.773 21 9 21 10.989c0 3.5-2.456 6.637-6.03 8.188l-.893-1.378c3.335-1.804 3.987-4.145 4.248-5.621c-.537.278-1.24.375-1.93.311c-1.804-.167-3.226-1.648-3.226-3.489a3.5 3.5 0 0 1 3.5-3.5c1.073 0 2.1.49 2.748 1.179m-10 0C10.447 7.773 11 9 11 10.989c0 3.5-2.456 6.637-6.03 8.188l-.893-1.378c3.335-1.804 3.987-4.145 4.247-5.621c-.537.278-1.24.375-1.929.311C4.591 12.323 3.17 10.842 3.17 9a3.5 3.5 0 0 1 3.5-3.5c1.073 0 2.1.49 2.748 1.179"/></svg>
+                                    </p>
+                                    <h4 class="mb-1">Sarah Chen</h4>
+                                    <p class="mb-0">Marketing Director</p>
+                                </div>
+
+                                <div class="carousel-item">
+                                    <p class="prelead mb-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill="#ffffff" d="M4.583 17.321C3.553 16.227 3 15 3 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621c.537-.278 1.24-.375 1.929-.311c1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 0 1-3.5 3.5a3.87 3.87 0 0 1-2.748-1.179m10 0C13.553 16.227 13 15 13 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621c.537-.278 1.24-.375 1.929-.311c1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 0 1-3.5 3.5a3.87 3.87 0 0 1-2.748-1.179"/></svg> 
+                                            Finally, a project management tool that understands the dropshipping business. The competitor analysis feature is game-changing.
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill="#ffffff" d="M19.417 6.679C20.447 7.773 21 9 21 10.989c0 3.5-2.456 6.637-6.03 8.188l-.893-1.378c3.335-1.804 3.987-4.145 4.248-5.621c-.537.278-1.24.375-1.93.311c-1.804-.167-3.226-1.648-3.226-3.489a3.5 3.5 0 0 1 3.5-3.5c1.073 0 2.1.49 2.748 1.179m-10 0C10.447 7.773 11 9 11 10.989c0 3.5-2.456 6.637-6.03 8.188l-.893-1.378c3.335-1.804 3.987-4.145 4.247-5.621c-.537.278-1.24.375-1.929.311C4.591 12.323 3.17 10.842 3.17 9a3.5 3.5 0 0 1 3.5-3.5c1.073 0 2.1.49 2.748 1.179"/></svg>
+                                    </p>
+                                    <h4 class="mb-1">Mike Rodriguez</h4>
+                                    <p class="mb-0">Brand Manager</p>
+                                </div>
+
+                                <div class="carousel-item">
+                                    <p class="prelead mb-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill="#ffffff" d="M4.583 17.321C3.553 16.227 3 15 3 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621c.537-.278 1.24-.375 1.929-.311c1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 0 1-3.5 3.5a3.87 3.87 0 0 1-2.748-1.179m10 0C13.553 16.227 13 15 13 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621c.537-.278 1.24-.375 1.929-.311c1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 0 1-3.5 3.5a3.87 3.87 0 0 1-2.748-1.179"/></svg> 
+                                            The team collaboration features and document management make coordinating our campaigns so much easier.
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill="#ffffff" d="M19.417 6.679C20.447 7.773 21 9 21 10.989c0 3.5-2.456 6.637-6.03 8.188l-.893-1.378c3.335-1.804 3.987-4.145 4.248-5.621c-.537.278-1.24.375-1.93.311c-1.804-.167-3.226-1.648-3.226-3.489a3.5 3.5 0 0 1 3.5-3.5c1.073 0 2.1.49 2.748 1.179m-10 0C10.447 7.773 11 9 11 10.989c0 3.5-2.456 6.637-6.03 8.188l-.893-1.378c3.335-1.804 3.987-4.145 4.247-5.621c-.537.278-1.24.375-1.929.311C4.591 12.323 3.17 10.842 3.17 9a3.5 3.5 0 0 1 3.5-3.5c1.073 0 2.1.49 2.748 1.179"/></svg>
+                                    </p>
+                                    <h4 class="mb-1">Emma Thompson</h4>
+                                    <p class="mb-0">Operations Lead</p>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<%- contentFor('extra_javascript') %>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Load user data from localStorage or session
+    loadUserData();
+    
+    // Handle form submission
+    document.getElementById('lockForm').addEventListener('submit', handleUnlock);
+});
+
+function loadUserData() {
+    // Try to get user data from localStorage
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    
+    if (currentUser.email) {
+        document.getElementById('userEmail').textContent = currentUser.email;
+        document.getElementById('userAvatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name || currentUser.email)}&background=3b82f6&color=fff&size=32`;
+    }
+}
+
+async function handleUnlock(e) {
+    e.preventDefault();
+    
+    const password = document.getElementById('password').value;
+    const errorDiv = document.getElementById('passwordError');
+    const submitBtn = document.getElementById('unlockBtn');
+    const btnText = document.getElementById('unlockBtnText');
+    const spinner = document.getElementById('unlockSpinner');
+    
+    // Clear previous errors
+    errorDiv.style.display = 'none';
+    
+    // Show loading state
+    btnText.textContent = 'Unlocking...';
+    spinner.classList.remove('d-none');
+    submitBtn.disabled = true;
+    
+    try {
+        // For demo purposes, accept any password
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        if (password.length < 1) {
+            throw new Error('Please enter a password');
+        }
+        
+        // Simple validation (in real app, this would be handled by Supabase)
+        if (password.length < 6) {
+            throw new Error('Password must be at least 6 characters');
+        }
+        
+        // Success - redirect to dashboard
+        window.location.href = '/';
+        
+    } catch (error) {
+        // Show error
+        errorDiv.textContent = error.message;
+        errorDiv.style.display = 'block';
+        
+        // Reset button
+        btnText.textContent = 'Unlock';
+        spinner.classList.add('d-none');
+        submitBtn.disabled = false;
+        
+        // Focus password field
+        document.getElementById('password').focus();
+    }
+}
+
+console.log('🔒 Lock screen loaded');
+</script>

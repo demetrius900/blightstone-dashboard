@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" <%- html_attribute %>>
+
+<head>
+    <%- include('./title-meta') %>
+    <%- extra_css %>
+    <%- include ('./head-css') %>
+</head>
+
+<body data-menu-color="light" data-sidebar="default" <%- body_attribute %>>
+
+<div id="app-layout">
+
+    <%- include ('./topbar') %>
+    <%- include ('./sidebar') %>
+
+    <div class="content-page">
+
+        <div class="content">
+            <%- content %>
+        </div>
+
+        <%- include ('./footer') %>
+
+    </div>
+
+</div>
+
+<%- include ('./vendor') %>
+<%- extra_javascript %>
+
+<script>
+// Authentication and user management
+document.addEventListener('DOMContentLoaded', function() {
+    // Light mode setup
+    console.log('✅ Loading dashboard in light mode...');
+    
+    // Add a small delay to avoid race conditions
+    setTimeout(() => {
+        // Check if we're on a public page (auth pages)
+        const publicPages = ['/auth-login', '/auth-register', '/auth-recoverpw'];
+        const currentPath = window.location.pathname;
+        const isPublicPage = publicPages.includes(currentPath);
+        
+        // Check if user is logged in
+        const user = localStorage.getItem('blightstone_user');
+        const session = localStorage.getItem('blightstone_session');
+        
+        console.log('Auth check:', { user: !!user, session: !!session, currentPath, isPublicPage });
+        
+        if (!user || !session) {
+            // User not logged in
+            if (!isPublicPage) {
+                console.log('No user found, but showing dashboard anyway for now...');
+                // Temporarily commented out redirect for testing
+                // window.location.href = '/auth-login';
+                // return;
+            }
+        } else {
+            // User is logged in
+            if (isPublicPage) {
+                console.log('User logged in, redirecting to dashboard...');
+                window.location.href = '/';
+                return;
+            }
+            
+            // Update UI with user info
+            try {
+                const userData = JSON.parse(user);
+                updateUserInterface(userData);
+            } catch (error) {
+                console.error('Error parsing user data:', error);
+                localStorage.removeItem('blightstone_user');
+                localStorage.removeItem('blightstone_session');
+                window.location.href = '/auth-login';
+            }
+        }
+        
+        // Logout functionality
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                logout();
+            });
+        }
+    }, 100);
+});
+
+function updateUserInterface(user) {
+    // Update greeting with current time
+    const greeting = document.getElementById('greeting');
+    if (greeting) {
+        const hour = new Date().getHours();
+        let timeGreeting = 'Good Evening';
+        if (hour < 12) timeGreeting = 'Good Morning';
+        else if (hour < 18) timeGreeting = 'Good Afternoon';
+        
+        const name = user.user_metadata?.name || user.email?.split('@')[0] || 'Team Member';
+        greeting.textContent = `${timeGreeting}, ${name}!`;
+        
+        // Fade in the greeting after updating
+        greeting.style.opacity = '1';
+    }
+    
+    // Update user name in dropdown
+    const userName = document.getElementById('userName');
+    if (userName) {
+        const name = user.user_metadata?.name || user.email?.split('@')[0] || 'Team Member';
+        userName.innerHTML = `${name} <i class="mdi mdi-chevron-down"></i>`;
+        // Fade in the username after updating
+        userName.style.opacity = '1';
+    }
+    
+    // Update user avatar
+    const userAvatar = document.getElementById('userAvatar');
+    if (userAvatar) {
+        const name = user.user_metadata?.name || user.email?.split('@')[0] || 'Team Member';
+        const avatarUrl = user.user_metadata?.avatar_url || 
+                         `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=6c5ce7&color=fff&size=128`;
+        userAvatar.src = avatarUrl;
+        // Fade in the avatar after updating
+        userAvatar.style.opacity = '1';
+    }
+}
+
+async function logout() {
+    try {
+        // Call logout API
+        await fetch('/api/auth/signout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+    } catch (error) {
+        console.error('Logout error:', error);
+    } finally {
+        // Clear local storage
+        localStorage.removeItem('blightstone_user');
+        localStorage.removeItem('blightstone_session');
+        
+        // Redirect to login
+        window.location.href = '/auth-login';
+    }
+}
+
+function enableDarkMode() {
+    // Set dark mode theme
+    document.documentElement.setAttribute('data-bs-theme', 'dark');
+    
+    // Update the theme toggle button if it exists
+    const themeToggle = document.getElementById('light-dark-mode');
+    if (themeToggle) {
+        const darkIcon = themeToggle.querySelector('.dark-mode');
+        const lightIcon = themeToggle.querySelector('.light-mode');
+        if (darkIcon) darkIcon.style.display = 'none';
+        if (lightIcon) lightIcon.style.display = 'block';
+    }
+}
+
+// Make user info globally available
+window.getUserInfo = function() {
+    const user = localStorage.getItem('blightstone_user');
+    return user ? JSON.parse(user) : null;
+};
+</script>
+
+</body>
+
+</html>

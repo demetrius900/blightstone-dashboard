@@ -1,0 +1,779 @@
+<%- contentFor('html_attribute') %>
+
+<%- contentFor('extra_css') %>
+
+<%- contentFor('body_attribute') %>
+
+<%- contentFor('content') %>
+
+<!-- Project Detail Page -->
+<div class="container-fluid">
+    <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column">
+        <div class="flex-grow-1">
+            <div class="d-flex align-items-center">
+                <button class="btn btn-outline-secondary me-3" onclick="goBackToProjects()">
+                    <i class="mdi mdi-arrow-left"></i> Back to Projects
+                </button>
+                <div>
+                    <h4 class="fs-18 fw-semibold m-0" id="projectTitle">Project Name</h4>
+                    <small class="text-muted" id="projectDescription">Project description</small>
+                </div>
+            </div>
+        </div>
+        <div class="text-end">
+            <button class="btn btn-primary" onclick="editProject()">
+                <i class="mdi mdi-pencil me-2"></i>Edit Project
+            </button>
+        </div>
+    </div>
+
+    <!-- Project Management Tools -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Project Management Tools</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 col-lg-3 mb-3">
+                            <div class="card bg-primary-subtle border-primary" style="cursor: pointer;" onclick="goToTasks()">
+                                <div class="card-body text-center">
+                                    <i class="mdi mdi-format-list-checks fs-48 text-primary mb-3"></i>
+                                    <h6 class="card-title">Tasks & To-Do</h6>
+                                    <p class="card-text small">Manage project tasks and track progress</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3 mb-3">
+                            <div class="card bg-success-subtle border-success" style="cursor: pointer;" onclick="goToCreativeTracker()">
+                                <div class="card-body text-center">
+                                    <i class="mdi mdi-palette fs-48 text-success mb-3"></i>
+                                    <h6 class="card-title">Creative Tracker</h6>
+                                    <p class="card-text small">Track ad creatives, testing, and performance</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3 mb-3">
+                            <div class="card bg-info-subtle border-info" style="cursor: pointer;" onclick="goToCustomerAvatars()">
+                                <div class="card-body text-center">
+                                    <i class="mdi mdi-account-group fs-48 text-info mb-3"></i>
+                                    <h6 class="card-title">Customer Avatars</h6>
+                                    <p class="card-text small">Define and track target audience personas</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3 mb-3">
+                            <div class="card bg-warning-subtle border-warning" style="cursor: pointer;" onclick="goToCompetitorAnalysis()">
+                                <div class="card-body text-center">
+                                    <i class="mdi mdi-chart-line fs-48 text-warning mb-3"></i>
+                                    <h6 class="card-title">Competitor Analysis</h6>
+                                    <p class="card-text small">Analyze competition and market positioning</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Tasks Overview -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">Recent Tasks</h5>
+                        <button class="btn btn-sm btn-primary" onclick="goToTasks()">
+                            <i class="mdi mdi-plus me-2"></i>Manage Tasks
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="tasksList">
+                        <div class="text-center py-4">
+                            <i class="mdi mdi-format-list-checks fs-48 text-muted"></i>
+                            <h6 class="mt-3">No Tasks Yet</h6>
+                            <p class="text-muted">Create your first task to get started</p>
+                            <button class="btn btn-primary" onclick="goToTasks()">
+                                <i class="mdi mdi-plus me-2"></i>Add Task
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Task Modal -->
+<div class="modal fade" id="addTaskModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New Task</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="addTaskForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Task Title</label>
+                        <input type="text" class="form-control" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" name="description" rows="3"></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Priority</label>
+                                <select class="form-select" name="priority">
+                                    <option value="Low">Low</option>
+                                    <option value="Medium" selected>Medium</option>
+                                    <option value="High">High</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Due Date</label>
+                                <input type="date" class="form-control" name="due_date">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Assign To</label>
+                        <select class="form-select" name="assigned_to">
+                            <option value="">Unassigned</option>
+                            <!-- Team members will be loaded here -->
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Add Creative Modal -->
+<div class="modal fade" id="addCreativeModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Creative Entry</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="addCreativeForm">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Batch #</label>
+                                <input type="text" class="form-control" name="batch" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Brand</label>
+                                <input type="text" class="form-control" name="brand" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Status</label>
+                                <select class="form-select" name="status">
+                                    <option value="Planning">Planning</option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Testing">Testing</option>
+                                    <option value="Completed">Completed</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Launch Date</label>
+                                <input type="date" class="form-control" name="launch_date">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Ad Concept (Inspo)</label>
+                                <input type="text" class="form-control" name="ad_concept">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Testing Goals</label>
+                        <textarea class="form-control" name="testing_goals" rows="2" placeholder="What are you creating/testing and what gives you the confidence this test will improve overall performance?"></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Ad Type</label>
+                                <input type="text" class="form-control" name="ad_type">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Ad Variable</label>
+                                <input type="text" class="form-control" name="ad_variable">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Desire</label>
+                        <textarea class="form-control" name="desire" rows="2"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Benefit Focus</label>
+                        <textarea class="form-control" name="benefit" rows="2" placeholder="Focus on pain points and objections to determine which benefits to highlight"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Objections</label>
+                        <textarea class="form-control" name="objections" rows="2"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Persona</label>
+                        <input type="text" class="form-control" name="persona">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Positioning</label>
+                                <textarea class="form-control" name="positioning" rows="2" placeholder="How do we position the concept vid/img"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Positioning How?</label>
+                                <textarea class="form-control" name="positioning_how" rows="2" placeholder="How do we position the concept vid/img"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Hook Pattern</label>
+                        <textarea class="form-control" name="hook_pattern" rows="2" placeholder="Describe how the hook will look like"></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Results</label>
+                                <input type="text" class="form-control" name="results">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Best Performing Ad</label>
+                                <input type="text" class="form-control" name="best_ad">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Link to Brief</label>
+                                <input type="url" class="form-control" name="brief_link">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Creative</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Add Customer Avatar Modal -->
+<div class="modal fade" id="addAvatarModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create Customer Avatar</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="addAvatarForm">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Avatar Name</label>
+                                <input type="text" class="form-control" name="name" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Age Range</label>
+                                <input type="text" class="form-control" name="age" placeholder="e.g., 25-40">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Gender</label>
+                                <select class="form-select" name="gender">
+                                    <option value="">Select Gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Non-binary">Non-binary</option>
+                                    <option value="All">All</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Location</label>
+                                <input type="text" class="form-control" name="location" placeholder="e.g., United States">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Pain Points</label>
+                        <textarea class="form-control" name="pain_points" rows="3" placeholder="What problems does this persona face?"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Goals & Desires</label>
+                        <textarea class="form-control" name="goals" rows="3" placeholder="What does this persona want to achieve?"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Objections</label>
+                        <textarea class="form-control" name="objections" rows="3" placeholder="What prevents them from buying?"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Preferred Channels</label>
+                        <input type="text" class="form-control" name="channels" placeholder="e.g., Facebook, Instagram, TikTok">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Avatar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Add Competitor Modal -->
+<div class="modal fade" id="addCompetitorModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Competitor</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="addCompetitorForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Competitor Name</label>
+                        <input type="text" class="form-control" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Website</label>
+                        <input type="url" class="form-control" name="website">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Market</label>
+                                <input type="text" class="form-control" name="market" placeholder="e.g., USA, WW, UK">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Competition Level</label>
+                                <select class="form-select" name="level">
+                                    <option value="Low">Low</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="High">High</option>
+                                    <option value="Poor">Poor</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Notes</label>
+                        <textarea class="form-control" name="notes" rows="4" placeholder="Analysis notes, strengths, weaknesses, etc."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Competitor</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentProject = null;
+let projectTasks = [];
+let creativeEntries = [];
+let customerAvatars = [];
+let competitors = [];
+
+// Get project ID from URL parameters
+const urlParams = new URLSearchParams(window.location.search);
+const projectId = urlParams.get('id');
+
+// Load project data on page load
+document.addEventListener('DOMContentLoaded', function() {
+    if (projectId) {
+        loadProjectData(projectId);
+    } else {
+        goBackToProjects();
+    }
+});
+
+function goBackToProjects() {
+    window.location.href = '/projects';
+}
+
+function loadProjectData(id) {
+    // In a real app, this would be an API call
+    // For now, using localStorage or mock data
+    const projects = JSON.parse(localStorage.getItem('projects') || '[]');
+    currentProject = projects.find(p => p.id === id);
+    
+    if (!currentProject) {
+        goBackToProjects();
+        return;
+    }
+    
+    // Update project info
+    document.getElementById('projectTitle').textContent = currentProject.name;
+    document.getElementById('projectDescription').textContent = currentProject.description;
+    
+    // Load all data
+    loadTasks();
+    loadCreatives();
+    loadAvatars();
+    loadCompetitors();
+}
+
+function loadTasks() {
+    // Mock task data - replace with API call
+    projectTasks = [
+        {
+            id: '1',
+            title: 'Create landing page mockup',
+            description: 'Design initial wireframes and mockups',
+            status: 'In Progress',
+            priority: 'High',
+            assigned_to: 'John Doe',
+            due_date: '2024-08-15'
+        }
+    ];
+    
+    renderTasks();
+}
+
+function renderTasks() {
+    const tasksList = document.getElementById('tasksList');
+    
+    if (projectTasks.length === 0) {
+        tasksList.innerHTML = `
+            <div class="text-center py-4">
+                <i class="mdi mdi-format-list-checks fs-48 text-muted"></i>
+                <h5 class="mt-3">No Tasks Yet</h5>
+                <p class="text-muted">Add your first task to get started</p>
+            </div>
+        `;
+        return;
+    }
+    
+    tasksList.innerHTML = projectTasks.map(task => `
+        <div class="card mb-2">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="flex-grow-1">
+                        <h6 class="mb-1">${task.title}</h6>
+                        <p class="text-muted mb-2">${task.description}</p>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge bg-${getPriorityColor(task.priority)}">${task.priority}</span>
+                            <span class="badge bg-secondary">${task.status}</span>
+                            ${task.assigned_to ? `<small class="text-muted">Assigned to: ${task.assigned_to}</small>` : ''}
+                            ${task.due_date ? `<small class="text-muted">Due: ${formatDate(task.due_date)}</small>` : ''}
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-light" data-bs-toggle="dropdown">
+                            <i class="mdi mdi-dots-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" onclick="editTask('${task.id}')">Edit</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="markTaskComplete('${task.id}')">Mark Complete</a></li>
+                            <li><a class="dropdown-item text-danger" href="#" onclick="deleteTask('${task.id}')">Delete</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function loadCreatives() {
+    // Mock creative data - replace with API call
+    creativeEntries = [];
+    renderCreatives();
+}
+
+function renderCreatives() {
+    const tbody = document.getElementById('creativeTableBody');
+    
+    if (creativeEntries.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="19" class="text-center py-4">
+                    <i class="mdi mdi-palette fs-48 text-muted"></i>
+                    <h5 class="mt-3">No Creative Entries Yet</h5>
+                    <p class="text-muted">Add your first creative entry to start tracking</p>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    tbody.innerHTML = creativeEntries.map(creative => `
+        <tr>
+            <td>${creative.batch}</td>
+            <td>${creative.brand}</td>
+            <td><span class="badge bg-primary">${creative.status}</span></td>
+            <td>${formatDate(creative.launch_date)}</td>
+            <td>${creative.ad_concept}</td>
+            <td>${creative.testing_goals.substring(0, 50)}...</td>
+            <td>${creative.ad_type}</td>
+            <td>${creative.ad_variable}</td>
+            <td>${creative.desire.substring(0, 30)}...</td>
+            <td>${creative.benefit.substring(0, 30)}...</td>
+            <td>${creative.objections.substring(0, 30)}...</td>
+            <td>${creative.persona}</td>
+            <td>${creative.positioning.substring(0, 30)}...</td>
+            <td>${creative.positioning_how.substring(0, 30)}...</td>
+            <td>${creative.hook_pattern.substring(0, 30)}...</td>
+            <td>${creative.results}</td>
+            <td>${creative.best_ad}</td>
+            <td>${creative.brief_link ? `<a href="${creative.brief_link}" target="_blank">View</a>` : ''}</td>
+            <td>
+                <button class="btn btn-sm btn-outline-primary" onclick="editCreative('${creative.id}')">
+                    <i class="mdi mdi-pencil"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteCreative('${creative.id}')">
+                    <i class="mdi mdi-delete"></i>
+                </button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function loadAvatars() {
+    // Mock avatar data - replace with API call
+    customerAvatars = [];
+    renderAvatars();
+}
+
+function renderAvatars() {
+    const avatarsList = document.getElementById('avatarsList');
+    
+    if (customerAvatars.length === 0) {
+        avatarsList.innerHTML = `
+            <div class="col-12">
+                <div class="text-center py-4">
+                    <i class="mdi mdi-account-group fs-48 text-muted"></i>
+                    <h5 class="mt-3">No Customer Avatars Yet</h5>
+                    <p class="text-muted">Create your first customer avatar</p>
+                </div>
+            </div>
+        `;
+        return;
+    }
+    
+    avatarsList.innerHTML = customerAvatars.map(avatar => `
+        <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title">${avatar.name}</h6>
+                    <p class="text-muted small">${avatar.age} • ${avatar.gender} • ${avatar.location}</p>
+                    <p class="card-text">${avatar.pain_points.substring(0, 100)}...</p>
+                    <div class="d-flex justify-content-between">
+                        <button class="btn btn-sm btn-outline-primary" onclick="viewAvatar('${avatar.id}')">View</button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteAvatar('${avatar.id}')">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function loadCompetitors() {
+    // Mock competitor data - replace with API call
+    competitors = [];
+    renderCompetitors();
+}
+
+function renderCompetitors() {
+    const tbody = document.getElementById('competitorTableBody');
+    
+    if (competitors.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="6" class="text-center py-4">
+                    <i class="mdi mdi-chart-line fs-48 text-muted"></i>
+                    <h5 class="mt-3">No Competitors Yet</h5>
+                    <p class="text-muted">Add your first competitor analysis</p>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    tbody.innerHTML = competitors.map(competitor => `
+        <tr>
+            <td>${competitor.name}</td>
+            <td>${competitor.market}</td>
+            <td><span class="badge bg-${getLevelColor(competitor.level)}">${competitor.level}</span></td>
+            <td>${competitor.website ? `<a href="${competitor.website}" target="_blank">Visit</a>` : ''}</td>
+            <td>${competitor.notes.substring(0, 50)}...</td>
+            <td>
+                <button class="btn btn-sm btn-outline-primary" onclick="editCompetitor('${competitor.id}')">
+                    <i class="mdi mdi-pencil"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteCompetitor('${competitor.id}')">
+                    <i class="mdi mdi-delete"></i>
+                </button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+// Form handlers
+document.getElementById('addTaskForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const taskData = Object.fromEntries(formData.entries());
+    
+    const newTask = {
+        id: Date.now().toString(),
+        ...taskData,
+        status: 'Todo'
+    };
+    
+    projectTasks.push(newTask);
+    renderTasks();
+    bootstrap.Modal.getInstance(document.getElementById('addTaskModal')).hide();
+    e.target.reset();
+});
+
+document.getElementById('addCreativeForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const creativeData = Object.fromEntries(formData.entries());
+    
+    const newCreative = {
+        id: Date.now().toString(),
+        ...creativeData
+    };
+    
+    creativeEntries.push(newCreative);
+    renderCreatives();
+    bootstrap.Modal.getInstance(document.getElementById('addCreativeModal')).hide();
+    e.target.reset();
+});
+
+document.getElementById('addAvatarForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const avatarData = Object.fromEntries(formData.entries());
+    
+    const newAvatar = {
+        id: Date.now().toString(),
+        ...avatarData
+    };
+    
+    customerAvatars.push(newAvatar);
+    renderAvatars();
+    bootstrap.Modal.getInstance(document.getElementById('addAvatarModal')).hide();
+    e.target.reset();
+});
+
+document.getElementById('addCompetitorForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const competitorData = Object.fromEntries(formData.entries());
+    
+    const newCompetitor = {
+        id: Date.now().toString(),
+        ...competitorData
+    };
+    
+    competitors.push(newCompetitor);
+    renderCompetitors();
+    bootstrap.Modal.getInstance(document.getElementById('addCompetitorModal')).hide();
+    e.target.reset();
+});
+
+// Helper functions
+function getPriorityColor(priority) {
+    switch(priority) {
+        case 'High': return 'danger';
+        case 'Medium': return 'warning';
+        case 'Low': return 'success';
+        default: return 'secondary';
+    }
+}
+
+function getLevelColor(level) {
+    switch(level) {
+        case 'High': return 'danger';
+        case 'Medium': return 'warning';
+        case 'Low': return 'success';
+        case 'Poor': return 'secondary';
+        default: return 'secondary';
+    }
+}
+
+function formatDate(dateString) {
+    if (!dateString) return '';
+    return new Date(dateString).toLocaleDateString();
+}
+
+// Placeholder functions for edit/delete actions
+function editTask(id) { console.log('Edit task:', id); }
+function markTaskComplete(id) { console.log('Mark complete:', id); }
+function deleteTask(id) { console.log('Delete task:', id); }
+function editCreative(id) { console.log('Edit creative:', id); }
+function deleteCreative(id) { console.log('Delete creative:', id); }
+function viewAvatar(id) { console.log('View avatar:', id); }
+function deleteAvatar(id) { console.log('Delete avatar:', id); }
+function editCompetitor(id) { console.log('Edit competitor:', id); }
+function deleteCompetitor(id) { console.log('Delete competitor:', id); }
+function editProject() { console.log('Edit project'); }
+
+// Navigation functions for project tools
+function goToTasks() {
+    window.location.href = `/todolist?id=${projectId}`;
+}
+
+function goToCreativeTracker() {
+    window.location.href = `/creative-tracker?id=${projectId}`;
+}
+
+function goToCustomerAvatars() {
+    window.location.href = `/customer-avatars?id=${projectId}`;
+}
+
+function goToCompetitorAnalysis() {
+    window.location.href = `/competitor-analysis?id=${projectId}`;
+}
+
+console.log('📊 Project detail page loaded!');
+</script>
+
+<%- contentFor('extra_javascript') %>

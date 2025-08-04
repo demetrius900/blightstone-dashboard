@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Test Page | Blightstone</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background: #1a1a1a;
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .test-box {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Page - Blightstone</h1>
+    
+    <div class="test-box">
+        <h3>Server Status: ✅ Working</h3>
+        <p>If you can see this page, the server is running correctly.</p>
+    </div>
+    
+    <div class="test-box">
+        <h3>Quick Links:</h3>
+        <ul>
+            <li><a href="/auth-login" style="color: #6c5ce7;">Login Page</a></li>
+            <li><a href="/" style="color: #6c5ce7;">Dashboard (with auth)</a></li>
+        </ul>
+    </div>
+    
+    <div class="test-box">
+        <h3>Demo Credentials:</h3>
+        <p>Email: admin@blightstone.com</p>
+        <p>Password: password123</p>
+    </div>
+    
+    <script>
+        console.log('Test page loaded successfully');
+        console.log('User data in localStorage:', localStorage.getItem('blightstone_user'));
+        console.log('Session data in localStorage:', localStorage.getItem('blightstone_session'));
+    </script>
+</body>
+</html>

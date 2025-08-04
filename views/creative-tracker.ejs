@@ -1,0 +1,778 @@
+<%- contentFor('html_attribute') %>
+<%- contentFor('extra_css') %>
+<%- contentFor('body_attribute') %>
+<%- contentFor('content') %>
+
+<div class="container-fluid">
+    <!-- Page Title -->
+    <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column">
+        <div class="flex-grow-1">
+            <div class="d-flex align-items-center">
+                <div id="back-button-container" style="display: none;">
+                    <a href="javascript:history.back()" class="btn btn-outline-secondary me-3">
+                        <i class="mdi mdi-arrow-left"></i> Back
+                    </a>
+                </div>
+                <div>
+                    <h4 class="fs-18 fw-semibold m-0">Creative Tracker</h4>
+                    <p class="text-muted mb-0" id="projectContext">Track ad creatives, testing, and performance</p>
+                </div>
+            </div>
+        </div>
+        <div class="text-end">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCreativeModal">
+                <i class="mdi mdi-plus me-2"></i>Add Creative
+            </button>
+            <button class="btn btn-secondary ms-2" onclick="exportCreativeData()">
+                <i class="mdi mdi-download me-2"></i>Export
+            </button>
+        </div>
+    </div>
+
+    <!-- Creative Tracker Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <!-- Filters -->
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <select class="form-select" id="statusFilter">
+                                <option value="">All Status</option>
+                                <option value="Planning">Planning</option>
+                                <option value="In Progress">In Progress</option>
+                                <option value="Testing">Testing</option>
+                                <option value="Completed">Completed</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" id="adTypeFilter">
+                                <option value="">All Types</option>
+                                <option value="Video">Video</option>
+                                <option value="Image">Image</option>
+                                <option value="Carousel">Carousel</option>
+                                <option value="Story">Story</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" id="brandFilter">
+                                <option value="">All Brands</option>
+                                <!-- Will be populated dynamically -->
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" class="form-control" id="searchCreatives" placeholder="Search creatives...">
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="creativesTable">
+                            <thead class="table-light">
+                                <tr>
+                                    <th width="5%">
+                                        <input type="checkbox" id="selectAll" class="form-check-input">
+                                    </th>
+                                    <th width="10%">Batch #</th>
+                                    <th width="15%">Brand</th>
+                                    <th width="10%">Status</th>
+                                    <th width="12%">Launch Date</th>
+                                    <th width="15%">Ad Concept</th>
+                                    <th width="10%">Ad Type</th>
+                                    <th width="13%">Results</th>
+                                    <th width="10%">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="creativesTableBody">
+                                <tr>
+                                    <td colspan="9" class="text-center py-4">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                        <p class="mt-2">Loading creatives...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Bulk Actions -->
+                    <div class="d-none" id="bulkActions">
+                        <div class="bg-light p-3 rounded mb-3">
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-success" onclick="bulkUpdateStatus('Completed')">
+                                    <i class="mdi mdi-check me-1"></i>Mark Completed
+                                </button>
+                                <button class="btn btn-sm btn-warning" onclick="bulkUpdateStatus('Testing')">
+                                    <i class="mdi mdi-flask me-1"></i>Mark Testing
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="bulkDeleteCreatives()">
+                                    <i class="mdi mdi-delete me-1"></i>Delete Selected
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Creative Multi-Step Modal -->
+<div class="modal fade" id="addCreativeModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <h5 class="modal-title">Add Creative Entry</h5>
+                    <div class="step-progress-container mt-3">
+                        <div class="step-progress">
+                            <div class="step-item active" data-step="1">
+                                <div class="step-circle">1</div>
+                                <div class="step-label">Basic Info</div>
+                            </div>
+                            <div class="step-line"></div>
+                            <div class="step-item" data-step="2">
+                                <div class="step-circle">2</div>
+                                <div class="step-label">Creative Details</div>
+                            </div>
+                            <div class="step-line"></div>
+                            <div class="step-item" data-step="3">
+                                <div class="step-circle">3</div>
+                                <div class="step-label">Results & Links</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="addCreativeForm">
+                <div class="modal-body" style="min-height: 400px;">
+                    
+                    <!-- Step 1: Basic Information -->
+                    <div class="step-content" id="step1" style="display: block;">
+                        <h6 class="mb-3 text-primary">📝 Basic Information</h6>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Batch # *</label>
+                                <input type="text" class="form-control" name="batch" placeholder="B001" required>
+                                <small class="text-muted">Unique identifier for this creative batch</small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Brand *</label>
+                                <input type="text" class="form-control" name="brand" required>
+                                <small class="text-muted">Which brand is this creative for?</small>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Status</label>
+                                <select class="form-select" name="status">
+                                    <option value="Planning">Planning</option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Testing">Testing</option>
+                                    <option value="Completed">Completed</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Launch Date</label>
+                                <input type="date" class="form-control" name="launch_date">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Ad Type</label>
+                                <select class="form-select" name="ad_type">
+                                    <option value="Video">Video</option>
+                                    <option value="Image">Image</option>
+                                    <option value="Carousel">Carousel</option>
+                                    <option value="Story">Story</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Ad Concept</label>
+                                <input type="text" class="form-control" name="ad_concept" placeholder="Concept inspiration">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Creative Strategy -->
+                    <div class="step-content" id="step2" style="display: none;">
+                        <h6 class="mb-3 text-primary">🎯 Creative Strategy</h6>
+                        <div class="mb-3">
+                            <label class="form-label">Testing Goals</label>
+                            <textarea class="form-control" name="testing_goals" rows="3" placeholder="What are you creating/testing and what gives you confidence this test will improve performance?"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Ad Variable</label>
+                            <input type="text" class="form-control" name="ad_variable" placeholder="What specific element are you testing?">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Target Persona</label>
+                                <input type="text" class="form-control" name="persona" placeholder="Who is this for?">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Desire/Motivation</label>
+                                <input type="text" class="form-control" name="desire" placeholder="What do they want?">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Benefits Focus</label>
+                            <textarea class="form-control" name="benefits" rows="2" placeholder="Focus on pain points and objections to determine which benefits to highlight"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Objections to Address</label>
+                            <textarea class="form-control" name="objections" rows="2" placeholder="What concerns might they have?"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Positioning & Results -->
+                    <div class="step-content" id="step3" style="display: none;">
+                        <h6 class="mb-3 text-primary">🚀 Positioning & Results</h6>
+                        <div class="mb-3">
+                            <label class="form-label">Positioning Strategy</label>
+                            <input type="text" class="form-control" name="positioning" placeholder="How will you position this concept?">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Hook Pattern</label>
+                            <input type="text" class="form-control" name="hook_pattern" placeholder="Describe how the hook will look like">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Results</label>
+                                <input type="text" class="form-control" name="results" placeholder="Performance metrics">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Best Performing Ad</label>
+                                <input type="text" class="form-control" name="best_ad" placeholder="Link to winning creative">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Brief Link</label>
+                            <input type="url" class="form-control" name="brief_link" placeholder="https://link-to-creative-brief">
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-outline-primary" id="prevStep" style="display: none;">
+                        <i class="mdi mdi-arrow-left me-1"></i>Previous
+                    </button>
+                    <button type="button" class="btn btn-primary" id="nextStep">
+                        Next <i class="mdi mdi-arrow-right ms-1"></i>
+                    </button>
+                    <button type="submit" class="btn btn-success" id="submitCreative" style="display: none;">
+                        <span id="addCreativeBtnText"><i class="mdi mdi-check me-1"></i>Add Creative</span>
+                        <span id="addCreativeSpinner" class="spinner-border spinner-border-sm d-none ms-2"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Creative Modal -->
+<div class="modal fade" id="editCreativeModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Creative Entry</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="editCreativeForm">
+                <input type="hidden" id="editCreativeId" name="id">
+                <!-- Same form fields as add modal -->
+                <div class="modal-body">
+                    <!-- Form fields identical to add modal -->
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Batch # *</label>
+                            <input type="text" class="form-control" name="batch" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Brand *</label>
+                            <input type="text" class="form-control" name="brand" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" name="status">
+                                <option value="Planning">Planning</option>
+                                <option value="In Progress">In Progress</option>
+                                <option value="Testing">Testing</option>
+                                <option value="Completed">Completed</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- Rest of form fields... (keeping compact for brevity) -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <span id="editCreativeBtnText">Update Creative</span>
+                        <span id="editCreativeSpinner" class="spinner-border spinner-border-sm d-none ms-2"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Creative Modal -->
+<div class="modal fade" id="deleteCreativeModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Creative</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete <strong id="deleteCreativeName"></strong>?</p>
+                <p class="text-muted small">This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" onclick="confirmDeleteCreative()">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let projectId;
+let allCreatives = [];
+let currentEditId = null;
+
+// Get project ID from URL
+function getProjectIdFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('id');
+}
+
+// Load creatives
+async function loadCreatives() {
+    try {
+        showLoadingState();
+        
+        const creatives = JSON.parse(localStorage.getItem(`creatives_${projectId}`) || '[]');
+        allCreatives = creatives;
+        
+        renderCreatives(creatives);
+        updateFilters();
+        updateBulkActions();
+        
+        console.log('✅ Creatives loaded:', creatives.length);
+    } catch (error) {
+        console.error('Error loading creatives:', error);
+        showErrorState('Failed to load creatives');
+    }
+}
+
+// Show loading state
+function showLoadingState() {
+    const tbody = document.getElementById('creativesTableBody');
+    tbody.innerHTML = `
+        <tr>
+            <td colspan="9" class="text-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2">Loading creatives...</p>
+            </td>
+        </tr>
+    `;
+}
+
+// Show error state
+function showErrorState(message) {
+    const tbody = document.getElementById('creativesTableBody');
+    tbody.innerHTML = `
+        <tr>
+            <td colspan="9" class="text-center py-4">
+                <i class="mdi mdi-alert-circle fs-48 text-muted"></i>
+                <h5 class="mt-3">Error</h5>
+                <p class="text-muted">${message}</p>
+                <button class="btn btn-primary" onclick="loadCreatives()">
+                    <i class="mdi mdi-refresh me-2"></i>Retry
+                </button>
+            </td>
+        </tr>
+    `;
+}
+
+// Render creatives table
+function renderCreatives(creatives) {
+    const tbody = document.getElementById('creativesTableBody');
+    
+    if (creatives.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="9" class="text-center py-4">
+                    <i class="mdi mdi-palette fs-48 text-muted"></i>
+                    <h5 class="mt-3">No Creatives Yet</h5>
+                    <p class="text-muted">Add your first creative to start tracking</p>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCreativeModal">
+                        <i class="mdi mdi-plus me-2"></i>Add Creative
+                    </button>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    tbody.innerHTML = creatives.map(creative => `
+        <tr data-id="${creative.id}">
+            <td>
+                <input type="checkbox" class="form-check-input creative-checkbox" value="${creative.id}">
+            </td>
+            <td>
+                <span class="fw-semibold">${creative.batch || ''}</span>
+            </td>
+            <td>${creative.brand || ''}</td>
+            <td>
+                <span class="badge ${getStatusBadge(creative.status)}">${creative.status || 'Planning'}</span>
+            </td>
+            <td>${creative.launch_date || ''}</td>
+            <td>
+                <span class="text-truncate d-inline-block" style="max-width: 150px;" title="${creative.ad_concept || ''}">${creative.ad_concept || ''}</span>
+            </td>
+            <td>${creative.ad_type || ''}</td>
+            <td>${creative.results || ''}</td>
+            <td>
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                        <i class="mdi mdi-dots-vertical"></i>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#" onclick="editCreative('${creative.id}')">
+                            <i class="mdi mdi-pencil me-2"></i>Edit
+                        </a></li>
+                        <li><a class="dropdown-item" href="#" onclick="viewCreativeDetails('${creative.id}')">
+                            <i class="mdi mdi-eye me-2"></i>View Details
+                        </a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="#" onclick="deleteCreative('${creative.id}')">
+                            <i class="mdi mdi-delete me-2"></i>Delete
+                        </a></li>
+                    </ul>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+}
+
+// Get status badge class
+function getStatusBadge(status) {
+    switch (status) {
+        case 'Planning': return 'bg-secondary';
+        case 'In Progress': return 'bg-warning';
+        case 'Testing': return 'bg-info';
+        case 'Completed': return 'bg-success';
+        default: return 'bg-secondary';
+    }
+}
+
+// Update filters
+function updateFilters() {
+    const brands = [...new Set(allCreatives.map(c => c.brand).filter(Boolean))];
+    const brandFilter = document.getElementById('brandFilter');
+    
+    brandFilter.innerHTML = '<option value="">All Brands</option>' + 
+        brands.map(brand => `<option value="${brand}">${brand}</option>`).join('');
+}
+
+// Update bulk actions
+function updateBulkActions() {
+    const checkboxes = document.querySelectorAll('.creative-checkbox:checked');
+    const bulkActions = document.getElementById('bulkActions');
+    
+    if (checkboxes.length > 0) {
+        bulkActions.classList.remove('d-none');
+    } else {
+        bulkActions.classList.add('d-none');
+    }
+}
+
+// Initialize filters and search
+document.getElementById('statusFilter').addEventListener('change', filterCreatives);
+document.getElementById('adTypeFilter').addEventListener('change', filterCreatives);
+document.getElementById('brandFilter').addEventListener('change', filterCreatives);
+document.getElementById('searchCreatives').addEventListener('input', filterCreatives);
+
+function filterCreatives() {
+    const statusFilter = document.getElementById('statusFilter').value;
+    const typeFilter = document.getElementById('adTypeFilter').value;
+    const brandFilter = document.getElementById('brandFilter').value;
+    const searchTerm = document.getElementById('searchCreatives').value.toLowerCase();
+    
+    let filtered = allCreatives.filter(creative => {
+        const matchesStatus = !statusFilter || creative.status === statusFilter;
+        const matchesType = !typeFilter || creative.ad_type === typeFilter;
+        const matchesBrand = !brandFilter || creative.brand === brandFilter;
+        const matchesSearch = !searchTerm || 
+            creative.batch?.toLowerCase().includes(searchTerm) ||
+            creative.brand?.toLowerCase().includes(searchTerm) ||
+            creative.ad_concept?.toLowerCase().includes(searchTerm);
+        
+        return matchesStatus && matchesType && matchesBrand && matchesSearch;
+    });
+    
+    renderCreatives(filtered);
+}
+
+// Add creative
+document.getElementById('addCreativeForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(e.target);
+    const creativeData = Object.fromEntries(formData.entries());
+    
+    try {
+        showButtonLoading('addCreativeBtnText', 'addCreativeSpinner');
+        
+        creativeData.id = Date.now().toString();
+        creativeData.project_id = projectId;
+        creativeData.created_at = new Date().toISOString();
+        
+        const creatives = JSON.parse(localStorage.getItem(`creatives_${projectId}`) || '[]');
+        creatives.push(creativeData);
+        localStorage.setItem(`creatives_${projectId}`, JSON.stringify(creatives));
+        
+        hideButtonLoading('addCreativeBtnText', 'addCreativeSpinner', 'Add Creative');
+        bootstrap.Modal.getInstance(document.getElementById('addCreativeModal')).hide();
+        e.target.reset();
+        
+        loadCreatives();
+        showSuccess('Creative added successfully!');
+    } catch (error) {
+        hideButtonLoading('addCreativeBtnText', 'addCreativeSpinner', 'Add Creative');
+        showError('Failed to add creative');
+    }
+});
+
+// Show/hide button loading
+function showButtonLoading(textId, spinnerId) {
+    document.getElementById(textId).classList.add('d-none');
+    document.getElementById(spinnerId).classList.remove('d-none');
+}
+
+function hideButtonLoading(textId, spinnerId, originalText) {
+    document.getElementById(textId).classList.remove('d-none');
+    document.getElementById(textId).textContent = originalText;
+    document.getElementById(spinnerId).classList.add('d-none');
+}
+
+// Success/error messages
+function showSuccess(message) {
+    // Implementation similar to tasks page
+    console.log('Success:', message);
+}
+
+function showError(message) {
+    // Implementation similar to tasks page
+    console.log('Error:', message);
+}
+
+// Initialize project context
+document.addEventListener('DOMContentLoaded', function() {
+    projectId = getProjectIdFromURL();
+    
+    if (projectId) {
+        document.getElementById('back-button-container').style.display = 'block';
+        
+        const projects = JSON.parse(localStorage.getItem('projects') || '[]');
+        const project = projects.find(p => p.id === projectId);
+        if (project) {
+            document.getElementById('projectContext').textContent = `Project: ${project.name}`;
+        }
+        
+        loadCreatives();
+    } else {
+        document.getElementById('projectContext').textContent = 'No project selected';
+    }
+});
+
+// Checkbox handling
+document.addEventListener('change', function(e) {
+    if (e.target.classList.contains('creative-checkbox') || e.target.id === 'selectAll') {
+        updateBulkActions();
+    }
+});
+
+// Multi-step modal functionality
+let currentStep = 1;
+const totalSteps = 3;
+
+function showStep(step) {
+    // Hide all steps
+    document.querySelectorAll('.step-content').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.step-item').forEach(el => {
+        el.classList.remove('active', 'completed');
+    });
+    document.querySelectorAll('.step-line').forEach(el => {
+        el.classList.remove('completed');
+    });
+    
+    // Show current step
+    document.getElementById(`step${step}`).style.display = 'block';
+    
+    // Update step indicators
+    for (let i = 1; i <= totalSteps; i++) {
+        const stepItem = document.querySelector(`.step-item[data-step="${i}"]`);
+        if (i < step) {
+            stepItem.classList.add('completed');
+        } else if (i === step) {
+            stepItem.classList.add('active');
+        }
+    }
+    
+    // Update step lines
+    for (let i = 1; i < totalSteps; i++) {
+        const stepLine = document.querySelectorAll('.step-line')[i - 1];
+        if (i < step) {
+            stepLine.classList.add('completed');
+        }
+    }
+    
+    // Update buttons
+    const prevBtn = document.getElementById('prevStep');
+    const nextBtn = document.getElementById('nextStep');
+    const submitBtn = document.getElementById('submitCreative');
+    
+    if (step === 1) {
+        prevBtn.style.display = 'none';
+        nextBtn.style.display = 'inline-block';
+        submitBtn.style.display = 'none';
+    } else if (step === totalSteps) {
+        prevBtn.style.display = 'inline-block';
+        nextBtn.style.display = 'none';
+        submitBtn.style.display = 'inline-block';
+    } else {
+        prevBtn.style.display = 'inline-block';
+        nextBtn.style.display = 'inline-block';
+        submitBtn.style.display = 'none';
+    }
+}
+
+// Step navigation
+document.getElementById('nextStep').addEventListener('click', function() {
+    if (currentStep < totalSteps) {
+        currentStep++;
+        showStep(currentStep);
+    }
+});
+
+document.getElementById('prevStep').addEventListener('click', function() {
+    if (currentStep > 1) {
+        currentStep--;
+        showStep(currentStep);
+    }
+});
+
+// Reset modal when closed
+document.getElementById('addCreativeModal').addEventListener('hidden.bs.modal', function() {
+    currentStep = 1;
+    showStep(1);
+    document.getElementById('addCreativeForm').reset();
+});
+
+// Custom styles for step indicators
+const stepStyles = `
+<style>
+.step-progress-container {
+    padding: 0 1rem;
+}
+
+.step-progress {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.step-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    flex: 0 0 auto;
+}
+
+.step-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #e5e7eb;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+    border: 2px solid #e5e7eb;
+}
+
+.step-item.active .step-circle {
+    background: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+.step-item.completed .step-circle {
+    background: #10b981;
+    color: white;
+    border-color: #10b981;
+}
+
+.step-label {
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #6b7280;
+    text-align: center;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+}
+
+.step-item.active .step-label {
+    color: #3b82f6;
+    font-weight: 600;
+}
+
+.step-item.completed .step-label {
+    color: #10b981;
+}
+
+.step-line {
+    flex: 1;
+    height: 2px;
+    background: #e5e7eb;
+    margin: 0 1rem;
+    position: relative;
+    top: -8px;
+    transition: all 0.3s ease;
+}
+
+.step-line.completed {
+    background: #10b981;
+}
+
+.step-content {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+</style>
+`;
+
+document.head.insertAdjacentHTML('beforeend', stepStyles);
+
+console.log('🎨 Creative Tracker loaded!');
+</script>
+
+<%- contentFor('extra_javascript') %>

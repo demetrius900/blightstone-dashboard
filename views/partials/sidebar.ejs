@@ -1,0 +1,823 @@
+<!-- Left Sidebar Start -->
+<div class="app-sidebar-menu">
+    <div class="sidebar-scroll">
+        <!--- Sidemenu -->
+        <div id="sidebar-menu">
+            <!-- Project Switcher -->
+            <div class="project-switcher">
+                <div class="dropdown">
+                    <button class="switcher-button" type="button" id="projectSwitcher" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div class="switcher-content">
+                            <div class="switcher-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="3" width="7" height="7"></rect>
+                                    <rect x="14" y="3" width="7" height="7"></rect>
+                                    <rect x="14" y="14" width="7" height="7"></rect>
+                                    <rect x="3" y="14" width="7" height="7"></rect>
+                                </svg>
+                            </div>
+                            <div class="switcher-text">
+                                <div class="switcher-name" id="currentProjectName">Organization</div>
+                                <div class="switcher-type" id="currentProjectType">Main Dashboard</div>
+                            </div>
+                            <div class="switcher-arrow">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="6,9 12,15 18,9"></polyline>
+                                </svg>
+                            </div>
+                        </div>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="projectSwitcher" id="projectDropdownMenu">
+                        <li><a class="dropdown-item" href="/" onclick="switchToOrganization()">
+                            <div class="dropdown-item-content">
+                                <div class="dropdown-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M3 21h18"></path>
+                                        <path d="M5 21V7l8-4v18"></path>
+                                        <path d="M19 21V11l-6-4"></path>
+                                    </svg>
+                                </div>
+                                <div class="dropdown-text">
+                                    <div class="dropdown-name">Organization</div>
+                                    <div class="dropdown-desc">Main Dashboard</div>
+                                </div>
+                            </div>
+                        </a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li class="dropdown-header">Projects</li>
+                        <!-- Projects will be populated here -->
+                    </ul>
+                </div>
+            </div>
+
+            <ul id="side-menu">
+
+                <!-- Organization Menu (default) -->
+                <div id="org-menu" class="menu-section">
+                    
+                    <li class="menu-item">
+                        <a href="/" class="menu-link">
+                            <div class="menu-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                    <polyline points="9,22 9,12 15,12 15,22"></polyline>
+                                </svg>
+                            </div>
+                            <span class="menu-text">Dashboard</span>
+                        </a>
+                    </li>
+
+                    <li class="menu-item">
+                        <a href="projects" class="menu-link">
+                            <div class="menu-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                                </svg>
+                            </div>
+                            <span class="menu-text">Projects</span>
+                        </a>
+                    </li>
+
+                    <li class="menu-item">
+                        <a href="todolist" class="menu-link">
+                            <div class="menu-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M9 11H3l3-3m0 6l-3-3m6 2v9a3 3 0 0 0 3 3h9a3 3 0 0 0 3-3v-9a3 3 0 0 0-3-3H12a3 3 0 0 0-3 3z"></path>
+                                </svg>
+                            </div>
+                            <span class="menu-text">Tasks</span>
+                        </a>
+                    </li>
+
+                    <li class="menu-item">
+                        <a href="hrm" class="menu-link">
+                            <div class="menu-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="m22 21-3-3m0 0a2 2 0 1 1-2.83-2.83 2 2 0 0 1 2.83 2.83L19 18Z"></path>
+                                </svg>
+                            </div>
+                            <span class="menu-text">Team</span>
+                        </a>
+                    </li>
+
+                    <li class="menu-item">
+                        <a href="documents" class="menu-link">
+                            <div class="menu-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14,2 14,8 20,8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                    <polyline points="10,9 9,9 8,9"></polyline>
+                                </svg>
+                            </div>
+                            <span class="menu-text">Documents</span>
+                        </a>
+                    </li>
+
+                    <li class="menu-item">
+                        <a href="calendar" class="menu-link">
+                            <div class="menu-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                            </div>
+                            <span class="menu-text">Calendar</span>
+                        </a>
+                    </li>
+                </div>
+
+                <!-- Project Menu (when ?id= is present) -->
+                <div id="project-menu" class="menu-section" style="display: none;">
+                    
+                    <li class="menu-item">
+                        <a href="/projects" class="menu-link">
+                            <div class="menu-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m12 19-7-7 7-7"></path>
+                                    <path d="M19 12H5"></path>
+                                </svg>
+                            </div>
+                            <span class="menu-text">Back to Projects</span>
+                        </a>
+                    </li>
+
+                    <li class="menu-divider"></li>
+
+                    <li class="menu-item">
+                        <a href="#" onclick="goToProjectOverview()" class="menu-link">
+                            <div class="menu-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                    <polyline points="9,22 9,12 15,12 15,22"></polyline>
+                                </svg>
+                            </div>
+                            <span class="menu-text">Project Overview</span>
+                        </a>
+                    </li>
+
+                    <li class="menu-item">
+                        <a href="#" onclick="goToProjectTasks()" class="menu-link">
+                            <div class="menu-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M9 11H3l3-3m0 6l-3-3m6 2v9a3 3 0 0 0 3 3h9a3 3 0 0 0 3-3v-9a3 3 0 0 0-3-3H12a3 3 0 0 0-3 3z"></path>
+                                </svg>
+                            </div>
+                            <span class="menu-text">Tasks & To-Do</span>
+                        </a>
+                    </li>
+
+                    <li class="menu-item">
+                        <a href="#" onclick="goToCreativeTracker()" class="menu-link">
+                            <div class="menu-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                    <circle cx="9" cy="9" r="2"></circle>
+                                    <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path>
+                                </svg>
+                            </div>
+                            <span class="menu-text">Creative Tracker</span>
+                        </a>
+                    </li>
+
+                    <li class="menu-item">
+                        <a href="#" onclick="goToCustomerAvatars()" class="menu-link">
+                            <div class="menu-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M22 2 14 10"></path>
+                                    <path d="m18 6 2 2"></path>
+                                    <path d="m17 7 1 1"></path>
+                                </svg>
+                            </div>
+                            <span class="menu-text">Customer Avatars</span>
+                        </a>
+                    </li>
+
+                    <li class="menu-item">
+                        <a href="#" onclick="goToCompetitorAnalysis()" class="menu-link">
+                            <div class="menu-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="22,12 18,12 15,21 9,3 6,12 2,12"></polyline>
+                                </svg>
+                            </div>
+                            <span class="menu-text">Competitor Analysis</span>
+                        </a>
+                    </li>
+
+                    <li class="menu-item">
+                        <a href="#" onclick="goToProjectDocuments()" class="menu-link">
+                            <div class="menu-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14,2 14,8 20,8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                    <polyline points="10,9 9,9 8,9"></polyline>
+                                </svg>
+                            </div>
+                            <span class="menu-text">Project Documents</span>
+                        </a>
+                    </li>
+                </div>
+
+            </ul>
+            
+            <!-- Logo at bottom -->
+            <div class="logo-bottom">
+                <a href="/" class="logo">
+                    <div class="logo-content">
+                        <span class="logo-icon">🗲</span>
+                        <span class="logo-text">Blightstone</span>
+                    </div>
+                </a>
+            </div>
+            
+        </div>
+        <!-- End Sidebar -->
+
+        <div class="clearfix"></div>
+
+    </div>
+</div>
+<!-- Left Sidebar End -->
+
+<style>
+/* Reset any global spacing that might affect sidebar */
+body, html {
+    margin: 0 !important;
+}
+
+#app-layout {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Ensure footer doesn't affect sidebar */
+.footer {
+    z-index: 1 !important;
+}
+
+/* Modern Sidebar Styling */
+.app-sidebar-menu {
+    background: #ffffff;
+    border-right: 1px solid #f1f5f9;
+    width: 260px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    height: 100vh;
+    z-index: 1000 !important;
+    display: flex;
+    flex-direction: column;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box;
+}
+
+.app-sidebar-menu * {
+    box-sizing: border-box;
+}
+
+.sidebar-scroll {
+    flex: 1;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Project Switcher */
+.project-switcher {
+    padding: 16px 16px 12px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    margin: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+.switcher-button {
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.switcher-button:hover {
+    background: #f8fafc;
+}
+
+.switcher-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px;
+}
+
+.switcher-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: #f1f5f9;
+    border-radius: 6px;
+    color: #64748b;
+}
+
+.switcher-text {
+    flex: 1;
+    text-align: left;
+}
+
+.switcher-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #0f172a;
+    line-height: 1.2;
+}
+
+.switcher-type {
+    font-size: 12px;
+    color: #64748b;
+    line-height: 1.2;
+}
+
+.switcher-arrow {
+    color: #94a3b8;
+    transition: transform 0.2s ease;
+}
+
+.switcher-button[aria-expanded="true"] .switcher-arrow {
+    transform: rotate(180deg);
+}
+
+/* Logo at bottom */
+.logo-bottom {
+    padding: 16px;
+    border-top: 1px solid #f1f5f9;
+    background: #fafafa;
+    margin-top: auto;
+    flex-shrink: 0;
+}
+
+.logo-bottom .logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    padding: 8px;
+    border-radius: 6px;
+    transition: background 0.2s ease;
+}
+
+.logo-bottom .logo:hover {
+    background: #f1f5f9;
+    text-decoration: none;
+}
+
+.logo-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.logo-icon {
+    font-size: 20px;
+    color: #3b82f6;
+}
+
+.logo-text {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0;
+}
+
+/* Menu Styling */
+#sidebar-menu {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+}
+
+#side-menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.menu-section {
+    padding: 8px 0 16px 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-item {
+    list-style: none;
+    margin: 0 16px 1px;
+}
+
+.menu-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px;
+    color: #64748b;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.menu-link:hover {
+    background: #f8fafc;
+    color: #0f172a;
+    text-decoration: none;
+}
+
+.menu-link.active {
+    background: #3b82f6 !important;
+    color: #ffffff !important;
+}
+
+.menu-link.active .menu-text {
+    color: #ffffff !important;
+}
+
+.menu-link.active .menu-icon {
+    color: #ffffff !important;
+}
+
+.menu-link.active .menu-icon svg {
+    color: #ffffff !important;
+    stroke: #ffffff !important;
+}
+
+.menu-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.menu-text {
+    flex: 1;
+    font-weight: 500;
+}
+
+.menu-divider {
+    height: 1px;
+    background: #f1f5f9;
+    margin: 8px 16px;
+    list-style: none;
+}
+
+/* Dropdown Styling */
+.dropdown-menu {
+    border: 1px solid #f1f5f9;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 8px;
+    max-width: 240px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.dropdown-item {
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.dropdown-item .fw-semibold {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+}
+
+.dropdown-item-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.dropdown-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+}
+
+.dropdown-text {
+    flex: 1;
+}
+
+.dropdown-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: #0f172a;
+    line-height: 1.2;
+}
+
+.dropdown-desc {
+    font-size: 12px;
+    color: #64748b;
+    line-height: 1.2;
+}
+
+/* Dark mode */
+[data-bs-theme="dark"] .app-sidebar-menu {
+    background: #1e293b;
+    border-right-color: #334155;
+}
+
+[data-bs-theme="dark"] .project-switcher {
+    border-bottom-color: #334155;
+}
+
+[data-bs-theme="dark"] .switcher-name {
+    color: #f8fafc;
+}
+
+[data-bs-theme="dark"] .logo-bottom {
+    background: #0f172a;
+    border-top-color: #334155;
+}
+
+[data-bs-theme="dark"] .logo-text {
+    color: #f8fafc;
+}
+
+[data-bs-theme="dark"] .menu-link {
+    color: #94a3b8;
+}
+
+[data-bs-theme="dark"] .menu-link:hover {
+    background: #334155;
+    color: #f8fafc;
+}
+
+[data-bs-theme="dark"] .menu-link.active {
+    background: #3b82f6 !important;
+    color: #ffffff !important;
+}
+
+[data-bs-theme="dark"] .menu-link.active .menu-text {
+    color: #ffffff !important;
+}
+
+[data-bs-theme="dark"] .menu-link.active .menu-icon {
+    color: #ffffff !important;
+}
+
+[data-bs-theme="dark"] .menu-link.active .menu-icon svg {
+    color: #ffffff !important;
+    stroke: #ffffff !important;
+}
+
+
+
+/* Smooth transitions for menu switching */
+#org-menu, #project-menu {
+    transition: all 0.3s ease-in-out;
+}
+</style>
+
+<script>
+// Project sidebar drill-down functionality
+function initializeProjectSidebar() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const projectId = urlParams.get('id');
+    const isProjectPage = window.location.pathname.includes('project-detail') || 
+                          window.location.pathname.includes('creative-tracker') || 
+                          window.location.pathname.includes('customer-avatars') || 
+                          window.location.pathname.includes('competitor-analysis') ||
+                          (window.location.pathname.includes('todolist') && projectId) ||
+                          (window.location.pathname.includes('documents') && projectId);
+    
+    const orgMenu = document.getElementById('org-menu');
+    const projectMenu = document.getElementById('project-menu');
+    
+    if (isProjectPage && projectId) {
+        // Show project drill-down menu
+        orgMenu.style.display = 'none';
+        projectMenu.style.display = 'block';
+        
+        // Update project name
+        const projects = JSON.parse(localStorage.getItem('projects') || '[]');
+        const project = projects.find(p => p.id === projectId);
+        const projectTitle = document.getElementById('project-title');
+        if (projectTitle && project) {
+            projectTitle.textContent = project.name;
+        }
+        
+        console.log('🔄 Switched to project sidebar for:', project ? project.name : projectId);
+    } else {
+        // Show organization menu
+        orgMenu.style.display = 'block';
+        projectMenu.style.display = 'none';
+        
+        console.log('🏢 Showing organization sidebar');
+    }
+}
+
+// Project navigation functions
+window.goToProjectOverview = function() {
+    const projectId = new URLSearchParams(window.location.search).get('id');
+    window.location.href = `/project-detail?id=${projectId}`;
+}
+
+window.goToProjectTasks = function() {
+    const projectId = new URLSearchParams(window.location.search).get('id');
+    window.location.href = `/todolist?id=${projectId}`;
+}
+
+window.goToCreativeTracker = function() {
+    const projectId = new URLSearchParams(window.location.search).get('id');
+    window.location.href = `/creative-tracker?id=${projectId}`;
+}
+
+window.goToCustomerAvatars = function() {
+    const projectId = new URLSearchParams(window.location.search).get('id');
+    window.location.href = `/customer-avatars?id=${projectId}`;
+}
+
+window.goToCompetitorAnalysis = function() {
+    const projectId = new URLSearchParams(window.location.search).get('id');
+    window.location.href = `/competitor-analysis?id=${projectId}`;
+}
+
+window.goToProjectDocuments = function() {
+    const projectId = new URLSearchParams(window.location.search).get('id');
+    window.location.href = `/documents?id=${projectId}`;
+}
+
+window.goToProjectSettings = function() {
+    const projectId = new URLSearchParams(window.location.search).get('id');
+    // TODO: Create project settings page
+    console.log('Project settings for:', projectId);
+}
+
+// Set active menu item based on current page
+function setActiveMenuItem() {
+    // Remove active class from all links
+    document.querySelectorAll('#side-menu .menu-link').forEach(link => {
+        link.classList.remove('active');
+    });
+    
+    // Get current path
+    const currentPath = window.location.pathname;
+    const urlParams = new URLSearchParams(window.location.search);
+    const projectId = urlParams.get('id');
+    
+    // Find matching menu item and set active based on href
+    const menuLinks = {
+        '/': '/',
+        '/dashboard': '/', 
+        '/projects': 'projects',
+        '/todolist': 'todolist',
+        '/hrm': 'hrm',
+        '/documents': 'documents',
+        '/calendar': 'calendar'
+    };
+    
+    const targetHref = menuLinks[currentPath];
+    if (targetHref) {
+        const activeLink = document.querySelector(`#side-menu .menu-link[href="${targetHref}"]`);
+        if (activeLink) {
+            activeLink.classList.add('active');
+        }
+    }
+    
+    // Handle project-level pages
+    if (projectId) {
+        const projectMenuLinks = document.querySelectorAll('#project-menu .menu-link');
+        projectMenuLinks.forEach(link => {
+            link.classList.remove('active');
+        });
+        
+        // Set active based on current project page
+        if (currentPath.includes('project-detail')) {
+            document.querySelector('#project-menu .menu-link[onclick*="goToProjectOverview"]')?.classList.add('active');
+        } else if (currentPath.includes('todolist')) {
+            document.querySelector('#project-menu .menu-link[onclick*="goToProjectTasks"]')?.classList.add('active');
+        } else if (currentPath.includes('creative-tracker')) {
+            document.querySelector('#project-menu .menu-link[onclick*="goToCreativeTracker"]')?.classList.add('active');
+        } else if (currentPath.includes('customer-avatars')) {
+            document.querySelector('#project-menu .menu-link[onclick*="goToCustomerAvatars"]')?.classList.add('active');
+        } else if (currentPath.includes('competitor-analysis')) {
+            document.querySelector('#project-menu .menu-link[onclick*="goToCompetitorAnalysis"]')?.classList.add('active');
+        } else if (currentPath.includes('documents')) {
+            document.querySelector('#project-menu .menu-link[onclick*="goToProjectDocuments"]')?.classList.add('active');
+        }
+    }
+}
+
+// Project switcher functionality
+function loadProjectSwitcher() {
+    const projects = JSON.parse(localStorage.getItem('projects') || '[]');
+    const dropdown = document.getElementById('projectDropdownMenu');
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentProjectId = urlParams.get('id');
+    
+    // Update current project display
+    if (currentProjectId) {
+        const currentProject = projects.find(p => p.id === currentProjectId);
+        if (currentProject) {
+            document.getElementById('currentProjectName').textContent = currentProject.name;
+            document.getElementById('currentProjectType').textContent = 'Project Dashboard';
+        }
+    } else {
+        document.getElementById('currentProjectName').textContent = 'Organization';
+        document.getElementById('currentProjectType').textContent = 'Main Dashboard';
+    }
+    
+    // Clear existing project items (keep organization item)
+    const existingItems = dropdown.querySelectorAll('li:not(.dropdown-header):not([data-org])');
+    existingItems.forEach(item => {
+        if (!item.querySelector('[onclick="switchToOrganization()"]')) {
+            item.remove();
+        }
+    });
+    
+    // Add organization item marker
+    const orgItem = dropdown.querySelector('[onclick="switchToOrganization()"]').closest('li');
+    orgItem.setAttribute('data-org', 'true');
+    
+    // Add projects to dropdown
+    projects.forEach(project => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+            <a class="dropdown-item" href="/project-detail?id=${project.id}">
+                <div class="d-flex align-items-center">
+                    <i class="mdi mdi-folder me-2"></i>
+                    <div class="fw-semibold">${project.name}</div>
+                </div>
+            </a>
+        `;
+        dropdown.appendChild(li);
+    });
+}
+
+function switchToOrganization() {
+    window.location.href = '/';
+}
+
+// Initialize on page load
+if (typeof document !== 'undefined') {
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeProjectSidebar();
+        setActiveMenuItem();
+        loadProjectSwitcher();
+        
+        // Re-initialize feather icons after DOM changes
+        if (typeof feather !== 'undefined') {
+            feather.replace();
+        }
+    });
+}
+</script>
