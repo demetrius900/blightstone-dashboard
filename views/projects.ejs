@@ -386,7 +386,7 @@ async function loadTeamMembers() {
 function renderProjects() {
     const grid = document.getElementById('projectsGrid');
     
-    if (projects.length === 0) {
+    if (!projects || projects.length === 0) {
         grid.innerHTML = `
             <div class="col-12">
                 <div class="text-center py-5">
@@ -403,10 +403,9 @@ function renderProjects() {
     }
     
     grid.innerHTML = projects.map(project => {
-        const progress = project.tasks_count > 0 ? Math.round((project.completed_tasks / project.tasks_count) * 100) : 0;
-        const teamMemberNames = project.team_members.map(id => {
-            const member = teamMembers.find(m => m.id === id);
-            return member ? member.name : 'Unknown';
+        const progress = (project.tasks_count || 0) > 0 ? Math.round(((project.completed_tasks || 0) / (project.tasks_count || 0)) * 100) : 0;
+        const teamMemberNames = (project.project_members || []).map(memberData => {
+            return memberData.users ? memberData.users.name : 'Unknown';
         }).join(', ');
         
         return `
@@ -441,7 +440,7 @@ function renderProjects() {
                         
                         <div class="row text-center mb-3">
                             <div class="col-4">
-                                <h6 class="mb-0">${project.tasks_count}</h6>
+                                <h6 class="mb-0">${project.tasks_count || 0}</h6>
                                 <small class="text-muted">Tasks</small>
                             </div>
                             <div class="col-4">
@@ -449,7 +448,7 @@ function renderProjects() {
                                 <small class="text-muted">Complete</small>
                             </div>
                             <div class="col-4">
-                                <h6 class="mb-0">${project.team_members.length}</h6>
+                                <h6 class="mb-0">${(project.project_members || []).length}</h6>
                                 <small class="text-muted">Team</small>
                             </div>
                         </div>
@@ -644,8 +643,9 @@ function editProject(projectId) {
     
     // Select team members - check checkboxes for existing team members
     const teamCheckboxes = document.querySelectorAll('#editTeamMembersList input[name="team_members"]');
+    const existingMemberIds = (project.project_members || []).map(member => member.user_id);
     teamCheckboxes.forEach(checkbox => {
-        checkbox.checked = project.team_members.includes(checkbox.value);
+        checkbox.checked = existingMemberIds.includes(checkbox.value);
     });
     
     // Show modal
@@ -782,12 +782,7 @@ function showError(message) {
     setTimeout(() => toast.remove(), 4000);
 }
 
-// Initialize projects on page load
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Projects page loaded, loading projects...');
-    loadProjects();
-    loadTeamMembers();
-});
+// Project initialization is handled by the main DOMContentLoaded listener above
 
 // Team member cards are now populated by the main loadTeamMembers function above
 
