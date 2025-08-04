@@ -287,10 +287,30 @@ let users = [];
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
     console.log('📋 Task Management loaded');
-    renderTasks();
-    populateDropdowns();
+    loadTasks();
+    loadProjects();
+    loadUsers();
     setupEventListeners();
+    setupProjectContext();
 });
+
+// Load tasks from API
+async function loadTasks() {
+    try {
+        const response = await fetch('/api/tasks');
+        if (response.ok) {
+            tasks = await response.json();
+            renderTasks();
+            console.log('✅ Tasks loaded:', tasks.length);
+        } else {
+            console.error('Failed to load tasks');
+            showError('Failed to load tasks');
+        }
+    } catch (error) {
+        console.error('Error loading tasks:', error);
+        showError('Failed to load tasks');
+    }
+}
 
 // Render tasks in table
 function renderTasks(tasksToRender = tasks) {
@@ -381,6 +401,54 @@ function getPriorityBadgeClass(priority) {
     }
 }
 
+// Load projects from API
+async function loadProjects() {
+    try {
+        const response = await fetch('/api/projects');
+        if (response.ok) {
+            projects = await response.json();
+            populateDropdowns();
+        } else {
+            console.error('Failed to load projects');
+        }
+    } catch (error) {
+        console.error('Error loading projects:', error);
+    }
+}
+
+// Load users from API
+async function loadUsers() {
+    try {
+        const response = await fetch('/api/users');
+        if (response.ok) {
+            users = await response.json();
+            populateDropdowns();
+        } else {
+            console.error('Failed to load users');
+        }
+    } catch (error) {
+        console.error('Error loading users:', error);
+    }
+}
+
+// Setup project context (for back button, etc.)
+function setupProjectContext() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const projectId = urlParams.get('id');
+    
+    if (projectId) {
+        // Show back button and set project context
+        document.getElementById('back-button-container').style.display = 'block';
+        document.getElementById('task-context').textContent = 'Project Tasks';
+        
+        // Filter tasks by project
+        if (tasks.length > 0) {
+            const projectTasks = tasks.filter(task => task.project_id === projectId);
+            renderTasks(projectTasks);
+        }
+    }
+}
+
 // Populate dropdowns
 function populateDropdowns() {
     // Project dropdowns
@@ -430,27 +498,38 @@ function setupEventListeners() {
 }
 
 // Handle add task
-function handleAddTask(e) {
+async function handleAddTask(e) {
     e.preventDefault();
     
     const formData = new FormData(e.target);
     const taskData = Object.fromEntries(formData.entries());
     
-    // Add new task
-    const newTask = {
-        id: Date.now().toString(),
-        ...taskData,
-        status: 'Pending'
-    };
-    
-    tasks.unshift(newTask);
-    renderTasks();
-    
-    // Close modal and reset form
-    bootstrap.Modal.getInstance(document.getElementById('addTaskModal')).hide();
-    e.target.reset();
-    
-    showSuccess('Task created successfully!');
+    try {
+        // Create task via API
+        const response = await fetch('/api/tasks', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(taskData)
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to create task');
+        }
+
+        // Reload tasks from API
+        await loadTasks();
+        
+        // Close modal and reset form
+        bootstrap.Modal.getInstance(document.getElementById('addTaskModal')).hide();
+        e.target.reset();
+        
+        showSuccess('Task created successfully!');
+    } catch (error) {
+        console.error('Error creating task:', error);
+        showError('Failed to create task');
+    }
 }
 
 // Toggle task status

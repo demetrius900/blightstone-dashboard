@@ -745,49 +745,64 @@ function setActiveMenuItem() {
 }
 
 // Project switcher functionality
-function loadProjectSwitcher() {
-    // Projects loaded from API
-    const dropdown = document.getElementById('projectDropdownMenu');
-    const urlParams = new URLSearchParams(window.location.search);
-    const currentProjectId = urlParams.get('id');
-    
-    // Update current project display
-    if (currentProjectId) {
-        const currentProject = projects.find(p => p.id === currentProjectId);
-        if (currentProject) {
-            document.getElementById('currentProjectName').textContent = currentProject.name;
-            document.getElementById('currentProjectType').textContent = 'Project Dashboard';
+async function loadProjectSwitcher() {
+    try {
+        // Fetch projects from API
+        const response = await fetch('/api/projects');
+        if (!response.ok) {
+            console.error('Failed to load projects for switcher');
+            return;
         }
-    } else {
-        document.getElementById('currentProjectName').textContent = 'Organization';
-        document.getElementById('currentProjectType').textContent = 'Main Dashboard';
+        
+        const projects = await response.json();
+        const dropdown = document.getElementById('projectDropdownMenu');
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentProjectId = urlParams.get('id');
+        
+        // Update current project display
+        if (currentProjectId) {
+            const currentProject = projects.find(p => p.id === currentProjectId);
+            if (currentProject) {
+                document.getElementById('currentProjectName').textContent = currentProject.name;
+                document.getElementById('currentProjectType').textContent = 'Project Dashboard';
+            }
+        } else {
+            document.getElementById('currentProjectName').textContent = 'Organization';
+            document.getElementById('currentProjectType').textContent = 'Main Dashboard';
+        }
+        
+        // Clear existing project items (keep organization item)
+        const existingItems = dropdown.querySelectorAll('li:not(.dropdown-header):not([data-org])');
+        existingItems.forEach(item => {
+            if (!item.querySelector('[onclick="switchToOrganization()"]')) {
+                item.remove();
+            }
+        });
+        
+        // Add organization item marker
+        const orgItem = dropdown.querySelector('[onclick="switchToOrganization()"]').closest('li');
+        if (orgItem) {
+            orgItem.setAttribute('data-org', 'true');
+        }
+        
+        // Add projects to dropdown
+        projects.forEach(project => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <a class="dropdown-item" href="/project-detail?id=${project.id}">
+                    <div class="d-flex align-items-center">
+                        <i class="mdi mdi-folder me-2"></i>
+                        <div class="fw-semibold">${project.name}</div>
+                    </div>
+                </a>
+            `;
+            dropdown.appendChild(li);
+        });
+        
+        console.log('✅ Project switcher loaded with', projects.length, 'projects');
+    } catch (error) {
+        console.error('Error loading project switcher:', error);
     }
-    
-    // Clear existing project items (keep organization item)
-    const existingItems = dropdown.querySelectorAll('li:not(.dropdown-header):not([data-org])');
-    existingItems.forEach(item => {
-        if (!item.querySelector('[onclick="switchToOrganization()"]')) {
-            item.remove();
-        }
-    });
-    
-    // Add organization item marker
-    const orgItem = dropdown.querySelector('[onclick="switchToOrganization()"]').closest('li');
-    orgItem.setAttribute('data-org', 'true');
-    
-    // Add projects to dropdown
-    projects.forEach(project => {
-        const li = document.createElement('li');
-        li.innerHTML = `
-            <a class="dropdown-item" href="/project-detail?id=${project.id}">
-                <div class="d-flex align-items-center">
-                    <i class="mdi mdi-folder me-2"></i>
-                    <div class="fw-semibold">${project.name}</div>
-                </div>
-            </a>
-        `;
-        dropdown.appendChild(li);
-    });
 }
 
 function switchToOrganization() {

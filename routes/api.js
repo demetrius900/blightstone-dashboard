@@ -231,6 +231,117 @@ route.delete('/projects/:id', async (req, res) => {
     }
 });
 
+// Tasks API
+route.get('/tasks', async (req, res) => {
+    try {
+        const { data: tasks, error } = await supabaseAdmin
+            .from('tasks')
+            .select(`
+                *,
+                projects!inner(name),
+                users!inner(name, email)
+            `)
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        res.json(tasks || []);
+    } catch (error) {
+        console.error('Tasks API error:', error);
+        res.status(500).json({ error: 'Failed to load tasks' });
+    }
+});
+
+route.post('/tasks', async (req, res) => {
+    try {
+        const { title, description, project_id, assigned_to, priority, due_date } = req.body;
+
+        if (!title) {
+            return res.status(400).json({ error: 'Task title is required' });
+        }
+
+        // Get first user as created_by for now
+        const { data: users } = await supabaseAdmin
+            .from('users')
+            .select('id')
+            .limit(1);
+
+        if (!users || users.length === 0) {
+            return res.status(400).json({ error: 'No users found' });
+        }
+
+        const created_by = users[0].id;
+
+        const { data: task, error } = await supabaseAdmin
+            .from('tasks')
+            .insert({
+                title,
+                description,
+                project_id,
+                assigned_to,
+                priority: priority || 'Medium',
+                status: 'Pending',
+                due_date,
+                created_by,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+            })
+            .select()
+            .single();
+
+        if (error) throw error;
+        res.json({ success: true, task });
+    } catch (error) {
+        console.error('Create task error:', error);
+        res.status(500).json({ error: 'Failed to create task' });
+    }
+});
+
+route.put('/tasks/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { title, description, project_id, assigned_to, priority, status, due_date } = req.body;
+
+        const { data: task, error } = await supabaseAdmin
+            .from('tasks')
+            .update({
+                title,
+                description,
+                project_id,
+                assigned_to,
+                priority,
+                status,
+                due_date,
+                updated_at: new Date().toISOString()
+            })
+            .eq('id', id)
+            .select()
+            .single();
+
+        if (error) throw error;
+        res.json({ success: true, task });
+    } catch (error) {
+        console.error('Update task error:', error);
+        res.status(500).json({ error: 'Failed to update task' });
+    }
+});
+
+route.delete('/tasks/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const { error } = await supabaseAdmin
+            .from('tasks')
+            .delete()
+            .eq('id', id);
+
+        if (error) throw error;
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Delete task error:', error);
+        res.status(500).json({ error: 'Failed to delete task' });
+    }
+});
+
 // Users API
 route.get('/users', async (req, res) => {
     try {
