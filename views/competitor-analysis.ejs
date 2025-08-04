@@ -497,7 +497,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (projectId) {
         document.getElementById('back-button-container').style.display = 'block';
         
-        const projects = JSON.parse(localStorage.getItem('projects') || '[]');
+        // Projects loaded from API
+        const projects = [];
         const project = projects.find(p => p.id === projectId);
         if (project) {
             document.getElementById('projectContext').textContent = `Project: ${project.name}`;

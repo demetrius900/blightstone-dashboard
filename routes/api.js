@@ -28,16 +28,34 @@ route.get('/dashboard', async (req, res) => {
 // Projects API
 route.get('/projects', async (req, res) => {
     try {
-        const { data, error } = await supabase
+        // Get projects first
+        const { data: projects, error: projectsError } = await supabase
             .from('projects')
-            .select(`
-                *,
-                project_members(user_id, users(name, email, role))
-            `)
+            .select('*')
             .order('created_at', { ascending: false });
 
-        if (error) throw error;
-        res.json(data || []);
+        if (projectsError) throw projectsError;
+
+        // For each project, get the members separately
+        const projectsWithMembers = await Promise.all(
+            (projects || []).map(async (project) => {
+                const { data: members } = await supabase
+                    .from('project_members')
+                    .select(`
+                        user_id,
+                        role,
+                        users!inner(name, email, role)
+                    `)
+                    .eq('project_id', project.id);
+
+                return {
+                    ...project,
+                    project_members: members || []
+                };
+            })
+        );
+
+        res.json(projectsWithMembers);
     } catch (error) {
         console.error('Projects API error:', error);
         res.status(500).json({ error: 'Failed to load projects' });

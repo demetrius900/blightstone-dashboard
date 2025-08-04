@@ -439,7 +439,8 @@ function goBackToProjects() {
 function loadProjectData(id) {
     // In a real app, this would be an API call
             // Project data loaded from API
-    const projects = JSON.parse(localStorage.getItem('projects') || '[]');
+            // Projects loaded from API
+        const projects = [];
     currentProject = projects.find(p => p.id === id);
     
     if (!currentProject) {
