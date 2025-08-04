@@ -31,8 +31,8 @@ class AuthService {
                 throw new Error(`Auth creation failed: ${authError.message}`);
             }
 
-            // Create user profile in database
-            const { data: profileData, error: profileError } = await supabase
+            // Create user profile in database (using admin client to bypass RLS)
+            const { data: profileData, error: profileError } = await supabaseAdmin
                 .from('users')
                 .insert({
                     id: authData.user.id,
