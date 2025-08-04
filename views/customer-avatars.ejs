@@ -429,44 +429,7 @@ function filterAvatars() {
     renderAvatars(filtered);
 }
 
-// Add avatar
-document.getElementById('addAvatarForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    const formData = new FormData(e.target);
-    const avatarData = Object.fromEntries(formData.entries());
-    
-    try {
-        showButtonLoading('addAvatarBtnText', 'addAvatarSpinner');
-        
-        avatarData.id = Date.now().toString();
-        avatarData.project_id = projectId;
-        avatarData.created_at = new Date().toISOString();
-        
-        // Save avatar to API
-        const response = await fetch(`/api/projects/${projectId}/avatars`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(avatarData)
-        });
-        
-        if (!response.ok) {
-            throw new Error('Failed to save avatar');
-        }
-        
-        hideButtonLoading('addAvatarBtnText', 'addAvatarSpinner', 'Add Avatar');
-        bootstrap.Modal.getInstance(document.getElementById('addAvatarModal')).hide();
-        e.target.reset();
-        
-        loadAvatars();
-        showSuccess('Customer avatar added successfully!');
-    } catch (error) {
-        hideButtonLoading('addAvatarBtnText', 'addAvatarSpinner', 'Add Avatar');
-        showError('Failed to add avatar');
-    }
-});
+
 
 // Utility functions
 function showButtonLoading(textId, spinnerId) {
@@ -504,6 +467,131 @@ document.addEventListener('DOMContentLoaded', function() {
         loadAvatars();
     } else {
         document.getElementById('projectContext').textContent = 'No project selected';
+    }
+});
+
+// Multi-step form navigation
+let currentStep = 1;
+const totalSteps = 2;
+
+function nextStep() {
+    if (currentStep < totalSteps) {
+        // Hide current step
+        document.getElementById(`avatarStep${currentStep}`).style.display = 'none';
+        
+        // Show next step
+        currentStep++;
+        document.getElementById(`avatarStep${currentStep}`).style.display = 'block';
+        
+        // Update progress bar
+        const progress = (currentStep / totalSteps) * 100;
+        document.getElementById('avatarProgress').style.width = progress + '%';
+        
+        // Update step indicators
+        document.querySelectorAll('.step-indicator').forEach((indicator, index) => {
+            if (index + 1 <= currentStep) {
+                indicator.classList.add('active');
+                indicator.classList.remove('text-muted');
+            } else {
+                indicator.classList.remove('active');
+                indicator.classList.add('text-muted');
+            }
+        });
+        
+        // Update button text
+        const submitBtn = document.querySelector('#addAvatarForm button[type="submit"]');
+        if (currentStep === totalSteps) {
+            submitBtn.innerHTML = '<span id="addAvatarBtnText">Add Avatar</span><span id="addAvatarSpinner" class="spinner-border spinner-border-sm d-none ms-2"></span>';
+        } else {
+            submitBtn.innerHTML = 'Next →';
+        }
+    }
+}
+
+function prevStep() {
+    if (currentStep > 1) {
+        // Hide current step
+        document.getElementById(`avatarStep${currentStep}`).style.display = 'none';
+        
+        // Show previous step
+        currentStep--;
+        document.getElementById(`avatarStep${currentStep}`).style.display = 'block';
+        
+        // Update progress bar
+        const progress = (currentStep / totalSteps) * 100;
+        document.getElementById('avatarProgress').style.width = progress + '%';
+        
+        // Update step indicators
+        document.querySelectorAll('.step-indicator').forEach((indicator, index) => {
+            if (index + 1 <= currentStep) {
+                indicator.classList.add('active');
+                indicator.classList.remove('text-muted');
+            } else {
+                indicator.classList.remove('active');
+                indicator.classList.add('text-muted');
+            }
+        });
+        
+        // Update button text
+        const submitBtn = document.querySelector('#addAvatarForm button[type="submit"]');
+        submitBtn.innerHTML = 'Next →';
+    }
+}
+
+// Handle form submission
+document.getElementById('addAvatarForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    if (currentStep < totalSteps) {
+        // If not on last step, go to next step
+        nextStep();
+        return;
+    }
+    
+    // On last step, submit the form
+    const formData = new FormData(e.target);
+    const avatarData = Object.fromEntries(formData.entries());
+    
+    try {
+        showButtonLoading('addAvatarBtnText', 'addAvatarSpinner');
+        
+        const response = await fetch(`/api/projects/${projectId}/avatars`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(avatarData)
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to save avatar');
+        }
+        
+        hideButtonLoading('addAvatarBtnText', 'addAvatarSpinner', 'Add Avatar');
+        bootstrap.Modal.getInstance(document.getElementById('addAvatarModal')).hide();
+        e.target.reset();
+        
+        // Reset form to step 1
+        currentStep = 1;
+        document.getElementById('avatarStep1').style.display = 'block';
+        document.getElementById('avatarStep2').style.display = 'none';
+        document.getElementById('avatarProgress').style.width = '50%';
+        document.querySelectorAll('.step-indicator').forEach((indicator, index) => {
+            if (index === 0) {
+                indicator.classList.add('active');
+                indicator.classList.remove('text-muted');
+            } else {
+                indicator.classList.remove('active');
+                indicator.classList.add('text-muted');
+            }
+        });
+        
+        await loadAvatars();
+        showSuccess('Customer avatar added successfully!');
+    } catch (error) {
+        console.error('Error creating avatar:', error);
+        hideButtonLoading('addAvatarBtnText', 'addAvatarSpinner', 'Add Avatar');
+        showError('Failed to add avatar');
     }
 });
 

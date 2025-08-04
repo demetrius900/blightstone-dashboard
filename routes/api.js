@@ -272,13 +272,12 @@ route.post('/tasks', async (req, res) => {
 
         const created_by = users[0].id;
 
-        // Clean up empty UUID fields
+        // Clean up empty UUID fields and dates
         const taskData = {
             title,
             description,
             priority: priority || 'Medium',
             status: 'Pending',
-            due_date,
             created_by,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
@@ -290,6 +289,10 @@ route.post('/tasks', async (req, res) => {
         }
         if (assigned_to && assigned_to.trim() !== '') {
             taskData.assigned_to = assigned_to;
+        }
+        // Only add due_date if it has a value
+        if (due_date && due_date.trim() !== '') {
+            taskData.due_date = due_date;
         }
 
         const { data: task, error } = await supabaseAdmin
@@ -436,10 +439,23 @@ route.post('/projects/:projectId/avatars', async (req, res) => {
             return res.status(400).json({ error: 'No users found' });
         }
 
+        // Only include fields that exist in the database schema
+        const allowedFields = [
+            'name', 'age_group', 'gender', 'location', 'occupation', 
+            'income_level', 'family_status', 'pain_points', 'goals', 'key_messaging'
+        ];
+        
+        const filteredData = {};
+        allowedFields.forEach(field => {
+            if (avatarData[field] !== undefined && avatarData[field] !== '') {
+                filteredData[field] = avatarData[field];
+            }
+        });
+
         const { data: avatar, error } = await supabaseAdmin
             .from('customer_avatars')
             .insert({
-                ...avatarData,
+                ...filteredData,
                 project_id: projectId,
                 created_by: users[0].id
             })
@@ -487,10 +503,24 @@ route.post('/projects/:projectId/competitors', async (req, res) => {
             return res.status(400).json({ error: 'No users found' });
         }
 
+        // Only include fields that exist in the database schema
+        const allowedFields = [
+            'competitor_name', 'industry', 'market_position', 'strengths', 
+            'weaknesses', 'opportunities', 'threats', 'key_strategies', 
+            'pricing_model', 'target_audience', 'marketing_channels', 'notes'
+        ];
+        
+        const filteredData = {};
+        allowedFields.forEach(field => {
+            if (competitorData[field] !== undefined && competitorData[field] !== '') {
+                filteredData[field] = competitorData[field];
+            }
+        });
+
         const { data: competitor, error } = await supabaseAdmin
             .from('competitor_analysis')
             .insert({
-                ...competitorData,
+                ...filteredData,
                 project_id: projectId,
                 created_by: users[0].id
             })
