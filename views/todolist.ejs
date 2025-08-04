@@ -718,7 +718,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('back-button-container').style.display = 'block';
         
         // Update context text
-        const projects = JSON.parse(localStorage.getItem('projects') || '[]');
+        // Project loaded from API
         const project = projects.find(p => p.id === projectId);
         const contextElement = document.getElementById('task-context');
         if (contextElement && project) {

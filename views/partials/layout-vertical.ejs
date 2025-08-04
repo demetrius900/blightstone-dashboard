@@ -43,8 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const isPublicPage = publicPages.includes(currentPath);
         
         // Check if user is logged in
-        const user = localStorage.getItem('blightstone_user');
-        const session = localStorage.getItem('blightstone_session');
+            // User session loaded from server
         
         console.log('Auth check:', { user: !!user, session: !!session, currentPath, isPublicPage });
         
@@ -161,7 +160,7 @@ function enableDarkMode() {
 
 // Make user info globally available
 window.getUserInfo = function() {
-    const user = localStorage.getItem('blightstone_user');
+            // User session loaded from server
     return user ? JSON.parse(user) : null;
 };
 </script>

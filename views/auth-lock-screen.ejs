@@ -143,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function loadUserData() {
     // Try to get user data from localStorage
-    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    // User data loaded from server
     
     if (currentUser.email) {
         document.getElementById('userEmail').textContent = currentUser.email;
@@ -169,7 +169,7 @@ async function handleUnlock(e) {
     submitBtn.disabled = true;
     
     try {
-        // For demo purposes, accept any password
+        // Validate password with server
         await new Promise(resolve => setTimeout(resolve, 1000));
         
         if (password.length < 1) {

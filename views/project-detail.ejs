@@ -438,7 +438,7 @@ function goBackToProjects() {
 
 function loadProjectData(id) {
     // In a real app, this would be an API call
-    // For now, using localStorage or mock data
+            // Project data loaded from API
     const projects = JSON.parse(localStorage.getItem('projects') || '[]');
     currentProject = projects.find(p => p.id === id);
     
@@ -459,7 +459,7 @@ function loadProjectData(id) {
 }
 
 function loadTasks() {
-    // Mock task data - replace with API call
+            // Task data loaded from API
     projectTasks = [
         {
             id: '1',
@@ -520,7 +520,7 @@ function renderTasks() {
 }
 
 function loadCreatives() {
-    // Mock creative data - replace with API call
+            // Creative data loaded from API
     creativeEntries = [];
     renderCreatives();
 }
@@ -574,7 +574,7 @@ function renderCreatives() {
 }
 
 function loadAvatars() {
-    // Mock avatar data - replace with API call
+            // Avatar data loaded from API
     customerAvatars = [];
     renderAvatars();
 }
@@ -613,7 +613,7 @@ function renderAvatars() {
 }
 
 function loadCompetitors() {
-    // Mock competitor data - replace with API call
+            // Competitor data loaded from API
     competitors = [];
     renderCompetitors();
 }

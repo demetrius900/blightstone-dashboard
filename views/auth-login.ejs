@@ -164,9 +164,7 @@ document.getElementById("loginForm").addEventListener("submit", async (event) =>
         const data = await response.json();
         
         if (response.ok && data.success) {
-            // Store user session
-            localStorage.setItem("blightstone_user", JSON.stringify(data.user));
-            localStorage.setItem("blightstone_session", JSON.stringify(data.session));
+            // User session stored on server
             
             // Show success message briefly
             loginText.textContent = "Success! Redirecting...";
@@ -190,10 +188,8 @@ document.getElementById("loginForm").addEventListener("submit", async (event) =>
     }
 });
 
-// Auto-login for demo - remove in production
+// Initialize login form
 document.addEventListener('DOMContentLoaded', function() {
-    // Pre-fill demo credentials
-    document.getElementById("emailaddress").value = "admin@blightstone.com";
-    document.getElementById("password").value = "password123";
+    // Form ready for user input
 });
 </script>

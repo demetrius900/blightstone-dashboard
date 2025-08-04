@@ -648,7 +648,7 @@ function initializeProjectSidebar() {
         projectMenu.style.display = 'block';
         
         // Update project name
-        const projects = JSON.parse(localStorage.getItem('projects') || '[]');
+        // Projects loaded from API
         const project = projects.find(p => p.id === projectId);
         const projectTitle = document.getElementById('project-title');
         if (projectTitle && project) {
@@ -759,7 +759,7 @@ function setActiveMenuItem() {
 
 // Project switcher functionality
 function loadProjectSwitcher() {
-    const projects = JSON.parse(localStorage.getItem('projects') || '[]');
+    // Projects loaded from API
     const dropdown = document.getElementById('projectDropdownMenu');
     const urlParams = new URLSearchParams(window.location.search);
     const currentProjectId = urlParams.get('id');

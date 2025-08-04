@@ -226,57 +226,15 @@ function setupEventListeners() {
 // Load team members from API
 async function loadTeamMembers() {
     try {
-        // For now, use mock data - will connect to API later
-        teamMembers = [
-            {
-                id: '1',
-                name: 'John Smith',
-                email: 'john@blightstone.com',
-                role: 'CEO/Founder',
-                status: 'Active',
-                avatar_url: '/images/users/user.jpg',
-                created_at: '2024-01-15'
-            },
-            {
-                id: '2',
-                name: 'Sarah Johnson',
-                email: 'sarah@blightstone.com',
-                role: 'Media Buyer',
-                status: 'Active',
-                avatar_url: '/images/users/user-2.jpg',
-                created_at: '2024-01-20'
-            },
-            {
-                id: '3',
-                name: 'Mike Chen',
-                email: 'mike@blightstone.com',
-                role: 'Store Manager',
-                status: 'Active',
-                avatar_url: '/images/users/user-3.jpg',
-                created_at: '2024-01-25'
-            },
-            {
-                id: '4',
-                name: 'Emma Davis',
-                email: 'emma@blightstone.com',
-                role: 'Product Research',
-                status: 'Active',
-                avatar_url: '/images/users/user-4.jpg',
-                created_at: '2024-02-01'
-            },
-            {
-                id: '5',
-                name: 'Alex Rodriguez',
-                email: 'alex@blightstone.com',
-                role: 'Creative Designer',
-                status: 'Active',
-                avatar_url: '/images/users/user-5.jpg',
-                created_at: '2024-02-05'
-            }
-        ];
-        
-        updateTeamStats();
-        console.log('✅ Team members loaded:', teamMembers.length);
+        const response = await fetch('/api/users');
+        if (response.ok) {
+            teamMembers = await response.json();
+            updateTeamStats();
+            console.log('✅ Team members loaded:', teamMembers.length);
+        } else {
+            console.error('Failed to load team members');
+            showError('Failed to load team members');
+        }
     } catch (error) {
         console.error('Error loading team members:', error);
         showError('Failed to load team members');
@@ -403,50 +361,68 @@ function showError(message) {
 }
 
 // Team member action functions
-function editTeamMember(email) {
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-    const user = users.find(u => u.email === email);
-    
-    if (user) {
-        // Fill the add member form with existing data for editing
-        document.getElementById('memberName').value = user.name || '';
-        document.getElementById('memberEmail').value = user.email || '';
-        document.getElementById('memberRole').value = user.role || '';
-        
-        // Change modal title and button text
-        document.querySelector('#addTeamMemberModal .modal-title').textContent = 'Edit Team Member';
-        document.getElementById('addMemberBtnText').textContent = 'Update Member';
-        
-        // Store editing state
-        document.getElementById('addTeamMemberForm').dataset.editing = email;
-        
-        // Show the modal
-        const modal = new bootstrap.Modal(document.getElementById('addTeamMemberModal'));
-        modal.show();
-    } else {
-        showError('Team member not found');
+async function editTeamMember(email) {
+    try {
+        const response = await fetch(`/api/users/${email}`);
+        if (response.ok) {
+            const user = await response.json();
+            
+            // Fill the add member form with existing data for editing
+            document.getElementById('memberName').value = user.name || '';
+            document.getElementById('memberEmail').value = user.email || '';
+            document.getElementById('memberRole').value = user.role || '';
+            
+            // Change modal title and button text
+            document.querySelector('#addTeamMemberModal .modal-title').textContent = 'Edit Team Member';
+            document.getElementById('addMemberBtnText').textContent = 'Update Member';
+            
+            // Store editing state
+            document.getElementById('addTeamMemberForm').dataset.editing = email;
+            
+            // Show the modal
+            const modal = new bootstrap.Modal(document.getElementById('addTeamMemberModal'));
+            modal.show();
+        } else {
+            showError('Team member not found');
+        }
+    } catch (error) {
+        console.error('Error fetching user:', error);
+        showError('Failed to load team member data');
     }
 }
 
-function viewTeamMember(email) {
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-    const user = users.find(u => u.email === email);
-    
-    if (user) {
-        alert(`Team Member Profile:\n\nName: ${user.name || 'N/A'}\nEmail: ${user.email}\nRole: ${user.role || 'N/A'}\nStatus: ${user.status || 'Active'}`);
-    } else {
-        showError('Team member not found');
+async function viewTeamMember(email) {
+    try {
+        const response = await fetch(`/api/users/${email}`);
+        if (response.ok) {
+            const user = await response.json();
+            alert(`Team Member Profile:\n\nName: ${user.name || 'N/A'}\nEmail: ${user.email}\nRole: ${user.role || 'N/A'}\nStatus: ${user.status || 'Active'}`);
+        } else {
+            showError('Team member not found');
+        }
+    } catch (error) {
+        console.error('Error fetching user:', error);
+        showError('Failed to load team member data');
     }
 }
 
-function removeTeamMember(email) {
+async function removeTeamMember(email) {
     if (confirm(`Are you sure you want to remove this team member?\n\nEmail: ${email}\n\nThis action cannot be undone.`)) {
-        let users = JSON.parse(localStorage.getItem('users') || '[]');
-        users = users.filter(u => u.email !== email);
-        localStorage.setItem('users', JSON.stringify(users));
-        
-        showSuccess('Team member removed successfully');
-        loadTeamMembers(); // Reload the table
+        try {
+            const response = await fetch(`/api/users/${email}`, {
+                method: 'DELETE'
+            });
+            
+            if (response.ok) {
+                showSuccess('Team member removed successfully');
+                loadTeamMembers(); // Reload the table
+            } else {
+                showError('Failed to remove team member');
+            }
+        } catch (error) {
+            console.error('Error removing user:', error);
+            showError('Failed to remove team member');
+        }
     }
 }
 </script>

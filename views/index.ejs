@@ -245,119 +245,32 @@
 <%- contentFor('extra_javascript') %>
 
 <script>
-// Ecommerce Dashboard Analytics
+// Dashboard data will be loaded from API
 let dashboardData = {
-    projects: [
-        {
-            id: '1',
-            name: 'TechGear Store',
-            status: 'Active',
-            created_at: '2024-01-01'
-        },
-        {
-            id: '2',
-            name: 'FitnessPro Brand',
-            status: 'Active',
-            created_at: '2024-01-15'
-        },
-        {
-            id: '3',
-            name: 'Mobile Shopping App',
-            status: 'Planning',
-            created_at: '2024-02-01'
-        },
-        {
-            id: '4',
-            name: 'Q1 Social Media Campaign',
-            status: 'Active',
-            created_at: '2024-01-01'
-        },
-        {
-            id: '5',
-            name: 'Supply Chain Optimization',
-            status: 'Completed',
-            created_at: '2023-11-01'
-        }
-    ],
-    tasks: [
-        {
-            id: '1',
-            title: 'Launch Facebook ad campaign for tech gadgets',
-            status: 'In Progress',
-            priority: 'High',
-            due_date: '2024-12-15',
-            created_at: '2024-12-01'
-        },
-        {
-            id: '2',
-            title: 'Source fitness equipment suppliers',
-            status: 'Completed',
-            priority: 'Medium',
-            due_date: '2024-12-12',
-            created_at: '2024-12-01'
-        },
-        {
-            id: '3',
-            title: 'Design product mockups for mobile app',
-            status: 'Pending',
-            priority: 'High',
-            due_date: '2024-12-18',
-            created_at: '2024-12-05'
-        },
-        {
-            id: '4',
-            title: 'Optimize store conversion rate',
-            status: 'In Progress',
-            priority: 'Medium',
-            due_date: '2024-12-20',
-            created_at: '2024-12-03'
-        },
-        {
-            id: '5',
-            title: 'Create TikTok video content',
-            status: 'Pending',
-            priority: 'High',
-            due_date: '2024-12-22',
-            created_at: '2024-12-06'
-        },
-        {
-            id: '6',
-            title: 'Analyze competitor pricing strategies',
-            status: 'Completed',
-            priority: 'Medium',
-            due_date: '2024-12-10',
-            created_at: '2024-12-02'
-        },
-        {
-            id: '7',
-            title: 'Set up email marketing automation',
-            status: 'In Progress',
-            priority: 'High',
-            due_date: '2024-12-25',
-            created_at: '2024-12-01'
-        },
-        {
-            id: '8',
-            title: 'Update product descriptions for SEO',
-            status: 'Pending',
-            priority: 'Low',
-            due_date: '2024-12-30',
-            created_at: '2024-12-04'
-        }
-    ],
-    teamMembers: [
-        { id: '1', name: 'John Smith', role: 'CEO/Founder', status: 'Active' },
-        { id: '2', name: 'Sarah Johnson', role: 'Media Buyer', status: 'Active' },
-        { id: '3', name: 'Mike Chen', role: 'Store Manager', status: 'Active' },
-        { id: '4', name: 'Emma Davis', role: 'Product Research', status: 'Active' },
-        { id: '5', name: 'Alex Rodriguez', role: 'Creative Designer', status: 'Active' }
-    ]
+    projects: [],
+    tasks: [],
+    teamMembers: []
 };
+
+// Load dashboard data from API
+async function loadDashboardData() {
+    try {
+        const response = await fetch('/api/dashboard');
+        if (response.ok) {
+            dashboardData = await response.json();
+            updateDashboardStats();
+        } else {
+            console.error('Failed to load dashboard data');
+        }
+    } catch (error) {
+        console.error('Error loading dashboard data:', error);
+    }
+}
 
 // Initialize dashboard on page load
 document.addEventListener('DOMContentLoaded', function() {
     console.log('📊 Ecommerce Dashboard loaded');
-    updateDashboardStats();
+    loadDashboardData();
     
     // Update every 30 seconds (simulate real-time)
     setInterval(updateDashboardStats, 30000);

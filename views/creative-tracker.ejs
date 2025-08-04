@@ -349,19 +349,24 @@ function getProjectIdFromURL() {
     return urlParams.get('id');
 }
 
-// Load creatives
+// Load creatives from API
 async function loadCreatives() {
     try {
         showLoadingState();
         
-        const creatives = JSON.parse(localStorage.getItem(`creatives_${projectId}`) || '[]');
-        allCreatives = creatives;
-        
-        renderCreatives(creatives);
-        updateFilters();
-        updateBulkActions();
-        
-        console.log('✅ Creatives loaded:', creatives.length);
+        const response = await fetch(`/api/projects/${projectId}/creatives`);
+        if (response.ok) {
+            const creatives = await response.json();
+            allCreatives = creatives;
+            
+            renderCreatives(creatives);
+            updateFilters();
+            updateBulkActions();
+            
+            console.log('✅ Creatives loaded:', creatives.length);
+        } else {
+            throw new Error('Failed to load creatives');
+        }
     } catch (error) {
         console.error('Error loading creatives:', error);
         showErrorState('Failed to load creatives');
@@ -534,9 +539,18 @@ document.getElementById('addCreativeForm').addEventListener('submit', async func
         creativeData.project_id = projectId;
         creativeData.created_at = new Date().toISOString();
         
-        const creatives = JSON.parse(localStorage.getItem(`creatives_${projectId}`) || '[]');
-        creatives.push(creativeData);
-        localStorage.setItem(`creatives_${projectId}`, JSON.stringify(creatives));
+        // Save creative to API
+        const response = await fetch(`/api/projects/${projectId}/creatives`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(creativeData)
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to save creative');
+        }
         
         hideButtonLoading('addCreativeBtnText', 'addCreativeSpinner', 'Add Creative');
         bootstrap.Modal.getInstance(document.getElementById('addCreativeModal')).hide();
@@ -580,7 +594,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (projectId) {
         document.getElementById('back-button-container').style.display = 'block';
         
-        const projects = JSON.parse(localStorage.getItem('projects') || '[]');
+        // Project loaded from API
         const project = projects.find(p => p.id === projectId);
         if (project) {
             document.getElementById('projectContext').textContent = `Project: ${project.name}`;

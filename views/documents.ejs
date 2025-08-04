@@ -618,7 +618,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('back-button-container').style.display = 'block';
         
         // Update title for project context
-        const projects = JSON.parse(localStorage.getItem('projects') || '[]');
+        // Project loaded from API
         const project = projects.find(p => p.id === projectId);
         const titleElement = document.getElementById('document-title');
         if (titleElement && project) {

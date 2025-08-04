@@ -253,18 +253,23 @@ function getProjectIdFromURL() {
     return urlParams.get('id');
 }
 
-// Load competitors
+// Load competitors from API
 async function loadCompetitors() {
     try {
         showLoadingState();
         
-        const competitors = JSON.parse(localStorage.getItem(`competitors_${projectId}`) || '[]');
-        allCompetitors = competitors;
-        
-        renderCompetitors(competitors);
-        updateBulkActions();
-        
-        console.log('✅ Competitors loaded:', competitors.length);
+        const response = await fetch(`/api/projects/${projectId}/competitors`);
+        if (response.ok) {
+            const competitors = await response.json();
+            allCompetitors = competitors;
+            
+            renderCompetitors(competitors);
+            updateBulkActions();
+            
+            console.log('✅ Competitors loaded:', competitors.length);
+        } else {
+            throw new Error('Failed to load competitors');
+        }
     } catch (error) {
         console.error('Error loading competitors:', error);
         showErrorState('Failed to load competitors');

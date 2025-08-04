@@ -266,13 +266,18 @@ async function loadAvatars() {
     try {
         showLoadingState();
         
-        const avatars = JSON.parse(localStorage.getItem(`avatars_${projectId}`) || '[]');
-        allAvatars = avatars;
-        
-        renderAvatars(avatars);
-        updateBulkActions();
-        
-        console.log('✅ Avatars loaded:', avatars.length);
+        const response = await fetch(`/api/projects/${projectId}/avatars`);
+        if (response.ok) {
+            const avatars = await response.json();
+            allAvatars = avatars;
+            
+            renderAvatars(avatars);
+            updateBulkActions();
+            
+            console.log('✅ Avatars loaded:', avatars.length);
+        } else {
+            throw new Error('Failed to load avatars');
+        }
     } catch (error) {
         console.error('Error loading avatars:', error);
         showErrorState('Failed to load avatars');
@@ -438,9 +443,18 @@ document.getElementById('addAvatarForm').addEventListener('submit', async functi
         avatarData.project_id = projectId;
         avatarData.created_at = new Date().toISOString();
         
-        const avatars = JSON.parse(localStorage.getItem(`avatars_${projectId}`) || '[]');
-        avatars.push(avatarData);
-        localStorage.setItem(`avatars_${projectId}`, JSON.stringify(avatars));
+        // Save avatar to API
+        const response = await fetch(`/api/projects/${projectId}/avatars`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(avatarData)
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to save avatar');
+        }
         
         hideButtonLoading('addAvatarBtnText', 'addAvatarSpinner', 'Add Avatar');
         bootstrap.Modal.getInstance(document.getElementById('addAvatarModal')).hide();
@@ -481,7 +495,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (projectId) {
         document.getElementById('back-button-container').style.display = 'block';
         
-        const projects = JSON.parse(localStorage.getItem('projects') || '[]');
+        // Project loaded from API
         const project = projects.find(p => p.id === projectId);
         if (project) {
             document.getElementById('projectContext').textContent = `Project: ${project.name}`;

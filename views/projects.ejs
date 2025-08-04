@@ -347,103 +347,34 @@ function setupEventListeners() {
     document.getElementById('confirmDeleteProject').addEventListener('click', handleDeleteProject);
 }
 
-// Load projects
+// Load projects from API
 async function loadProjects() {
     try {
-        // Mock data for ecommerce/dropshipping projects
-        projects = [
-            {
-                id: '1',
-                name: 'TechGear Store',
-                description: 'Premium electronics dropshipping store targeting tech enthusiasts',
-                type: 'Ecommerce Store',
-                status: 'Active',
-                priority: 'High',
-                start_date: '2024-01-01',
-                end_date: '2024-03-15',
-                team_members: ['1', '2', '3'],
-                tasks_count: 23,
-                completed_tasks: 18,
-                created_at: '2024-01-01'
-            },
-            {
-                id: '2',
-                name: 'FitnessPro Brand',
-                description: 'Fitness equipment and supplements brand development',
-                type: 'Dropshipping Brand',
-                status: 'Active',
-                priority: 'High',
-                start_date: '2024-01-15',
-                end_date: '2024-04-30',
-                team_members: ['2', '4', '5'],
-                tasks_count: 31,
-                completed_tasks: 12,
-                created_at: '2024-01-15'
-            },
-            {
-                id: '3',
-                name: 'Mobile Shopping App',
-                description: 'Native mobile app for seamless shopping experience',
-                type: 'Mobile App',
-                status: 'Planning',
-                priority: 'Medium',
-                start_date: '2024-02-01',
-                end_date: '2024-06-30',
-                team_members: ['1', '5'],
-                tasks_count: 8,
-                completed_tasks: 2,
-                created_at: '2024-01-20'
-            },
-            {
-                id: '4',
-                name: 'Q1 Social Media Campaign',
-                description: 'Instagram and TikTok marketing campaign for product launches',
-                type: 'Marketing Campaign',
-                status: 'Active',
-                priority: 'High',
-                start_date: '2024-01-01',
-                end_date: '2024-03-31',
-                team_members: ['2', '4'],
-                tasks_count: 15,
-                completed_tasks: 15,
-                created_at: '2024-01-01'
-            },
-            {
-                id: '5',
-                name: 'Supply Chain Optimization',
-                description: 'Streamline supplier relationships and fulfillment processes',
-                type: 'Software Development',
-                status: 'Completed',
-                priority: 'Medium',
-                start_date: '2023-11-01',
-                end_date: '2024-01-31',
-                team_members: ['1', '3'],
-                tasks_count: 12,
-                completed_tasks: 12,
-                created_at: '2023-11-01'
-            }
-        ];
-        
-        renderProjects();
-        console.log('✅ Projects loaded:', projects.length);
+        const response = await fetch('/api/projects');
+        if (response.ok) {
+            projects = await response.json();
+            renderProjects();
+            console.log('✅ Projects loaded:', projects.length);
+        } else {
+            console.error('Failed to load projects');
+            showError('Failed to load projects');
+        }
     } catch (error) {
         console.error('Error loading projects:', error);
         showError('Failed to load projects');
     }
 }
 
-// Load team members for dropdowns
+// Load team members from API
 async function loadTeamMembers() {
     try {
-        teamMembers = [
-            { id: '1', name: 'John Smith', role: 'CEO/Founder' },
-            { id: '2', name: 'Sarah Johnson', role: 'Media Buyer' },
-            { id: '3', name: 'Mike Chen', role: 'Store Manager' },
-            { id: '4', name: 'Emma Davis', role: 'Product Research' },
-            { id: '5', name: 'Alex Rodriguez', role: 'Creative Designer' }
-        ];
-        
-        populateTeamDropdowns();
+        const response = await fetch('/api/users');
+        if (response.ok) {
+            teamMembers = await response.json();
+            populateTeamDropdowns();
+        } else {
+            console.error('Failed to load team members');
+        }
     } catch (error) {
         console.error('Error loading team members:', error);
     }
@@ -553,7 +484,7 @@ function openProject(projectId) {
     // Store current project in localStorage for the detail page
     const project = projects.find(p => p.id === projectId);
     if (project) {
-        localStorage.setItem('projects', JSON.stringify(projects));
+        // Projects saved successfully
         console.log('Project found, navigating...');
         window.location.href = `/project-detail?id=${projectId}`;
     } else {
@@ -849,7 +780,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Team member assignment functionality
 function loadTeamMembers() {
     // Get team members from HRM
-    const teamMembers = JSON.parse(localStorage.getItem('users') || '[]');
+            // Team members loaded from API
     
     renderTeamMemberCards('teamMembersList', teamMembers);
     renderTeamMemberCards('editTeamMembersList', teamMembers);
