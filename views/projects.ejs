@@ -510,24 +510,29 @@ async function handleAddProject(e) {
     try {
         showLoading('addProject');
         
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
         // Get selected team members from checkboxes
         const selectedMembers = Array.from(document.querySelectorAll('#teamMembersList input[name="team_members"]:checked')).map(input => input.value);
         
-        const newProject = {
-            id: Date.now().toString(),
-            ...projectData,
-            status: 'Planning',
-            team_members: selectedMembers,
-            tasks_count: 0,
-            completed_tasks: 0,
-            created_at: new Date().toISOString().split('T')[0]
-        };
+        // Create project via API
+        const response = await fetch('/api/projects', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                ...projectData,
+                team_members: selectedMembers
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to create project');
+        }
+
+        const result = await response.json();
         
-        projects.unshift(newProject);
-        renderProjects();
+        // Reload projects from API to get the latest data
+        await loadProjects();
         
         // Close modal and reset form
         bootstrap.Modal.getInstance(document.getElementById('addProjectModal')).hide();
@@ -554,27 +559,32 @@ async function handleEditProject(e) {
     try {
         showLoading('editProject');
         
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
         // Get selected team members from checkboxes
         const selectedMembers = Array.from(document.querySelectorAll('#editTeamMembersList input[name="team_members"]:checked')).map(input => input.value);
         
-        const projectIndex = projects.findIndex(p => p.id === projectId);
-        if (projectIndex !== -1) {
-            projects[projectIndex] = {
-                ...projects[projectIndex],
+        // Update project via API
+        const response = await fetch(`/api/projects/${projectId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
                 ...projectData,
                 team_members: selectedMembers
-            };
-            
-                renderProjects();
-            
-            // Close modal
-            bootstrap.Modal.getInstance(document.getElementById('editProjectModal')).hide();
-            
-            showSuccess('Project updated successfully!');
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to update project');
         }
+
+        // Reload projects from API to get the latest data
+        await loadProjects();
+        
+        // Close modal
+        bootstrap.Modal.getInstance(document.getElementById('editProjectModal')).hide();
+        
+        showSuccess('Project updated successfully!');
     } catch (error) {
         console.error('Error updating project:', error);
         showError('Failed to update project');
@@ -592,11 +602,17 @@ async function handleDeleteProject() {
     try {
         showLoading('deleteProject');
         
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        projects = projects.filter(p => p.id !== projectId);
-        renderProjects();
+        // Delete project via API
+        const response = await fetch(`/api/projects/${projectId}`, {
+            method: 'DELETE'
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to delete project');
+        }
+
+        // Reload projects from API to get the latest data
+        await loadProjects();
         
         // Close modal
         bootstrap.Modal.getInstance(modal).hide();

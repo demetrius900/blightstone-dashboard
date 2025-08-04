@@ -62,6 +62,129 @@ route.get('/projects', async (req, res) => {
     }
 });
 
+// Create new project
+route.post('/projects', async (req, res) => {
+    try {
+        const { name, description, type, priority, team_members = [] } = req.body;
+
+        if (!name) {
+            return res.status(400).json({ error: 'Project name is required' });
+        }
+
+        // Create project in database
+        const { data: project, error: projectError } = await supabase
+            .from('projects')
+            .insert({
+                name,
+                description,
+                type,
+                priority: priority || 'Medium',
+                status: 'Planning',
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+            })
+            .select()
+            .single();
+
+        if (projectError) throw projectError;
+
+        // Add team members to project_members table
+        if (team_members.length > 0) {
+            const memberInserts = team_members.map(userId => ({
+                project_id: project.id,
+                user_id: userId,
+                role: 'member'
+            }));
+
+            const { error: membersError } = await supabase
+                .from('project_members')
+                .insert(memberInserts);
+
+            if (membersError) {
+                console.error('Error adding team members:', membersError);
+                // Don't fail the whole request if team member addition fails
+            }
+        }
+
+        res.json({ success: true, project });
+    } catch (error) {
+        console.error('Create project error:', error);
+        res.status(500).json({ error: 'Failed to create project' });
+    }
+});
+
+// Update project
+route.put('/projects/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name, description, type, priority, status, team_members = [] } = req.body;
+
+        // Update project
+        const { data: project, error: projectError } = await supabase
+            .from('projects')
+            .update({
+                name,
+                description,
+                type,
+                priority,
+                status,
+                updated_at: new Date().toISOString()
+            })
+            .eq('id', id)
+            .select()
+            .single();
+
+        if (projectError) throw projectError;
+
+        // Update team members - remove existing and add new ones
+        await supabase
+            .from('project_members')
+            .delete()
+            .eq('project_id', id);
+
+        if (team_members.length > 0) {
+            const memberInserts = team_members.map(userId => ({
+                project_id: id,
+                user_id: userId,
+                role: 'member'
+            }));
+
+            const { error: membersError } = await supabase
+                .from('project_members')
+                .insert(memberInserts);
+
+            if (membersError) {
+                console.error('Error updating team members:', membersError);
+            }
+        }
+
+        res.json({ success: true, project });
+    } catch (error) {
+        console.error('Update project error:', error);
+        res.status(500).json({ error: 'Failed to update project' });
+    }
+});
+
+// Delete project
+route.delete('/projects/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Delete project (team members will be deleted automatically due to CASCADE)
+        const { error } = await supabase
+            .from('projects')
+            .delete()
+            .eq('id', id);
+
+        if (error) throw error;
+
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Delete project error:', error);
+        res.status(500).json({ error: 'Failed to delete project' });
+    }
+});
+
 // Users API
 route.get('/users', async (req, res) => {
     try {
