@@ -436,14 +436,24 @@ function goBackToProjects() {
     window.location.href = '/projects';
 }
 
-function loadProjectData(id) {
-    // In a real app, this would be an API call
-            // Project data loaded from API
-            // Projects loaded from API
-        const projects = [];
-    currentProject = projects.find(p => p.id === id);
-    
-    if (!currentProject) {
+async function loadProjectData(id) {
+    try {
+        // Fetch specific project data from API
+        const response = await fetch(`/api/projects/${id}`);
+        if (!response.ok) {
+            if (response.status === 404) {
+                console.error('Project not found:', id);
+                goBackToProjects();
+                return;
+            }
+            throw new Error('Failed to load project');
+        }
+        
+        currentProject = await response.json();
+        console.log('✅ Project loaded:', currentProject);
+        
+    } catch (error) {
+        console.error('Error loading project data:', error);
         goBackToProjects();
         return;
     }

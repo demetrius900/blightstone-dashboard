@@ -62,6 +62,42 @@ route.get('/projects', async (req, res) => {
     }
 });
 
+// Get single project by ID
+route.get('/projects/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        // Get project
+        const { data: project, error: projectError } = await supabaseAdmin
+            .from('projects')
+            .select('*')
+            .eq('id', id)
+            .single();
+
+        if (projectError) throw projectError;
+
+        // Get project members
+        const { data: members } = await supabaseAdmin
+            .from('project_members')
+            .select(`
+                user_id,
+                role,
+                users!inner(name, email, role)
+            `)
+            .eq('project_id', id);
+
+        const projectWithMembers = {
+            ...project,
+            project_members: members || []
+        };
+
+        res.json(projectWithMembers);
+    } catch (error) {
+        console.error('Get project error:', error);
+        res.status(500).json({ error: 'Failed to load project' });
+    }
+});
+
 // Create new project
 route.post('/projects', async (req, res) => {
     try {
