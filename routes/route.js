@@ -1,6 +1,27 @@
 
 const express = require('express');
 const route = express.Router();
+const { requireAuth } = require('./auth');
+
+// Middleware to check authentication for protected routes
+const checkAuth = (req, res, next) => {
+    // Public routes that don't need authentication
+    const publicRoutes = ['/auth-login', '/auth-register', '/auth-forgot-password', '/auth-lock-screen'];
+    
+    if (publicRoutes.includes(req.path)) {
+        return next();
+    }
+    
+    // Check if user is logged in
+    if (!req.session.user) {
+        return res.redirect('/auth-login');
+    }
+    
+    next();
+};
+
+// Apply auth middleware to all routes
+route.use(checkAuth);
 
 route.get('/', (req, res, next) => {
   res.render('index', {title: 'Index'});

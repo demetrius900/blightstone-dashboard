@@ -83,3 +83,4 @@ Thumbs.db
 # Supabase
 .branches
 .temp
+.vercel

@@ -1,2 +1,9 @@
-routes/
 node_modules/
+.git/
+.env
+*.log
+.DS_Store
+.vscode/
+config.local.env
+dev.sh
+start-dev.sh
