@@ -4,6 +4,7 @@
   "description": "Blightstone - Bootstrap Admin and Dashboard Template",
   "main": "gulpfile.js",
   "scripts": {
+    "start": "node app.js",
     "gulp": "gulp",
     "build": "gulp build",
     "dev": "npm-run-all preview",
