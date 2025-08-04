@@ -1,5 +1,9 @@
 const { createClient } = require('@supabase/supabase-js');
 
+// Load environment variables
+require('dotenv').config({ path: '../.env' });
+require('dotenv').config({ path: './.env' });
+
 // Determine environment
 const isProduction = process.env.NODE_ENV === 'production';
 
