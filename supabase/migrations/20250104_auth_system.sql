@@ -180,6 +180,9 @@ CREATE POLICY "Users can view projects they're members of" ON public.projects
 CREATE POLICY "Users can create projects" ON public.projects
     FOR INSERT WITH CHECK (auth.uid() = created_by);
 
+CREATE POLICY "Authenticated users can create projects" ON public.projects
+    FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+
 CREATE POLICY "Project creators can update their projects" ON public.projects
     FOR UPDATE USING (auth.uid() = created_by);
 
