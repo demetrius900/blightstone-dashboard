@@ -131,7 +131,7 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Competitor Name *</label>
-                            <input type="text" class="form-control" name="name" required>
+                            <input type="text" class="form-control" name="competitor_name" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Website</label>
@@ -141,7 +141,7 @@
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Market</label>
-                            <select class="form-select" name="market">
+                            <select class="form-select" name="industry">
                                 <option value="E-commerce">E-commerce</option>
                                 <option value="SaaS">SaaS</option>
                                 <option value="Retail">Retail</option>
@@ -151,7 +151,7 @@
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Competition Level</label>
-                            <select class="form-select" name="level">
+                            <select class="form-select" name="market_position">
                                 <option value="Direct">Direct</option>
                                 <option value="Indirect">Indirect</option>
                                 <option value="Substitute">Substitute</option>
@@ -169,7 +169,7 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Products/Focus</label>
-                            <textarea class="form-control" name="products" rows="2" placeholder="What products or services do they offer?"></textarea>
+                            <textarea class="form-control" name="target_audience" rows="2" placeholder="Who is their target audience?"></textarea>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Target Market</label>
@@ -189,11 +189,11 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Pricing Strategy</label>
-                            <textarea class="form-control" name="pricing" rows="2" placeholder="How do they price their products?"></textarea>
+                            <textarea class="form-control" name="pricing_model" rows="2" placeholder="How do they price their products?"></textarea>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Marketing Strategy</label>
-                            <textarea class="form-control" name="marketing_strategy" rows="2" placeholder="How do they market themselves?"></textarea>
+                            <textarea class="form-control" name="marketing_channels" rows="2" placeholder="How do they market themselves?"></textarea>
                         </div>
                     </div>
                     <div class="row">
@@ -339,16 +339,16 @@ function renderCompetitors(competitors) {
                         <i class="mdi mdi-domain fs-24 text-primary"></i>
                     </div>
                     <div>
-                        <span class="fw-semibold">${competitor.name}</span>
-                        <div class="text-muted small">${competitor.products ? competitor.products.substring(0, 50) + '...' : ''}</div>
+                        <span class="fw-semibold">${competitor.competitor_name}</span>
+                        <div class="text-muted small">${competitor.target_audience ? competitor.target_audience.substring(0, 50) + '...' : ''}</div>
                     </div>
                 </div>
             </td>
             <td>
-                <span class="badge bg-secondary">${competitor.market || ''}</span>
+                <span class="badge bg-secondary">${competitor.industry || ''}</span>
             </td>
             <td>
-                <span class="badge ${getLevelBadge(competitor.level)}">${competitor.level || ''}</span>
+                <span class="badge ${getLevelBadge(competitor.market_position)}">${competitor.market_position || ''}</span>
             </td>
             <td>
                 <span class="badge ${getThreatBadge(competitor.threat_level)}">${competitor.threat_level || ''}</span>
@@ -426,12 +426,12 @@ function filterCompetitors() {
     const searchTerm = document.getElementById('searchCompetitors').value.toLowerCase();
     
     let filtered = allCompetitors.filter(competitor => {
-        const matchesMarket = !marketFilter || competitor.market === marketFilter;
-        const matchesLevel = !levelFilter || competitor.level === levelFilter;
+        const matchesMarket = !marketFilter || competitor.industry === marketFilter;
+        const matchesLevel = !levelFilter || competitor.market_position === levelFilter;
         const matchesThreat = !threatFilter || competitor.threat_level === threatFilter;
         const matchesSearch = !searchTerm || 
-            competitor.name?.toLowerCase().includes(searchTerm) ||
-            competitor.products?.toLowerCase().includes(searchTerm) ||
+            competitor.competitor_name?.toLowerCase().includes(searchTerm) ||
+            competitor.target_audience?.toLowerCase().includes(searchTerm) ||
             competitor.strengths?.toLowerCase().includes(searchTerm);
         
         return matchesMarket && matchesLevel && matchesThreat && matchesSearch;
@@ -450,21 +450,26 @@ document.getElementById('addCompetitorForm').addEventListener('submit', async fu
     try {
         showButtonLoading('addCompetitorBtnText', 'addCompetitorSpinner');
         
-        competitorData.id = Date.now().toString();
-        competitorData.project_id = projectId;
-        competitorData.created_at = new Date().toISOString();
-        
-        const competitors = JSON.parse(localStorage.getItem(`competitors_${projectId}`) || '[]');
-        competitors.push(competitorData);
-        localStorage.setItem(`competitors_${projectId}`, JSON.stringify(competitors));
-        
+        const response = await fetch(`/api/projects/${projectId}/competitors`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(competitorData)
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to create competitor');
+        }
+
         hideButtonLoading('addCompetitorBtnText', 'addCompetitorSpinner', 'Add Competitor');
         bootstrap.Modal.getInstance(document.getElementById('addCompetitorModal')).hide();
         e.target.reset();
         
-        loadCompetitors();
+        await loadCompetitors();
         showSuccess('Competitor added successfully!');
     } catch (error) {
+        console.error('Error creating competitor:', error);
         hideButtonLoading('addCompetitorBtnText', 'addCompetitorSpinner', 'Add Competitor');
         showError('Failed to add competitor');
     }

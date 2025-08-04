@@ -272,20 +272,29 @@ route.post('/tasks', async (req, res) => {
 
         const created_by = users[0].id;
 
+        // Clean up empty UUID fields
+        const taskData = {
+            title,
+            description,
+            priority: priority || 'Medium',
+            status: 'Pending',
+            due_date,
+            created_by,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+        };
+
+        // Only add project_id and assigned_to if they have values
+        if (project_id && project_id.trim() !== '') {
+            taskData.project_id = project_id;
+        }
+        if (assigned_to && assigned_to.trim() !== '') {
+            taskData.assigned_to = assigned_to;
+        }
+
         const { data: task, error } = await supabaseAdmin
             .from('tasks')
-            .insert({
-                title,
-                description,
-                project_id,
-                assigned_to,
-                priority: priority || 'Medium',
-                status: 'Pending',
-                due_date,
-                created_by,
-                created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString()
-            })
+            .insert(taskData)
             .select()
             .single();
 
