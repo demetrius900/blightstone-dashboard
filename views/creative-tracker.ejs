@@ -349,6 +349,18 @@ function getProjectIdFromURL() {
     return urlParams.get('id');
 }
 
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    projectId = getProjectIdFromURL();
+    if (projectId) {
+        loadCreatives();
+        setupEventListeners();
+    } else {
+        console.error('No project ID found in URL');
+        window.location.href = '/projects';
+    }
+});
+
 // Load creatives from API
 async function loadCreatives() {
     try {
@@ -484,6 +496,31 @@ function updateFilters() {
     
     brandFilter.innerHTML = '<option value="">All Brands</option>' + 
         brands.map(brand => `<option value="${brand}">${brand}</option>`).join('');
+}
+
+// Setup event listeners
+function setupEventListeners() {
+    // Add creative form
+    document.getElementById('addCreativeForm').addEventListener('submit', handleAddCreative);
+    
+    // Edit creative form
+    document.getElementById('editCreativeForm').addEventListener('submit', handleEditCreative);
+    
+    // Filters
+    document.getElementById('statusFilter').addEventListener('change', applyFilters);
+    document.getElementById('adTypeFilter').addEventListener('change', applyFilters);
+    document.getElementById('brandFilter').addEventListener('change', applyFilters);
+    document.getElementById('searchCreatives').addEventListener('input', applyFilters);
+    
+    // Select all checkbox
+    document.getElementById('selectAll').addEventListener('change', handleSelectAll);
+    
+    // Creative checkboxes
+    document.addEventListener('change', function(e) {
+        if (e.target.classList.contains('creative-checkbox')) {
+            updateBulkActions();
+        }
+    });
 }
 
 // Update bulk actions
@@ -785,6 +822,135 @@ const stepStyles = `
 `;
 
 document.head.insertAdjacentHTML('beforeend', stepStyles);
+
+// Handle add creative
+async function handleAddCreative(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(e.target);
+    const creativeData = Object.fromEntries(formData.entries());
+    
+    try {
+        const response = await fetch(`/api/projects/${projectId}/creatives`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(creativeData)
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to create creative');
+        }
+
+        // Reload creatives
+        await loadCreatives();
+        
+        // Close modal and reset form
+        bootstrap.Modal.getInstance(document.getElementById('addCreativeModal')).hide();
+        e.target.reset();
+        
+        showSuccess('Creative created successfully!');
+    } catch (error) {
+        console.error('Error creating creative:', error);
+        showError('Failed to create creative');
+    }
+}
+
+// Handle edit creative
+async function handleEditCreative(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(e.target);
+    const creativeData = Object.fromEntries(formData.entries());
+    
+    try {
+        const response = await fetch(`/api/projects/${projectId}/creatives/${currentEditId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(creativeData)
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to update creative');
+        }
+
+        // Reload creatives
+        await loadCreatives();
+        
+        // Close modal
+        bootstrap.Modal.getInstance(document.getElementById('editCreativeModal')).hide();
+        
+        showSuccess('Creative updated successfully!');
+    } catch (error) {
+        console.error('Error updating creative:', error);
+        showError('Failed to update creative');
+    }
+}
+
+// Apply filters
+function applyFilters() {
+    const statusFilter = document.getElementById('statusFilter').value;
+    const adTypeFilter = document.getElementById('adTypeFilter').value;
+    const brandFilter = document.getElementById('brandFilter').value;
+    const searchTerm = document.getElementById('searchCreatives').value.toLowerCase();
+    
+    const filteredCreatives = allCreatives.filter(creative => {
+        const matchesStatus = !statusFilter || creative.status === statusFilter;
+        const matchesType = !adTypeFilter || creative.ad_type === adTypeFilter;
+        const matchesBrand = !brandFilter || creative.brand === brandFilter;
+        const matchesSearch = !searchTerm || 
+            creative.brand?.toLowerCase().includes(searchTerm) ||
+            creative.ad_concept?.toLowerCase().includes(searchTerm) ||
+            creative.batch?.toLowerCase().includes(searchTerm);
+        
+        return matchesStatus && matchesType && matchesBrand && matchesSearch;
+    });
+    
+    renderCreatives(filteredCreatives);
+}
+
+// Handle select all
+function handleSelectAll(e) {
+    const checkboxes = document.querySelectorAll('.creative-checkbox');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = e.target.checked;
+    });
+    updateBulkActions();
+}
+
+// Utility functions
+function showSuccess(message) {
+    const toast = document.createElement('div');
+    toast.className = 'toast-notification bg-success text-white p-3 rounded position-fixed';
+    toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999;';
+    toast.innerHTML = `
+        <div class="d-flex align-items-center">
+            <i class="mdi mdi-check-circle me-2"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 4000);
+}
+
+function showError(message) {
+    const toast = document.createElement('div');
+    toast.className = 'toast-notification bg-danger text-white p-3 rounded position-fixed';
+    toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999;';
+    toast.innerHTML = `
+        <div class="d-flex align-items-center">
+            <i class="mdi mdi-alert-circle me-2"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 4000);
+}
 
 console.log('🎨 Creative Tracker loaded!');
 </script>

@@ -239,7 +239,8 @@ route.get('/tasks', async (req, res) => {
             .select(`
                 *,
                 projects!inner(name),
-                users!inner(name, email)
+                users!tasks_assigned_to_fkey(name, email),
+                created_by_user:users!tasks_created_by_fkey(name, email)
             `)
             .order('created_at', { ascending: false });
 
@@ -339,6 +340,159 @@ route.delete('/tasks/:id', async (req, res) => {
     } catch (error) {
         console.error('Delete task error:', error);
         res.status(500).json({ error: 'Failed to delete task' });
+    }
+});
+
+// Creative Tracker API
+route.get('/projects/:projectId/creatives', async (req, res) => {
+    try {
+        const { projectId } = req.params;
+        const { data: creatives, error } = await supabaseAdmin
+            .from('creative_entries')
+            .select('*')
+            .eq('project_id', projectId)
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        res.json(creatives || []);
+    } catch (error) {
+        console.error('Creative entries API error:', error);
+        res.status(500).json({ error: 'Failed to load creative entries' });
+    }
+});
+
+route.post('/projects/:projectId/creatives', async (req, res) => {
+    try {
+        const { projectId } = req.params;
+        const creativeData = req.body;
+
+        // Get first user as created_by for now
+        const { data: users } = await supabaseAdmin
+            .from('users')
+            .select('id')
+            .limit(1);
+
+        if (!users || users.length === 0) {
+            return res.status(400).json({ error: 'No users found' });
+        }
+
+        const { data: creative, error } = await supabaseAdmin
+            .from('creative_entries')
+            .insert({
+                ...creativeData,
+                project_id: projectId,
+                created_by: users[0].id
+            })
+            .select()
+            .single();
+
+        if (error) throw error;
+        res.json({ success: true, creative });
+    } catch (error) {
+        console.error('Create creative entry error:', error);
+        res.status(500).json({ error: 'Failed to create creative entry' });
+    }
+});
+
+// Customer Avatars API
+route.get('/projects/:projectId/avatars', async (req, res) => {
+    try {
+        const { projectId } = req.params;
+        const { data: avatars, error } = await supabaseAdmin
+            .from('customer_avatars')
+            .select('*')
+            .eq('project_id', projectId)
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        res.json(avatars || []);
+    } catch (error) {
+        console.error('Customer avatars API error:', error);
+        res.status(500).json({ error: 'Failed to load customer avatars' });
+    }
+});
+
+route.post('/projects/:projectId/avatars', async (req, res) => {
+    try {
+        const { projectId } = req.params;
+        const avatarData = req.body;
+
+        // Get first user as created_by for now
+        const { data: users } = await supabaseAdmin
+            .from('users')
+            .select('id')
+            .limit(1);
+
+        if (!users || users.length === 0) {
+            return res.status(400).json({ error: 'No users found' });
+        }
+
+        const { data: avatar, error } = await supabaseAdmin
+            .from('customer_avatars')
+            .insert({
+                ...avatarData,
+                project_id: projectId,
+                created_by: users[0].id
+            })
+            .select()
+            .single();
+
+        if (error) throw error;
+        res.json({ success: true, avatar });
+    } catch (error) {
+        console.error('Create customer avatar error:', error);
+        res.status(500).json({ error: 'Failed to create customer avatar' });
+    }
+});
+
+// Competitor Analysis API
+route.get('/projects/:projectId/competitors', async (req, res) => {
+    try {
+        const { projectId } = req.params;
+        const { data: competitors, error } = await supabaseAdmin
+            .from('competitor_analysis')
+            .select('*')
+            .eq('project_id', projectId)
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        res.json(competitors || []);
+    } catch (error) {
+        console.error('Competitor analysis API error:', error);
+        res.status(500).json({ error: 'Failed to load competitor analysis' });
+    }
+});
+
+route.post('/projects/:projectId/competitors', async (req, res) => {
+    try {
+        const { projectId } = req.params;
+        const competitorData = req.body;
+
+        // Get first user as created_by for now
+        const { data: users } = await supabaseAdmin
+            .from('users')
+            .select('id')
+            .limit(1);
+
+        if (!users || users.length === 0) {
+            return res.status(400).json({ error: 'No users found' });
+        }
+
+        const { data: competitor, error } = await supabaseAdmin
+            .from('competitor_analysis')
+            .insert({
+                ...competitorData,
+                project_id: projectId,
+                created_by: users[0].id
+            })
+            .select()
+            .single();
+
+        if (error) throw error;
+        res.json({ success: true, competitor });
+    } catch (error) {
+        console.error('Create competitor analysis error:', error);
+        res.status(500).json({ error: 'Failed to create competitor analysis' });
     }
 });
 
