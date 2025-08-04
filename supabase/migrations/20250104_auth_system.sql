@@ -184,13 +184,8 @@ CREATE POLICY "Project creators can update their projects" ON public.projects
     FOR UPDATE USING (auth.uid() = created_by);
 
 -- Project members
-CREATE POLICY "Users can view project members for their projects" ON public.project_members
-    FOR SELECT USING (
-        auth.uid() IN (
-            SELECT user_id FROM public.project_members pm2 
-            WHERE pm2.project_id = public.project_members.project_id
-        )
-    );
+CREATE POLICY "Authenticated users can view project members" ON public.project_members
+    FOR SELECT USING (auth.role() = 'authenticated');
 
 -- Tasks (similar policies for other project-related tables)
 CREATE POLICY "Users can view tasks in their projects" ON public.tasks

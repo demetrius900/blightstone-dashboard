@@ -276,75 +276,13 @@
 <%- contentFor('extra_javascript') %>
 
 <script>
-// Simple task management without authentication for now
-let tasks = [
-    {
-        id: '1',
-        title: 'Launch Facebook ad campaign for tech gadgets',
-        description: 'Create and optimize FB ads targeting tech enthusiasts aged 25-45',
-        status: 'In Progress',
-        priority: 'High',
-        project_id: '1',
-        assigned_to: '2',
-        due_date: '2024-12-15'
-    },
-    {
-        id: '2',
-        title: 'Source fitness equipment suppliers',
-        description: 'Research and contact 10 potential suppliers for resistance bands',
-        status: 'Completed',
-        priority: 'Medium',
-        project_id: '2',
-        assigned_to: '4',
-        due_date: '2024-12-12'
-    },
-    {
-        id: '3',
-        title: 'Design product mockups for mobile app',
-        description: 'Create wireframes and mockups for shopping cart flow',
-        status: 'Pending',
-        priority: 'High',
-        project_id: '3',
-        assigned_to: '5',
-        due_date: '2024-12-18'
-    },
-    {
-        id: '4',
-        title: 'Optimize store conversion rate',
-        description: 'A/B test checkout page to improve conversion rates',
-        status: 'In Progress',
-        priority: 'Medium',
-        project_id: '1',
-        assigned_to: '3',
-        due_date: '2024-12-20'
-    },
-    {
-        id: '5',
-        title: 'Create TikTok video content',
-        description: 'Produce 5 viral-style videos showcasing top products',
-        status: 'Pending',
-        priority: 'High',
-        project_id: '4',
-        assigned_to: '5',
-        due_date: '2024-12-22'
-    }
-];
+// Task management - data loaded from API
+let tasks = [];
+let projects = [];
+// Data will be loaded from API
 
-let projects = [
-    { id: '1', name: 'TechGear Store' },
-    { id: '2', name: 'FitnessPro Brand' },
-    { id: '3', name: 'Mobile Shopping App' },
-    { id: '4', name: 'Q1 Social Media Campaign' },
-    { id: '5', name: 'Supply Chain Optimization' }
-];
-
-let users = [
-    { id: '1', name: 'John Smith', role: 'CEO/Founder' },
-    { id: '2', name: 'Sarah Johnson', role: 'Media Buyer' },
-    { id: '3', name: 'Mike Chen', role: 'Store Manager' },
-    { id: '4', name: 'Emma Davis', role: 'Product Research' },
-    { id: '5', name: 'Alex Rodriguez', role: 'Creative Designer' }
-];
+let users = [];
+// Users will be loaded from API
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
