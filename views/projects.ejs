@@ -371,7 +371,9 @@ async function loadTeamMembers() {
         const response = await fetch('/api/users');
         if (response.ok) {
             teamMembers = await response.json();
-            populateTeamDropdowns();
+            // Populate team member cards for both add and edit modals
+            renderTeamMemberCards('teamMembersList', teamMembers);
+            renderTeamMemberCards('editTeamMembersList', teamMembers);
         } else {
             console.error('Failed to load team members');
         }
@@ -511,11 +513,14 @@ async function handleAddProject(e) {
         // Simulate API call
         await new Promise(resolve => setTimeout(resolve, 1000));
         
+        // Get selected team members from checkboxes
+        const selectedMembers = Array.from(document.querySelectorAll('#teamMembersList input[name="team_members"]:checked')).map(input => input.value);
+        
         const newProject = {
             id: Date.now().toString(),
             ...projectData,
             status: 'Planning',
-            team_members: Array.from(document.getElementById('projectTeam').selectedOptions).map(opt => opt.value),
+            team_members: selectedMembers,
             tasks_count: 0,
             completed_tasks: 0,
             created_at: new Date().toISOString().split('T')[0]
@@ -552,12 +557,15 @@ async function handleEditProject(e) {
         // Simulate API call
         await new Promise(resolve => setTimeout(resolve, 1000));
         
+        // Get selected team members from checkboxes
+        const selectedMembers = Array.from(document.querySelectorAll('#editTeamMembersList input[name="team_members"]:checked')).map(input => input.value);
+        
         const projectIndex = projects.findIndex(p => p.id === projectId);
         if (projectIndex !== -1) {
             projects[projectIndex] = {
                 ...projects[projectIndex],
                 ...projectData,
-                team_members: Array.from(document.getElementById('editProjectTeam').selectedOptions).map(opt => opt.value)
+                team_members: selectedMembers
             };
             
                 renderProjects();
@@ -618,10 +626,10 @@ function editProject(projectId) {
     document.getElementById('editProjectStartDate').value = project.start_date || '';
     document.getElementById('editProjectEndDate').value = project.end_date || '';
     
-    // Select team members
-    const teamSelect = document.getElementById('editProjectTeam');
-    Array.from(teamSelect.options).forEach(option => {
-        option.selected = project.team_members.includes(option.value);
+    // Select team members - check checkboxes for existing team members
+    const teamCheckboxes = document.querySelectorAll('#editTeamMembersList input[name="team_members"]');
+    teamCheckboxes.forEach(checkbox => {
+        checkbox.checked = project.team_members.includes(checkbox.value);
     });
     
     // Show modal
@@ -652,19 +660,7 @@ function viewProjectTasks(projectId) {
     }
 }
 
-// Populate team dropdowns
-function populateTeamDropdowns() {
-    const selectors = ['#projectTeam', '#editProjectTeam'];
-    
-    selectors.forEach(selector => {
-        const select = document.querySelector(selector);
-        if (select) {
-            select.innerHTML = teamMembers.map(member => 
-                `<option value="${member.id}">${member.name} (${member.role})</option>`
-            ).join('');
-        }
-    });
-}
+// Populate team member cards (already handled by renderTeamMemberCards function)
 
 // Utility functions for styling
 function getProjectTypeBadge(type) {
@@ -777,14 +773,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadTeamMembers();
 });
 
-// Team member assignment functionality
-function loadTeamMembers() {
-    // Get team members from HRM
-            // Team members loaded from API
-    
-    renderTeamMemberCards('teamMembersList', teamMembers);
-    renderTeamMemberCards('editTeamMembersList', teamMembers);
-}
+// Team member cards are now populated by the main loadTeamMembers function above
 
 function renderTeamMemberCards(containerId, members) {
     const container = document.getElementById(containerId);
