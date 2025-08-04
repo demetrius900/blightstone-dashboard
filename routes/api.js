@@ -71,6 +71,19 @@ route.post('/projects', async (req, res) => {
             return res.status(400).json({ error: 'Project name is required' });
         }
 
+        // For now, we'll use the first user in the database as created_by
+        // In a real app, this would be req.session.user.id
+        const { data: users } = await supabase
+            .from('users')
+            .select('id')
+            .limit(1);
+
+        if (!users || users.length === 0) {
+            return res.status(400).json({ error: 'No users found. Please create a user first.' });
+        }
+
+        const created_by = users[0].id;
+
         // Create project in database
         const { data: project, error: projectError } = await supabase
             .from('projects')
@@ -79,7 +92,8 @@ route.post('/projects', async (req, res) => {
                 description,
                 type,
                 priority: priority || 'Medium',
-                status: 'Planning',
+                status: 'active',
+                created_by,
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString()
             })
