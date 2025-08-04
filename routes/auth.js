@@ -61,8 +61,42 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// Register (complete invitation)
+// Direct registration (for internal use)
 router.post('/register', async (req, res) => {
+    try {
+        const { email, password, name, role = 'Team Member' } = req.body;
+
+        if (!email || !password || !name) {
+            return res.status(400).json({ 
+                success: false, 
+                error: 'Email, password, and name are required' 
+            });
+        }
+
+        // Create user directly
+        const result = await authService.createUser({
+            email,
+            password,
+            name,
+            role
+        });
+
+        if (result.success) {
+            res.json({
+                success: true,
+                message: 'Account created successfully. Please log in.'
+            });
+        } else {
+            res.status(400).json(result);
+        }
+    } catch (error) {
+        console.error('Registration error:', error);
+        res.status(500).json({ success: false, error: 'Registration failed' });
+    }
+});
+
+// Register (complete invitation) - keeping for backward compatibility
+router.post('/register-invitation', async (req, res) => {
     try {
         const { token, password, name } = req.body;
 
