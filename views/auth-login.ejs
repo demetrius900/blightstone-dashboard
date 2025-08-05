@@ -141,6 +141,7 @@ if (typeof sonner !== 'undefined') {
 }
 document.getElementById("loginForm").addEventListener("submit", async (event) => {
     event.preventDefault();
+    console.log('🔐 Login form submitted');
     
     const loginBtn = document.getElementById("loginBtn");
     const loginText = document.getElementById("loginText");
@@ -156,6 +157,8 @@ document.getElementById("loginForm").addEventListener("submit", async (event) =>
     const email = document.getElementById("emailaddress").value;
     const password = document.getElementById("password").value;
     
+    console.log('🔐 Attempting login with:', { email, password: '***' });
+    
     try {
         const response = await fetch('/api/auth/login', {
             method: 'POST',
@@ -165,10 +168,13 @@ document.getElementById("loginForm").addEventListener("submit", async (event) =>
             body: JSON.stringify({ email, password })
         });
         
+        console.log('🔐 Login response status:', response.status);
         const data = await response.json();
+        console.log('🔐 Login response data:', data);
         
         if (response.ok && data.success) {
             // User session stored on server
+            console.log('✅ Login successful, redirecting...');
             
             // Show success message briefly
             loginText.textContent = "Success! Redirecting...";
@@ -179,10 +185,13 @@ document.getElementById("loginForm").addEventListener("submit", async (event) =>
             }
             
             // Redirect to dashboard after short delay
+            console.log('🔄 Redirecting to dashboard in 1 second...');
             setTimeout(() => {
+                console.log('🔄 Executing redirect to /');
                 window.location.href = "/";
             }, 1000);
         } else {
+            console.error('❌ Login failed:', data);
             throw new Error(data.error || 'Login failed');
         }
     } catch (error) {
@@ -205,6 +214,26 @@ document.getElementById("loginForm").addEventListener("submit", async (event) =>
 
 // Initialize login form
 document.addEventListener('DOMContentLoaded', function() {
-    // Form ready for user input
+    console.log('🔐 Login page loaded');
+    
+    // Check if all required elements exist
+    const form = document.getElementById("loginForm");
+    const emailInput = document.getElementById("emailaddress");
+    const passwordInput = document.getElementById("password");
+    const loginBtn = document.getElementById("loginBtn");
+    
+    console.log('🔐 Form elements check:', {
+        form: !!form,
+        emailInput: !!emailInput,
+        passwordInput: !!passwordInput,
+        loginBtn: !!loginBtn
+    });
+    
+    if (!form || !emailInput || !passwordInput || !loginBtn) {
+        console.error('❌ Missing required form elements!');
+        return;
+    }
+    
+    console.log('✅ All form elements found, form ready for user input');
 });
 </script>
