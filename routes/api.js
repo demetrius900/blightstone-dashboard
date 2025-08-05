@@ -238,7 +238,7 @@ route.get('/tasks', async (req, res) => {
             .from('tasks')
             .select(`
                 *,
-                projects!inner(name),
+                projects(name),
                 users!tasks_assigned_to_fkey(name, email),
                 created_by_user:users!tasks_created_by_fkey(name, email)
             `)
@@ -546,6 +546,68 @@ route.post('/projects/:projectId/avatars', async (req, res) => {
     } catch (error) {
         console.error('Create customer avatar error:', error);
         res.status(500).json({ error: 'Failed to create customer avatar' });
+    }
+});
+
+// PUT - Update avatar
+route.put('/projects/:projectId/avatars/:id', async (req, res) => {
+    try {
+        const { projectId, id } = req.params;
+        const avatarData = req.body;
+        
+        // Only include fields that exist in the database schema
+        const allowedFields = [
+            'name', 'age_group', 'gender', 'location', 'occupation', 'income_level',
+            'family_status', 'pain_points', 'goals', 'key_messaging'
+        ];
+        
+        const filteredData = {};
+        allowedFields.forEach(field => {
+            if (avatarData[field] !== undefined && avatarData[field] !== '') {
+                filteredData[field] = avatarData[field];
+            }
+        });
+
+        const { data: avatar, error } = await supabaseAdmin
+            .from('customer_avatars')
+            .update(filteredData)
+            .eq('id', id)
+            .eq('project_id', projectId)
+            .select()
+            .single();
+
+        if (error) {
+            console.error('Error updating avatar:', error);
+            return res.status(500).json({ error: 'Failed to update avatar' });
+        }
+
+        res.json(avatar);
+    } catch (error) {
+        console.error('Error updating avatar:', error);
+        res.status(500).json({ error: 'Failed to update avatar' });
+    }
+});
+
+// DELETE - Delete avatar
+route.delete('/projects/:projectId/avatars/:id', async (req, res) => {
+    try {
+        const { projectId, id } = req.params;
+
+        const { error } = await supabaseAdmin
+            .from('customer_avatars')
+            .delete()
+            .eq('id', id)
+            .eq('project_id', projectId);
+
+        if (error) {
+            console.error('Error deleting avatar:', error);
+            return res.status(500).json({ error: 'Failed to delete avatar' });
+        }
+
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error deleting avatar:', error);
+        res.status(500).json({ error: 'Failed to delete avatar' });
     }
 });
 

@@ -267,6 +267,101 @@
     </div>
 </div>
 
+<!-- Edit Avatar Modal -->
+<div class="modal fade" id="editAvatarModal" tabindex="-1" aria-labelledby="editAvatarModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editAvatarModalLabel">Edit Customer Avatar</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="editAvatarForm">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Avatar Name *</label>
+                            <input type="text" class="form-control" id="editAvatarName" name="name" placeholder="e.g., Busy Professional Mom" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Age Group</label>
+                            <select class="form-select" id="editAgeGroup" name="age_group">
+                                <option value="18-24">18-24</option>
+                                <option value="25-34" selected>25-34</option>
+                                <option value="35-44">35-44</option>
+                                <option value="45-54">45-54</option>
+                                <option value="55+">55+</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Gender</label>
+                            <select class="form-select" id="editGender" name="gender">
+                                <option value="Female">Female</option>
+                                <option value="Male">Male</option>
+                                <option value="Non-binary">Non-binary</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Income Level</label>
+                            <select class="form-select" id="editIncomeLevel" name="income_level">
+                                <option value="$0-30k">$0-30k</option>
+                                <option value="$30k-50k">$30k-50k</option>
+                                <option value="$50k-75k" selected>$50k-75k</option>
+                                <option value="$75k-100k">$75k-100k</option>
+                                <option value="$100k+">$100k+</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Location Type</label>
+                            <select class="form-select" id="editLocation" name="location">
+                                <option value="Urban">Urban</option>
+                                <option value="Suburban" selected>Suburban</option>
+                                <option value="Rural">Rural</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Occupation</label>
+                            <input type="text" class="form-control" id="editOccupation" name="occupation" placeholder="e.g., Marketing Manager">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Family Status</label>
+                            <select class="form-select" id="editFamilyStatus" name="family_status">
+                                <option value="Single">Single</option>
+                                <option value="Married">Married</option>
+                                <option value="Married with kids" selected>Married with kids</option>
+                                <option value="Single parent">Single parent</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Pain Points</label>
+                        <textarea class="form-control" id="editPainPoints" name="pain_points" rows="3" placeholder="What problems does this avatar face?"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Goals & Aspirations</label>
+                        <textarea class="form-control" id="editGoals" name="goals" rows="3" placeholder="What does this avatar want to achieve?"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Key Messaging</label>
+                        <input type="text" class="form-control" id="editKeyMessaging" name="key_messaging" placeholder="How to speak to this avatar">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <span id="editAvatarBtnText">Update Avatar</span>
+                        <span id="editAvatarSpinner" class="spinner-border spinner-border-sm ms-2" style="display: none;"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- Delete Avatar Modal -->
 <div class="modal fade" id="deleteAvatarModal" tabindex="-1">
     <div class="modal-dialog">
@@ -486,6 +581,72 @@ function showSuccess(message) {
 function showError(message) {
     console.log('Error:', message);
 }
+
+// Edit avatar
+function editAvatar(id) {
+    const avatar = allAvatars.find(a => a.id === id);
+    if (!avatar) return;
+    
+    // Populate edit form
+    document.getElementById('editAvatarName').value = avatar.name || '';
+    document.getElementById('editAgeGroup').value = avatar.age_group || '';
+    document.getElementById('editGender').value = avatar.gender || '';
+    document.getElementById('editIncomeLevel').value = avatar.income_level || '';
+    document.getElementById('editLocation').value = avatar.location || '';
+    document.getElementById('editOccupation').value = avatar.occupation || '';
+    document.getElementById('editFamilyStatus').value = avatar.family_status || '';
+    document.getElementById('editPainPoints').value = avatar.pain_points || '';
+    document.getElementById('editGoals').value = avatar.goals || '';
+    document.getElementById('editKeyMessaging').value = avatar.key_messaging || '';
+    
+    // Store the avatar ID for the form submission
+    document.getElementById('editAvatarForm').dataset.avatarId = id;
+    
+    // Show the modal
+    const modal = new bootstrap.Modal(document.getElementById('editAvatarModal'));
+    modal.show();
+}
+
+// Handle edit form submission
+document.getElementById('editAvatarForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const avatarId = this.dataset.avatarId;
+    if (!avatarId) {
+        showError('No avatar selected for editing');
+        return;
+    }
+    
+    const formData = new FormData(e.target);
+    const avatarData = Object.fromEntries(formData.entries());
+    
+    try {
+        showButtonLoading('editAvatarBtnText', 'editAvatarSpinner');
+        
+        const response = await fetch(`/api/projects/${projectId}/avatars/${avatarId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(avatarData)
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to update avatar');
+        }
+        
+        hideButtonLoading('editAvatarBtnText', 'editAvatarSpinner', 'Update Avatar');
+        bootstrap.Modal.getInstance(document.getElementById('editAvatarModal')).hide();
+        e.target.reset();
+        
+        await loadAvatars();
+        showSuccess('Customer avatar updated successfully!');
+    } catch (error) {
+        console.error('Error updating avatar:', error);
+        hideButtonLoading('editAvatarBtnText', 'editAvatarSpinner', 'Update Avatar');
+        showError('Failed to update avatar');
+    }
+});
 
 // Initialize project context
 document.addEventListener('DOMContentLoaded', function() {
