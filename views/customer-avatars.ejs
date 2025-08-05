@@ -74,20 +74,24 @@
                         <table class="table table-hover" id="avatarsTable">
                             <thead class="table-light">
                                 <tr>
-                                    <th width="5%">
+                                    <th width="3%">
                                         <input type="checkbox" id="selectAll" class="form-check-input">
                                     </th>
-                                    <th width="20%">Avatar Name</th>
-                                    <th width="15%">Demographics</th>
-                                    <th width="15%">Income Level</th>
-                                    <th width="20%">Pain Points</th>
-                                    <th width="15%">Goals</th>
-                                    <th width="10%">Actions</th>
+                                    <th width="12%">Avatar Name</th>
+                                    <th width="8%">Age Group</th>
+                                    <th width="8%">Gender</th>
+                                    <th width="10%">Location</th>
+                                    <th width="10%">Occupation</th>
+                                    <th width="8%">Income</th>
+                                    <th width="10%">Family Status</th>
+                                    <th width="15%">Pain Points</th>
+                                    <th width="10%">Goals</th>
+                                    <th width="6%">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="avatarsTableBody">
                                 <tr>
-                                    <td colspan="7" class="text-center py-4">
+                                    <td colspan="11" class="text-center py-4">
                                         <div class="spinner-border text-primary" role="status">
                                             <span class="visually-hidden">Loading...</span>
                                         </div>
@@ -420,7 +424,7 @@ function showLoadingState() {
     const tbody = document.getElementById('avatarsTableBody');
     tbody.innerHTML = `
         <tr>
-            <td colspan="7" class="text-center py-4">
+            <td colspan="11" class="text-center py-4">
                 <div class="spinner-border text-primary" role="status">
                     <span class="visually-hidden">Loading...</span>
                 </div>
@@ -435,7 +439,7 @@ function showErrorState(message) {
     const tbody = document.getElementById('avatarsTableBody');
     tbody.innerHTML = `
         <tr>
-            <td colspan="7" class="text-center py-4">
+            <td colspan="11" class="text-center py-4">
                 <i class="mdi mdi-alert-circle fs-48 text-muted"></i>
                 <h5 class="mt-3">Error</h5>
                 <p class="text-muted">${message}</p>
@@ -454,7 +458,7 @@ function renderAvatars(avatars) {
     if (avatars.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="7" class="text-center py-4">
+                <td colspan="11" class="text-center py-4">
                     <i class="mdi mdi-account-group fs-48 text-muted"></i>
                     <h5 class="mt-3">No Customer Avatars Yet</h5>
                     <p class="text-muted">Create your first customer avatar to get started</p>
@@ -475,28 +479,36 @@ function renderAvatars(avatars) {
             <td>
                 <div class="d-flex align-items-center">
                     <div class="avatar-icon me-2">
-                        <i class="mdi mdi-account-circle fs-24 text-primary"></i>
+                        <i class="mdi mdi-account-circle fs-16 text-primary"></i>
                     </div>
                     <div>
-                        <span class="fw-semibold">${avatar.name}</span>
-                        <div class="text-muted small">${avatar.occupation || ''}</div>
+                        <span class="fw-semibold small">${avatar.name}</span>
                     </div>
                 </div>
             </td>
             <td>
-                <div class="small">
-                    <div>${avatar.gender}, ${avatar.age_group}</div>
-                    <div class="text-muted">${avatar.location}, ${avatar.family_status}</div>
-                </div>
+                <span class="small">${avatar.age_group || '-'}</span>
             </td>
             <td>
-                <span class="badge bg-info">${avatar.income_level}</span>
+                <span class="small">${avatar.gender || '-'}</span>
             </td>
             <td>
-                <span class="text-truncate d-inline-block" style="max-width: 200px;" title="${avatar.pain_points || ''}">${avatar.pain_points || ''}</span>
+                <span class="small">${avatar.location || '-'}</span>
             </td>
             <td>
-                <span class="text-truncate d-inline-block" style="max-width: 150px;" title="${avatar.goals || ''}">${avatar.goals || ''}</span>
+                <span class="small">${avatar.occupation || '-'}</span>
+            </td>
+            <td>
+                <span class="badge bg-info small">${avatar.income_level || '-'}</span>
+            </td>
+            <td>
+                <span class="small">${avatar.family_status || '-'}</span>
+            </td>
+            <td>
+                <span class="text-truncate d-inline-block small" style="max-width: 120px;" title="${avatar.pain_points || ''}">${avatar.pain_points || '-'}</span>
+            </td>
+            <td>
+                <span class="text-truncate d-inline-block small" style="max-width: 100px;" title="${avatar.goals || ''}">${avatar.goals || '-'}</span>
             </td>
             <td>
                 <div class="dropdown">
@@ -857,6 +869,10 @@ document.addEventListener('DOMContentLoaded', function() {
     if (projectId) {
         document.getElementById('back-button-container').style.display = 'block';
         loadAvatars();
+        
+        // Test edit modal availability
+        console.log('🔧 Edit modal element:', document.getElementById('editAvatarModal'));
+        console.log('🔧 Bootstrap available:', typeof bootstrap !== 'undefined');
     } else {
         console.error('No project ID found in URL');
         window.location.href = '/projects';
