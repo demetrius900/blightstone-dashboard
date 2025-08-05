@@ -584,8 +584,13 @@ function showError(message) {
 
 // Edit avatar
 function editAvatar(id) {
+    console.log('🔧 editAvatar called with id:', id);
     const avatar = allAvatars.find(a => a.id === id);
-    if (!avatar) return;
+    console.log('🔧 Found avatar:', avatar);
+    if (!avatar) {
+        console.error('❌ Avatar not found with id:', id);
+        return;
+    }
     
     // Populate edit form
     document.getElementById('editAvatarName').value = avatar.name || '';
@@ -603,6 +608,7 @@ function editAvatar(id) {
     document.getElementById('editAvatarForm').dataset.avatarId = id;
     
     // Show the modal
+    console.log('🔧 Showing edit modal...');
     const modal = new bootstrap.Modal(document.getElementById('editAvatarModal'));
     modal.show();
 }
