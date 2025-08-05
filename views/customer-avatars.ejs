@@ -504,14 +504,14 @@ function renderAvatars(avatars) {
                         <i class="mdi mdi-dots-vertical"></i>
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#" onclick="editAvatar('${avatar.id}')">
+                        <li><a class="dropdown-item" href="#" onclick="event.preventDefault(); editAvatar('${avatar.id}'); return false;">
                             <i class="mdi mdi-pencil me-2"></i>Edit
                         </a></li>
-                        <li><a class="dropdown-item" href="#" onclick="viewAvatarDetails('${avatar.id}')">
+                        <li><a class="dropdown-item" href="#" onclick="event.preventDefault(); viewAvatarDetails('${avatar.id}'); return false;">
                             <i class="mdi mdi-eye me-2"></i>View Details
                         </a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="#" onclick="deleteAvatar('${avatar.id}')">
+                        <li><a class="dropdown-item text-danger" href="#" onclick="event.preventDefault(); deleteAvatar('${avatar.id}'); return false;">
                             <i class="mdi mdi-delete me-2"></i>Delete
                         </a></li>
                     </ul>
@@ -609,8 +609,28 @@ function editAvatar(id) {
     
     // Show the modal
     console.log('🔧 Showing edit modal...');
-    const modal = new bootstrap.Modal(document.getElementById('editAvatarModal'));
-    modal.show();
+    const modalElement = document.getElementById('editAvatarModal');
+    console.log('🔧 Modal element found:', modalElement);
+    console.log('🔧 Bootstrap available:', typeof bootstrap !== 'undefined');
+    
+    if (!modalElement) {
+        console.error('❌ Modal element not found!');
+        return;
+    }
+    
+    if (typeof bootstrap === 'undefined') {
+        console.error('❌ Bootstrap not loaded!');
+        return;
+    }
+    
+    try {
+        const modal = new bootstrap.Modal(modalElement);
+        console.log('🔧 Modal instance created:', modal);
+        modal.show();
+        console.log('🔧 Modal show() called');
+    } catch (error) {
+        console.error('❌ Error creating/showing modal:', error);
+    }
 }
 
 // Handle edit form submission
@@ -797,6 +817,39 @@ document.getElementById('addAvatarForm').addEventListener('submit', async functi
         showError('Failed to add avatar');
     }
 });
+
+// View avatar details
+function viewAvatarDetails(id) {
+    console.log('👁️ viewAvatarDetails called with id:', id);
+    const avatar = allAvatars.find(a => a.id === id);
+    if (!avatar) {
+        console.error('❌ Avatar not found for view');
+        return;
+    }
+    // TODO: Implement view details modal
+    console.log('Avatar details:', avatar);
+    if (window.toast) {
+        window.toast.info('View details functionality coming soon!');
+    }
+}
+
+// Delete avatar
+function deleteAvatar(id) {
+    console.log('🗑️ deleteAvatar called with id:', id);
+    const avatar = allAvatars.find(a => a.id === id);
+    if (!avatar) {
+        console.error('❌ Avatar not found for delete');
+        return;
+    }
+    
+    if (confirm(`Are you sure you want to delete "${avatar.name}"?`)) {
+        // TODO: Implement delete functionality
+        console.log('Delete confirmed for:', avatar.name);
+        if (window.toast) {
+            window.toast.info('Delete functionality coming soon!');
+        }
+    }
+}
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
