@@ -243,6 +243,131 @@
     </div>
 </div>
 
+<!-- Edit Competitor Modal -->
+<div class="modal fade" id="editCompetitorModal" tabindex="-1" aria-labelledby="editCompetitorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editCompetitorModalLabel">Edit Competitor</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="editCompetitorForm">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editCompetitorName" class="form-label">Competitor Name</label>
+                                <input type="text" class="form-control" id="editCompetitorName" name="competitor_name" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editIndustry" class="form-label">Industry</label>
+                                <select class="form-select" id="editIndustry" name="industry">
+                                    <option value="E-commerce">E-commerce</option>
+                                    <option value="SaaS">SaaS</option>
+                                    <option value="Mobile App">Mobile App</option>
+                                    <option value="Digital Marketing">Digital Marketing</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editMarketPosition" class="form-label">Market Position</label>
+                                <select class="form-select" id="editMarketPosition" name="market_position">
+                                    <option value="Direct">Direct</option>
+                                    <option value="Indirect">Indirect</option>
+                                    <option value="Substitute">Substitute</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editThreatLevel" class="form-label">Threat Level</label>
+                                <select class="form-select" id="editThreatLevel" name="threat_level">
+                                    <option value="High">High</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="Low">Low</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editStrengths" class="form-label">Strengths</label>
+                                <textarea class="form-control" id="editStrengths" name="strengths" rows="3"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editWeaknesses" class="form-label">Weaknesses</label>
+                                <textarea class="form-control" id="editWeaknesses" name="weaknesses" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editOpportunities" class="form-label">Opportunities</label>
+                                <textarea class="form-control" id="editOpportunities" name="opportunities" rows="3"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editThreats" class="form-label">Threats</label>
+                                <textarea class="form-control" id="editThreats" name="threats" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editKeyStrategies" class="form-label">Key Strategies</label>
+                                <textarea class="form-control" id="editKeyStrategies" name="key_strategies" rows="3"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editPricingModel" class="form-label">Pricing Model</label>
+                                <textarea class="form-control" id="editPricingModel" name="pricing_model" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editTargetAudience" class="form-label">Target Audience</label>
+                                <textarea class="form-control" id="editTargetAudience" name="target_audience" rows="3"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editMarketingChannels" class="form-label">Marketing Channels</label>
+                                <textarea class="form-control" id="editMarketingChannels" name="marketing_channels" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editNotes" class="form-label">Notes</label>
+                        <textarea class="form-control" id="editNotes" name="notes" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <span id="editCompetitorBtnText">Update Competitor</span>
+                        <span id="editCompetitorSpinner" class="spinner-border spinner-border-sm ms-2" style="display: none;"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
 let projectId;
 let allCompetitors = [];
@@ -488,11 +613,108 @@ function hideButtonLoading(textId, spinnerId, originalText) {
 }
 
 function showSuccess(message) {
-    console.log('Success:', message);
+    if (window.toast) {
+        window.toast.success(message);
+    } else {
+        console.log('Success:', message);
+    }
+}
+
+// Edit competitor
+function editCompetitor(id) {
+    const competitor = allCompetitors.find(c => c.id === id);
+    if (!competitor) return;
+    
+    // Populate edit form
+    document.getElementById('editCompetitorName').value = competitor.competitor_name || '';
+    document.getElementById('editIndustry').value = competitor.industry || '';
+    document.getElementById('editMarketPosition').value = competitor.market_position || '';
+    document.getElementById('editThreatLevel').value = competitor.threat_level || '';
+    document.getElementById('editStrengths').value = competitor.strengths || '';
+    document.getElementById('editWeaknesses').value = competitor.weaknesses || '';
+    document.getElementById('editOpportunities').value = competitor.opportunities || '';
+    document.getElementById('editThreats').value = competitor.threats || '';
+    document.getElementById('editKeyStrategies').value = competitor.key_strategies || '';
+    document.getElementById('editPricingModel').value = competitor.pricing_model || '';
+    document.getElementById('editTargetAudience').value = competitor.target_audience || '';
+    document.getElementById('editMarketingChannels').value = competitor.marketing_channels || '';
+    document.getElementById('editNotes').value = competitor.notes || '';
+    
+    // Store the competitor ID for the form submission
+    document.getElementById('editCompetitorForm').dataset.competitorId = id;
+    
+    // Show the modal
+    const modal = new bootstrap.Modal(document.getElementById('editCompetitorModal'));
+    modal.show();
+}
+
+// Handle edit form submission
+document.getElementById('editCompetitorForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const competitorId = this.dataset.competitorId;
+    if (!competitorId) {
+        showError('No competitor selected for editing');
+        return;
+    }
+    
+    const formData = new FormData(e.target);
+    const competitorData = Object.fromEntries(formData.entries());
+    
+    try {
+        showButtonLoading('editCompetitorBtnText', 'editCompetitorSpinner');
+        
+        const response = await fetch(`/api/projects/${projectId}/competitors/${competitorId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(competitorData)
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to update competitor');
+        }
+        
+        hideButtonLoading('editCompetitorBtnText', 'editCompetitorSpinner', 'Update Competitor');
+        bootstrap.Modal.getInstance(document.getElementById('editCompetitorModal')).hide();
+        e.target.reset();
+        
+        await loadCompetitors();
+        showSuccess('Competitor updated successfully!');
+    } catch (error) {
+        console.error('Error updating competitor:', error);
+        hideButtonLoading('editCompetitorBtnText', 'editCompetitorSpinner', 'Update Competitor');
+        showError('Failed to update competitor');
+    }
+});
+
+// View competitor details
+function viewCompetitorDetails(id) {
+    const competitor = allCompetitors.find(c => c.id === id);
+    if (!competitor) return;
+    
+    console.log('View competitor details:', competitor);
+    // TODO: Add view modal
+}
+
+// Delete competitor
+function deleteCompetitor(id) {
+    const competitor = allCompetitors.find(c => c.id === id);
+    if (!competitor) return;
+    
+    if (confirm(`Are you sure you want to delete "${competitor.competitor_name}"?`)) {
+        // TODO: Add delete API call
+        console.log('Delete competitor:', id);
+    }
 }
 
 function showError(message) {
-    console.log('Error:', message);
+    if (window.toast) {
+        window.toast.error(message);
+    } else {
+        console.log('Error:', message);
+    }
 }
 
 // Initialize project context

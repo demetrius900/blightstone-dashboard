@@ -213,21 +213,57 @@
                         <input type="text" class="form-control" name="key_messaging" placeholder="How to speak to this avatar">
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-outline-primary" id="avatarPrevStep" style="display: none;">
-                        <i class="mdi mdi-arrow-left me-1"></i>Previous
-                    </button>
-                    <button type="button" class="btn btn-primary" id="avatarNextStep">
-                        Next <i class="mdi mdi-arrow-right ms-1"></i>
-                    </button>
-                    <button type="submit" class="btn btn-success" id="submitAvatar" style="display: none;">
-                        <span id="addAvatarBtnText"><i class="mdi mdi-check me-1"></i>Add Avatar</span>
-                        <span id="addAvatarSpinner" class="spinner-border spinner-border-sm d-none ms-2"></span>
-                    </button>
+                
+                <!-- Step 2: Psychographics -->
+                <div class="step-content" id="avatarStep2" style="display: none;">
+                    <h6 class="mb-3 text-primary">🧠 Psychographics & Behavior</h6>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Values & Beliefs</label>
+                            <textarea class="form-control" name="values_beliefs" rows="3" placeholder="What values drive this avatar's decisions?"></textarea>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Lifestyle</label>
+                            <textarea class="form-control" name="lifestyle" rows="3" placeholder="Describe their daily lifestyle"></textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Communication Preferences</label>
+                            <select class="form-select" name="communication_preferences">
+                                <option value="Direct">Direct</option>
+                                <option value="Emotional">Emotional</option>
+                                <option value="Data-driven">Data-driven</option>
+                                <option value="Story-based">Story-based</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Decision Making Style</label>
+                            <select class="form-select" name="decision_style">
+                                <option value="Quick">Quick</option>
+                                <option value="Analytical">Analytical</option>
+                                <option value="Emotional">Emotional</option>
+                                <option value="Consultative">Consultative</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Additional Notes</label>
+                        <textarea class="form-control" name="additional_notes" rows="3" placeholder="Any other important details about this avatar"></textarea>
+                    </div>
                 </div>
-            </form>
-        </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-outline-primary" id="avatarPrevStep" style="display: none;">
+                    <i class="mdi mdi-arrow-left me-1"></i>Previous
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    <span id="addAvatarBtnText">Next →</span>
+                    <span id="addAvatarSpinner" class="spinner-border spinner-border-sm d-none ms-2"></span>
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -592,6 +628,18 @@ document.getElementById('addAvatarForm').addEventListener('submit', async functi
         console.error('Error creating avatar:', error);
         hideButtonLoading('addAvatarBtnText', 'addAvatarSpinner', 'Add Avatar');
         showError('Failed to add avatar');
+    }
+});
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    projectId = getProjectIdFromURL();
+    if (projectId) {
+        document.getElementById('back-button-container').style.display = 'block';
+        loadAvatars();
+    } else {
+        console.error('No project ID found in URL');
+        window.location.href = '/projects';
     }
 });
 

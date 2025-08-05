@@ -388,10 +388,25 @@ route.post('/projects/:projectId/creatives', async (req, res) => {
             return res.status(400).json({ error: 'No users found' });
         }
 
+        // Only include fields that exist in the database schema
+        const allowedFields = [
+            'batch_number', 'brand', 'status', 'launch_date', 'ad_concept', 
+            'ad_type', 'ad_variable', 'desire', 'benefit_focus', 'objections', 
+            'persona', 'positioning_concept', 'positioning_how', 'hook_pattern', 
+            'results', 'winning_ads', 'brief_link'
+        ];
+        
+        const filteredData = {};
+        allowedFields.forEach(field => {
+            if (creativeData[field] !== undefined && creativeData[field] !== '') {
+                filteredData[field] = creativeData[field];
+            }
+        });
+
         const { data: creative, error } = await supabaseAdmin
             .from('creative_entries')
             .insert({
-                ...creativeData,
+                ...filteredData,
                 project_id: projectId,
                 created_by: users[0].id
             })
@@ -403,6 +418,70 @@ route.post('/projects/:projectId/creatives', async (req, res) => {
     } catch (error) {
         console.error('Create creative entry error:', error);
         res.status(500).json({ error: 'Failed to create creative entry' });
+    }
+});
+
+// PUT - Update creative
+route.put('/projects/:projectId/creatives/:id', async (req, res) => {
+    try {
+        const { projectId, id } = req.params;
+        const creativeData = req.body;
+        
+        // Only include fields that exist in the database schema
+        const allowedFields = [
+            'batch_number', 'brand', 'status', 'launch_date', 'ad_concept', 
+            'ad_type', 'ad_variable', 'desire', 'benefit_focus', 'objections', 
+            'persona', 'positioning_concept', 'positioning_how', 'hook_pattern', 
+            'results', 'winning_ads', 'brief_link'
+        ];
+        
+        const filteredData = {};
+        allowedFields.forEach(field => {
+            if (creativeData[field] !== undefined && creativeData[field] !== '') {
+                filteredData[field] = creativeData[field];
+            }
+        });
+
+        const { data: creative, error } = await supabaseAdmin
+            .from('creative_entries')
+            .update(filteredData)
+            .eq('id', id)
+            .eq('project_id', projectId)
+            .select()
+            .single();
+
+        if (error) {
+            console.error('Error updating creative:', error);
+            return res.status(500).json({ error: 'Failed to update creative' });
+        }
+
+        res.json(creative);
+    } catch (error) {
+        console.error('Error updating creative:', error);
+        res.status(500).json({ error: 'Failed to update creative' });
+    }
+});
+
+// DELETE - Delete creative
+route.delete('/projects/:projectId/creatives/:id', async (req, res) => {
+    try {
+        const { projectId, id } = req.params;
+
+        const { error } = await supabaseAdmin
+            .from('creative_entries')
+            .delete()
+            .eq('id', id)
+            .eq('project_id', projectId);
+
+        if (error) {
+            console.error('Error deleting creative:', error);
+            return res.status(500).json({ error: 'Failed to delete creative' });
+        }
+
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error deleting creative:', error);
+        res.status(500).json({ error: 'Failed to delete creative' });
     }
 });
 
@@ -532,6 +611,69 @@ route.post('/projects/:projectId/competitors', async (req, res) => {
     } catch (error) {
         console.error('Create competitor analysis error:', error);
         res.status(500).json({ error: 'Failed to create competitor analysis' });
+    }
+});
+
+// PUT - Update competitor
+route.put('/projects/:projectId/competitors/:id', async (req, res) => {
+    try {
+        const { projectId, id } = req.params;
+        const competitorData = req.body;
+        
+        // Only include fields that exist in the database schema
+        const allowedFields = [
+            'competitor_name', 'industry', 'market_position', 'strengths', 'weaknesses',
+            'opportunities', 'threats', 'key_strategies', 'pricing_model', 'target_audience',
+            'marketing_channels', 'notes'
+        ];
+        
+        const filteredData = {};
+        allowedFields.forEach(field => {
+            if (competitorData[field] !== undefined && competitorData[field] !== '') {
+                filteredData[field] = competitorData[field];
+            }
+        });
+
+        const { data: competitor, error } = await supabaseAdmin
+            .from('competitor_analysis')
+            .update(filteredData)
+            .eq('id', id)
+            .eq('project_id', projectId)
+            .select()
+            .single();
+
+        if (error) {
+            console.error('Error updating competitor:', error);
+            return res.status(500).json({ error: 'Failed to update competitor' });
+        }
+
+        res.json(competitor);
+    } catch (error) {
+        console.error('Error updating competitor:', error);
+        res.status(500).json({ error: 'Failed to update competitor' });
+    }
+});
+
+// DELETE - Delete competitor
+route.delete('/projects/:projectId/competitors/:id', async (req, res) => {
+    try {
+        const { projectId, id } = req.params;
+
+        const { error } = await supabaseAdmin
+            .from('competitor_analysis')
+            .delete()
+            .eq('id', id)
+            .eq('project_id', projectId);
+
+        if (error) {
+            console.error('Error deleting competitor:', error);
+            return res.status(500).json({ error: 'Failed to delete competitor' });
+        }
+
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error deleting competitor:', error);
+        res.status(500).json({ error: 'Failed to delete competitor' });
     }
 });
 

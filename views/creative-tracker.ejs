@@ -273,44 +273,146 @@
 </div>
 
 <!-- Edit Creative Modal -->
-<div class="modal fade" id="editCreativeModal" tabindex="-1">
+<div class="modal fade" id="editCreativeModal" tabindex="-1" aria-labelledby="editCreativeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Edit Creative Entry</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <h5 class="modal-title" id="editCreativeModalLabel">Edit Creative Entry</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="editCreativeForm">
-                <input type="hidden" id="editCreativeId" name="id">
-                <!-- Same form fields as add modal -->
                 <div class="modal-body">
-                    <!-- Form fields identical to add modal -->
                     <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Batch # *</label>
-                                                            <input type="text" class="form-control" name="batch_number" required>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="editBatchNumber" class="form-label">Batch Number</label>
+                                <input type="text" class="form-control" id="editBatchNumber" name="batch_number" placeholder="B001" required>
+                            </div>
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Brand *</label>
-                            <input type="text" class="form-control" name="brand" required>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="editBrand" class="form-label">Brand</label>
+                                <input type="text" class="form-control" id="editBrand" name="brand" placeholder="Brand name">
+                            </div>
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Status</label>
-                            <select class="form-select" name="status">
-                                <option value="Planning">Planning</option>
-                                <option value="In Progress">In Progress</option>
-                                <option value="Testing">Testing</option>
-                                <option value="Completed">Completed</option>
-                            </select>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="editStatus" class="form-label">Status</label>
+                                <select class="form-select" id="editStatus" name="status">
+                                    <option value="Draft">Draft</option>
+                                    <option value="In Review">In Review</option>
+                                    <option value="Approved">Approved</option>
+                                    <option value="Live">Live</option>
+                                    <option value="Paused">Paused</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
-                    <!-- Rest of form fields... (keeping compact for brevity) -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editLaunchDate" class="form-label">Launch Date</label>
+                                <input type="date" class="form-control" id="editLaunchDate" name="launch_date">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editAdConcept" class="form-label">Ad Concept</label>
+                                <input type="text" class="form-control" id="editAdConcept" name="ad_concept" placeholder="Brief concept description">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="editAdType" class="form-label">Ad Type</label>
+                                <select class="form-select" id="editAdType" name="ad_type">
+                                    <option value="Image">Image</option>
+                                    <option value="Video">Video</option>
+                                    <option value="Carousel">Carousel</option>
+                                    <option value="Story">Story</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="editAdVariable" class="form-label">Ad Variable</label>
+                                <input type="text" class="form-control" id="editAdVariable" name="ad_variable" placeholder="A/B test variable">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="editDesire" class="form-label">Desire</label>
+                                <input type="text" class="form-control" id="editDesire" name="desire" placeholder="Customer desire">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editBenefitFocus" class="form-label">Benefit Focus</label>
+                                <textarea class="form-control" id="editBenefitFocus" name="benefit_focus" rows="3" placeholder="Main benefits highlighted"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editObjections" class="form-label">Objections</label>
+                                <textarea class="form-control" id="editObjections" name="objections" rows="3" placeholder="Common objections addressed"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editPersona" class="form-label">Persona</label>
+                                <input type="text" class="form-control" id="editPersona" name="persona" placeholder="Target persona">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editPositioningConcept" class="form-label">Positioning Concept</label>
+                                <input type="text" class="form-control" id="editPositioningConcept" name="positioning_concept" placeholder="Positioning concept">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editPositioningHow" class="form-label">Positioning How</label>
+                                <textarea class="form-control" id="editPositioningHow" name="positioning_how" rows="3" placeholder="How positioning is executed"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editHookPattern" class="form-label">Hook Pattern</label>
+                                <input type="text" class="form-control" id="editHookPattern" name="hook_pattern" placeholder="Hook pattern used">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editResults" class="form-label">Results</label>
+                                <textarea class="form-control" id="editResults" name="results" rows="3" placeholder="Performance results"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editWinningAds" class="form-label">Winning Ads</label>
+                                <textarea class="form-control" id="editWinningAds" name="winning_ads" rows="3" placeholder="Winning ad variations"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editBriefLink" class="form-label">Brief Link</label>
+                        <input type="url" class="form-control" id="editBriefLink" name="brief_link" placeholder="Link to creative brief">
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-primary">
                         <span id="editCreativeBtnText">Update Creative</span>
-                        <span id="editCreativeSpinner" class="spinner-border spinner-border-sm d-none ms-2"></span>
+                        <span id="editCreativeSpinner" class="spinner-border spinner-border-sm ms-2" style="display: none;"></span>
                     </button>
                 </div>
             </form>
@@ -857,6 +959,38 @@ async function handleAddCreative(e) {
     }
 }
 
+// Edit creative
+function editCreative(id) {
+    const creative = allCreatives.find(c => c.id === id);
+    if (!creative) return;
+    
+    // Store the creative ID for the form submission
+    currentEditId = id;
+    
+    // Populate edit form
+    document.getElementById('editBatchNumber').value = creative.batch_number || '';
+    document.getElementById('editBrand').value = creative.brand || '';
+    document.getElementById('editStatus').value = creative.status || '';
+    document.getElementById('editLaunchDate').value = creative.launch_date || '';
+    document.getElementById('editAdConcept').value = creative.ad_concept || '';
+    document.getElementById('editAdType').value = creative.ad_type || '';
+    document.getElementById('editAdVariable').value = creative.ad_variable || '';
+    document.getElementById('editDesire').value = creative.desire || '';
+    document.getElementById('editBenefitFocus').value = creative.benefit_focus || '';
+    document.getElementById('editObjections').value = creative.objections || '';
+    document.getElementById('editPersona').value = creative.persona || '';
+    document.getElementById('editPositioningConcept').value = creative.positioning_concept || '';
+    document.getElementById('editPositioningHow').value = creative.positioning_how || '';
+    document.getElementById('editHookPattern').value = creative.hook_pattern || '';
+    document.getElementById('editResults').value = creative.results || '';
+    document.getElementById('editWinningAds').value = creative.winning_ads || '';
+    document.getElementById('editBriefLink').value = creative.brief_link || '';
+    
+    // Show the modal
+    const modal = new bootstrap.Modal(document.getElementById('editCreativeModal'));
+    modal.show();
+}
+
 // Handle edit creative
 async function handleEditCreative(e) {
     e.preventDefault();
@@ -923,33 +1057,19 @@ function handleSelectAll(e) {
 
 // Utility functions
 function showSuccess(message) {
-    const toast = document.createElement('div');
-    toast.className = 'toast-notification bg-success text-white p-3 rounded position-fixed';
-    toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999;';
-    toast.innerHTML = `
-        <div class="d-flex align-items-center">
-            <i class="mdi mdi-check-circle me-2"></i>
-            <span>${message}</span>
-        </div>
-    `;
-    
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 4000);
+    if (window.toast) {
+        window.toast.success(message);
+    } else {
+        console.log('Success:', message);
+    }
 }
 
 function showError(message) {
-    const toast = document.createElement('div');
-    toast.className = 'toast-notification bg-danger text-white p-3 rounded position-fixed';
-    toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999;';
-    toast.innerHTML = `
-        <div class="d-flex align-items-center">
-            <i class="mdi mdi-alert-circle me-2"></i>
-            <span>${message}</span>
-        </div>
-    `;
-    
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 4000);
+    if (window.toast) {
+        window.toast.error(message);
+    } else {
+        console.log('Error:', message);
+    }
 }
 
 console.log('🎨 Creative Tracker loaded!');

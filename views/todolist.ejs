@@ -297,17 +297,24 @@ document.addEventListener('DOMContentLoaded', function() {
 // Load tasks from API
 async function loadTasks() {
     try {
+        console.log('🔄 Loading tasks from API...');
         const response = await fetch('/api/tasks');
+        console.log('📡 API Response status:', response.status);
+        
         if (response.ok) {
-            tasks = await response.json();
+            const tasksData = await response.json();
+            console.log('📋 Tasks data received:', tasksData);
+            tasks = tasksData;
             renderTasks();
             console.log('✅ Tasks loaded:', tasks.length);
         } else {
-            console.error('Failed to load tasks');
+            console.error('❌ Failed to load tasks, status:', response.status);
+            const errorText = await response.text();
+            console.error('❌ Error response:', errorText);
             showError('Failed to load tasks');
         }
     } catch (error) {
-        console.error('Error loading tasks:', error);
+        console.error('❌ Error loading tasks:', error);
         showError('Failed to load tasks');
     }
 }
@@ -705,17 +712,19 @@ function bulkDelete() {
 
 // Utility functions
 function showSuccess(message) {
-    // Simple toast notification
-    const toast = document.createElement('div');
-    toast.className = 'toast-notification bg-success text-white p-3 rounded position-fixed';
-    toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999;';
-    toast.textContent = message;
-    
-    document.body.appendChild(toast);
-    
-    setTimeout(() => {
-        toast.remove();
-    }, 3000);
+    if (window.toast) {
+        window.toast.success(message);
+    } else {
+        console.log('Success:', message);
+    }
+}
+
+function showError(message) {
+    if (window.toast) {
+        window.toast.error(message);
+    } else {
+        console.log('Error:', message);
+    }
 }
 
 // Setup task checkbox change listeners (delegated)
