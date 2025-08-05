@@ -59,7 +59,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const isPublicPage = publicPages.includes(currentPath);
         
         // Check if user is logged in
-            // User session loaded from server
+        const user = <%-JSON.stringify(user || null)%>;
+        const session = user ? { user } : null;
         
         console.log('Auth check:', { user: !!user, session: !!session, currentPath, isPublicPage });
         
@@ -142,7 +143,7 @@ function updateUserInterface(user) {
 async function logout() {
     try {
         // Call logout API
-        await fetch('/api/auth/signout', {
+        await fetch('/api/auth/logout', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

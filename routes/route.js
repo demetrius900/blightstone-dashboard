@@ -23,6 +23,13 @@ const checkAuth = (req, res, next) => {
 // Apply auth middleware to all routes
 route.use(checkAuth);
 
+// Middleware to pass user context to all templates
+route.use((req, res, next) => {
+    res.locals.user = req.session.user || null;
+    res.locals.isAuthenticated = !!req.session.user;
+    next();
+});
+
 route.get('/', (req, res, next) => {
   res.render('index', {title: 'Index'});
 })
