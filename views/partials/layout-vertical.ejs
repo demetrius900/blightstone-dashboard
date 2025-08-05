@@ -82,12 +82,9 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Update UI with user info
             try {
-                const userData = JSON.parse(user);
-                updateUserInterface(userData);
+                updateUserInterface(user);
             } catch (error) {
-                console.error('Error parsing user data:', error);
-                localStorage.removeItem('blightstone_user');
-                localStorage.removeItem('blightstone_session');
+                console.error('Error updating user interface:', error);
                 window.location.href = '/auth-login';
             }
         }
@@ -112,7 +109,7 @@ function updateUserInterface(user) {
         if (hour < 12) timeGreeting = 'Good Morning';
         else if (hour < 18) timeGreeting = 'Good Afternoon';
         
-        const name = user.user_metadata?.name || user.email?.split('@')[0] || 'Team Member';
+        const name = user.name || user.email?.split('@')[0] || 'Team Member';
         greeting.textContent = `${timeGreeting}, ${name}!`;
         
         // Fade in the greeting after updating
@@ -122,7 +119,7 @@ function updateUserInterface(user) {
     // Update user name in dropdown
     const userName = document.getElementById('userName');
     if (userName) {
-        const name = user.user_metadata?.name || user.email?.split('@')[0] || 'Team Member';
+        const name = user.name || user.email?.split('@')[0] || 'Team Member';
         userName.innerHTML = `${name} <i class="mdi mdi-chevron-down"></i>`;
         // Fade in the username after updating
         userName.style.opacity = '1';
@@ -131,8 +128,8 @@ function updateUserInterface(user) {
     // Update user avatar
     const userAvatar = document.getElementById('userAvatar');
     if (userAvatar) {
-        const name = user.user_metadata?.name || user.email?.split('@')[0] || 'Team Member';
-        const avatarUrl = user.user_metadata?.avatar_url || 
+        const name = user.name || user.email?.split('@')[0] || 'Team Member';
+        const avatarUrl = user.avatar_url || 
                          `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=6c5ce7&color=fff&size=128`;
         userAvatar.src = avatarUrl;
         // Fade in the avatar after updating
