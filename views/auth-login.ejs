@@ -135,6 +135,10 @@
 
 <%- contentFor('extra_javascript') %>
 <script>
+// Initialize Sonner toast
+if (typeof sonner !== 'undefined') {
+    window.toast = sonner;
+}
 document.getElementById("loginForm").addEventListener("submit", async (event) => {
     event.preventDefault();
     
@@ -169,17 +173,28 @@ document.getElementById("loginForm").addEventListener("submit", async (event) =>
             // Show success message briefly
             loginText.textContent = "Success! Redirecting...";
             
+            // Show success toast if available
+            if (window.toast) {
+                window.toast.success("Login successful! Welcome back.");
+            }
+            
             // Redirect to dashboard after short delay
             setTimeout(() => {
                 window.location.href = "/";
-            }, 500);
+            }, 1000);
         } else {
             throw new Error(data.error || 'Login failed');
         }
     } catch (error) {
         console.error('Login error:', error);
-        errorDiv.textContent = error.message || 'Login failed. Please try again.';
+        const errorMessage = error.message || 'Login failed. Please try again.';
+        errorDiv.textContent = errorMessage;
         errorDiv.classList.remove("d-none");
+        
+        // Show error toast if available
+        if (window.toast) {
+            window.toast.error(errorMessage);
+        }
     } finally {
         // Reset button state
         loginText.textContent = "Log In";
