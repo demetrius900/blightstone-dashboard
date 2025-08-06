@@ -40,7 +40,7 @@ class UIManager {
         this.updateUI();
         this.initialized = true;
         
-        console.log('✅ UI manager initialized');
+        // console.log('✅ UI manager initialized');
     }
     
     // Handle app context changes
@@ -91,7 +91,7 @@ class UIManager {
                 projectTitle.textContent = state.currentProject.name;
             }
             
-            console.log('📋 Sidebar: Project mode -', state.currentProject.name);
+            // console.log('📋 Sidebar: Project mode -', state.currentProject.name);
         } else {
             // Show organization sidebar
             orgMenu.style.display = 'block';

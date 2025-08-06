@@ -34,7 +34,7 @@ function initSimpleSidebar() {
         // Update project switcher
         updateProjectSwitcher(projectId);
         
-        console.log('📋 Showing project sidebar for:', projectId);
+        // console.log('📋 Showing project sidebar for:', projectId);
     } else {
         // Show organization sidebar
         orgMenu.style.display = 'block';
@@ -146,6 +146,6 @@ function setActiveMenuItem() {
 
 // Initialize on page load (but sidebar state is already set)
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Simple sidebar initializing...');
+    // console.log('🚀 Simple sidebar initializing...');
     initSimpleSidebar();
 });

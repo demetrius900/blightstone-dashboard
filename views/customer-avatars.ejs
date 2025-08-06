@@ -500,7 +500,7 @@ async function loadAvatars() {
             renderAvatars(avatars);
             updateBulkActions();
             
-            console.log('✅ Avatars loaded:', avatars.length);
+            // console.log('✅ Avatars loaded:', avatars.length);
         } else {
             throw new Error('Failed to load avatars');
         }
@@ -678,11 +678,11 @@ function hideButtonLoading(textId, spinnerId, originalText) {
 }
 
 function showSuccess(message) {
-    console.log('Success:', message);
+    // console.log('Success:', message);
 }
 
 function showError(message) {
-    console.log('Error:', message);
+    // console.log('Error:', message);
 }
 
 // Edit avatar
@@ -1047,7 +1047,7 @@ document.addEventListener('change', function(e) {
     }
 });
 
-console.log('👥 Customer Avatars loaded!');
+        // console.log('👥 Customer Avatars loaded!');
 </script>
 
 <%- contentFor('extra_javascript') %>

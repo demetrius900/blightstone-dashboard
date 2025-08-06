@@ -97,7 +97,7 @@ class AppContext {
     async initialize() {
         if (this.state.initialized) return;
         
-        console.log('🚀 Initializing app context...');
+        // console.log('🚀 Initializing app context...');
         
         // Load projects if not cached
         if (!this.isCacheValid('projects')) {
@@ -114,7 +114,7 @@ class AppContext {
         }
         
         this.setState({ initialized: true });
-        console.log('✅ App context initialized');
+        // console.log('✅ App context initialized');
     }
     
     // Load projects from API
@@ -204,7 +204,7 @@ class AppContext {
             }
         }
         
-        console.log('✅ Context already in sync');
+        // console.log('✅ Context already in sync');
         return false; // No state change
     }
     

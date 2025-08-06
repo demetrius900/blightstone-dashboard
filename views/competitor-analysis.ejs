@@ -488,7 +488,7 @@ async function loadCompetitors() {
             renderCompetitors(competitors);
             updateBulkActions();
             
-            console.log('✅ Competitors loaded:', competitors.length);
+            // console.log('✅ Competitors loaded:', competitors.length);
         } else {
             throw new Error('Failed to load competitors');
         }
@@ -724,7 +724,7 @@ function showSuccess(message) {
     if (window.toast && window.toast.success) {
         window.toast.success(message);
     } else {
-        console.log('Success:', message);
+        // console.log('Success:', message);
         // Fallback to browser alert if toast is not available
         // alert(message);
     }
@@ -888,7 +888,7 @@ function showError(message) {
     if (window.toast) {
         window.toast.error(message);
     } else {
-        console.log('Error:', message);
+        // console.log('Error:', message);
     }
 }
 
@@ -915,7 +915,7 @@ document.addEventListener('change', function(e) {
     }
 });
 
-console.log('🏢 Competitor Analysis loaded!');
+        // console.log('🏢 Competitor Analysis loaded!');
 </script>
 
 <%- contentFor('extra_javascript') %>

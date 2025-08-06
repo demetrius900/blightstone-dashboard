@@ -581,7 +581,7 @@ async function loadCreatives() {
             updateFilters();
             updateBulkActions();
             
-            console.log('✅ Creatives loaded:', creatives.length);
+            // console.log('✅ Creatives loaded:', creatives.length);
         } else {
             throw new Error('Failed to load creatives');
         }
@@ -1153,7 +1153,7 @@ function showSuccess(message) {
     if (window.toast && window.toast.success) {
         window.toast.success(message);
     } else {
-        console.log('Success:', message);
+        // console.log('Success:', message);
         // Fallback to browser alert if toast is not available
         // alert(message);
     }
@@ -1163,7 +1163,7 @@ function showError(message) {
     if (window.toast) {
         window.toast.error(message);
     } else {
-        console.log('Error:', message);
+        // console.log('Error:', message);
     }
 }
 
@@ -1246,7 +1246,7 @@ async function confirmDeleteCreative() {
     }
 }
 
-console.log('🎨 Creative Tracker loaded!');
+        // console.log('🎨 Creative Tracker loaded!');
 </script>
 
 <%- contentFor('extra_javascript') %>
