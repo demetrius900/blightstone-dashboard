@@ -594,22 +594,35 @@ async function handleEditProject(e) {
 
 // Handle delete project
 async function handleDeleteProject() {
+    console.log('🗑️ handleDeleteProject called');
     const modal = document.getElementById('deleteProjectModal');
     const projectId = modal.dataset.projectId;
-    if (!projectId) return;
+    console.log('🗑️ Project ID to delete:', projectId);
+    
+    if (!projectId) {
+        console.error('❌ No project ID found');
+        return;
+    }
     
     try {
         showLoading('deleteProject');
+        console.log('🗑️ Calling DELETE API...');
         
         // Delete project via API
         const response = await fetch(`/api/projects/${projectId}`, {
             method: 'DELETE'
         });
 
+        console.log('🗑️ Delete API response status:', response.status);
+        
         if (!response.ok) {
+            const errorText = await response.text();
+            console.error('❌ Delete API failed:', errorText);
             throw new Error('Failed to delete project');
         }
 
+        console.log('✅ Project deleted successfully, reloading projects...');
+        
         // Reload projects from API to get the latest data
         await loadProjects();
         
