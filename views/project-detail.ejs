@@ -470,18 +470,8 @@ async function loadProjectData(id) {
 }
 
 function loadTasks() {
-            // Task data loaded from API
-    projectTasks = [
-        {
-            id: '1',
-            title: 'Create landing page mockup',
-            description: 'Design initial wireframes and mockups',
-            status: 'In Progress',
-            priority: 'High',
-            assigned_to: 'John Doe',
-            due_date: '2024-08-15'
-        }
-    ];
+    // Task data loaded from API - no mock data
+    projectTasks = [];
     
     renderTasks();
 }
@@ -682,21 +672,7 @@ document.getElementById('addTaskForm').addEventListener('submit', function(e) {
     e.target.reset();
 });
 
-document.getElementById('addCreativeForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const creativeData = Object.fromEntries(formData.entries());
-    
-    const newCreative = {
-        id: Date.now().toString(),
-        ...creativeData
-    };
-    
-    creativeEntries.push(newCreative);
-    renderCreatives();
-    bootstrap.Modal.getInstance(document.getElementById('addCreativeModal')).hide();
-    e.target.reset();
-});
+// Creative form is handled by creative-tracker.ejs - removed duplicate handler
 
 document.getElementById('addAvatarForm').addEventListener('submit', function(e) {
     e.preventDefault();

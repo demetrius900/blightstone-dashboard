@@ -53,7 +53,7 @@
             <ul id="side-menu">
 
                 <!-- Organization Menu (default) -->
-                <div id="org-menu" class="menu-section">
+                <div id="org-menu" class="menu-section" style="display: none;">
                     
                     <li class="menu-item">
                         <a href="/" class="menu-link">
@@ -217,6 +217,24 @@
 
             </ul>
             
+            <!-- Immediate sidebar state correction - prevents flicker -->
+            <script>
+                (function() {
+                    const sidebarMode = sessionStorage.getItem('sidebarMode');
+                    const orgMenu = document.getElementById('org-menu');
+                    const projectMenu = document.getElementById('project-menu');
+                    
+                    // Set display immediately based on stored state
+                    if (sidebarMode === 'project') {
+                        if (orgMenu) orgMenu.style.display = 'none';
+                        if (projectMenu) projectMenu.style.display = 'block';
+                    } else {
+                        if (orgMenu) orgMenu.style.display = 'block';
+                        if (projectMenu) projectMenu.style.display = 'none';
+                    }
+                })();
+            </script>
+            
             <!-- Logo at bottom -->
             <div class="logo-bottom">
                 <a href="/" class="logo">
@@ -318,7 +336,6 @@ body, html {
     padding: 0;
     cursor: pointer;
     border-radius: 8px;
-    transition: all 0.2s ease;
 }
 
 .switcher-button:hover {
@@ -363,7 +380,6 @@ body, html {
 
 .switcher-arrow {
     color: #94a3b8;
-    transition: transform 0.2s ease;
 }
 
 .switcher-button[aria-expanded="true"] .switcher-arrow {
@@ -386,7 +402,6 @@ body, html {
     text-decoration: none;
     padding: 8px;
     border-radius: 6px;
-    transition: background 0.2s ease;
 }
 
 .logo-bottom .logo:hover {
@@ -453,7 +468,6 @@ body, html {
     color: #64748b;
     text-decoration: none;
     border-radius: 8px;
-    transition: all 0.2s ease;
     font-size: 14px;
     font-weight: 500;
 }
@@ -609,217 +623,45 @@ body, html {
 
 
 
-/* Smooth transitions for menu switching */
+/* No transitions - instant switching */
 #org-menu, #project-menu {
-    transition: all 0.3s ease-in-out;
+    transition: none !important;
 }
 </style>
 
 <script>
-// Project sidebar drill-down functionality
-function initializeProjectSidebar() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const projectId = urlParams.get('id');
-    const isProjectPage = window.location.pathname.includes('project-detail') || 
-                          window.location.pathname.includes('creative-tracker') || 
-                          window.location.pathname.includes('customer-avatars') || 
-                          window.location.pathname.includes('competitor-analysis') ||
-                          (window.location.pathname.includes('todolist') && projectId) ||
-                          (window.location.pathname.includes('documents') && projectId);
-    
-    const orgMenu = document.getElementById('org-menu');
-    const projectMenu = document.getElementById('project-menu');
-    
-    if (isProjectPage && projectId) {
-        // Show project drill-down menu
-        orgMenu.style.display = 'none';
-        projectMenu.style.display = 'block';
-        
-        // Update project name
-        // Projects loaded from API
-        const project = projects.find(p => p.id === projectId);
-        const projectTitle = document.getElementById('project-title');
-        if (projectTitle && project) {
-            projectTitle.textContent = project.name;
-        }
-        
-        console.log('🔄 Switched to project sidebar for:', project ? project.name : projectId);
-    } else {
-        // Show organization menu
-        orgMenu.style.display = 'block';
-        projectMenu.style.display = 'none';
-        
-        console.log('🏢 Showing organization sidebar');
-    }
-}
-
 // Project navigation functions
-window.goToProjectOverview = function() {
+function goToProjectOverview() {
     const projectId = new URLSearchParams(window.location.search).get('id');
     window.location.href = `/project-detail?id=${projectId}`;
 }
 
-window.goToProjectTasks = function() {
+function goToProjectTasks() {
     const projectId = new URLSearchParams(window.location.search).get('id');
     window.location.href = `/todolist?id=${projectId}`;
 }
 
-window.goToCreativeTracker = function() {
+function goToCreativeTracker() {
     const projectId = new URLSearchParams(window.location.search).get('id');
     window.location.href = `/creative-tracker?id=${projectId}`;
 }
 
-window.goToCustomerAvatars = function() {
+function goToCustomerAvatars() {
     const projectId = new URLSearchParams(window.location.search).get('id');
     window.location.href = `/customer-avatars?id=${projectId}`;
 }
 
-window.goToCompetitorAnalysis = function() {
+function goToCompetitorAnalysis() {
     const projectId = new URLSearchParams(window.location.search).get('id');
     window.location.href = `/competitor-analysis?id=${projectId}`;
 }
 
-window.goToProjectDocuments = function() {
+function goToProjectDocuments() {
     const projectId = new URLSearchParams(window.location.search).get('id');
     window.location.href = `/documents?id=${projectId}`;
 }
 
-window.goToProjectSettings = function() {
-    const projectId = new URLSearchParams(window.location.search).get('id');
-    // TODO: Create project settings page
-    console.log('Project settings for:', projectId);
-}
-
-// Set active menu item based on current page
-function setActiveMenuItem() {
-    // Remove active class from all links
-    document.querySelectorAll('#side-menu .menu-link').forEach(link => {
-        link.classList.remove('active');
-    });
-    
-    // Get current path
-    const currentPath = window.location.pathname;
-    const urlParams = new URLSearchParams(window.location.search);
-    const projectId = urlParams.get('id');
-    
-    // Find matching menu item and set active based on href
-    const menuLinks = {
-        '/': '/',
-        '/dashboard': '/', 
-        '/projects': 'projects',
-        '/todolist': 'todolist',
-        '/hrm': 'hrm',
-        '/documents': 'documents'
-    };
-    
-    const targetHref = menuLinks[currentPath];
-    if (targetHref) {
-        const activeLink = document.querySelector(`#side-menu .menu-link[href="${targetHref}"]`);
-        if (activeLink) {
-            activeLink.classList.add('active');
-        }
-    }
-    
-    // Handle project-level pages
-    if (projectId) {
-        const projectMenuLinks = document.querySelectorAll('#project-menu .menu-link');
-        projectMenuLinks.forEach(link => {
-            link.classList.remove('active');
-        });
-        
-        // Set active based on current project page
-        if (currentPath.includes('project-detail')) {
-            document.querySelector('#project-menu .menu-link[onclick*="goToProjectOverview"]')?.classList.add('active');
-        } else if (currentPath.includes('todolist')) {
-            document.querySelector('#project-menu .menu-link[onclick*="goToProjectTasks"]')?.classList.add('active');
-        } else if (currentPath.includes('creative-tracker')) {
-            document.querySelector('#project-menu .menu-link[onclick*="goToCreativeTracker"]')?.classList.add('active');
-        } else if (currentPath.includes('customer-avatars')) {
-            document.querySelector('#project-menu .menu-link[onclick*="goToCustomerAvatars"]')?.classList.add('active');
-        } else if (currentPath.includes('competitor-analysis')) {
-            document.querySelector('#project-menu .menu-link[onclick*="goToCompetitorAnalysis"]')?.classList.add('active');
-        } else if (currentPath.includes('documents')) {
-            document.querySelector('#project-menu .menu-link[onclick*="goToProjectDocuments"]')?.classList.add('active');
-        }
-    }
-}
-
-// Project switcher functionality
-async function loadProjectSwitcher() {
-    try {
-        // Fetch projects from API
-        const response = await fetch('/api/projects');
-        if (!response.ok) {
-            console.error('Failed to load projects for switcher');
-            return;
-        }
-        
-        const projects = await response.json();
-        const dropdown = document.getElementById('projectDropdownMenu');
-        const urlParams = new URLSearchParams(window.location.search);
-        const currentProjectId = urlParams.get('id');
-        
-        // Update current project display
-        if (currentProjectId) {
-            const currentProject = projects.find(p => p.id === currentProjectId);
-            if (currentProject) {
-                document.getElementById('currentProjectName').textContent = currentProject.name;
-                document.getElementById('currentProjectType').textContent = 'Project Dashboard';
-            }
-        } else {
-            document.getElementById('currentProjectName').textContent = 'Organization';
-            document.getElementById('currentProjectType').textContent = 'Main Dashboard';
-        }
-        
-        // Clear existing project items (keep organization item)
-        const existingItems = dropdown.querySelectorAll('li:not(.dropdown-header):not([data-org])');
-        existingItems.forEach(item => {
-            if (!item.querySelector('[onclick="switchToOrganization()"]')) {
-                item.remove();
-            }
-        });
-        
-        // Add organization item marker
-        const orgItem = dropdown.querySelector('[onclick="switchToOrganization()"]').closest('li');
-        if (orgItem) {
-            orgItem.setAttribute('data-org', 'true');
-        }
-        
-        // Add projects to dropdown
-        projects.forEach(project => {
-            const li = document.createElement('li');
-            li.innerHTML = `
-                <a class="dropdown-item" href="/project-detail?id=${project.id}">
-                    <div class="d-flex align-items-center">
-                        <i class="mdi mdi-folder me-2"></i>
-                        <div class="fw-semibold">${project.name}</div>
-                    </div>
-                </a>
-            `;
-            dropdown.appendChild(li);
-        });
-        
-        console.log('✅ Project switcher loaded with', projects.length, 'projects');
-    } catch (error) {
-        console.error('Error loading project switcher:', error);
-    }
-}
-
 function switchToOrganization() {
     window.location.href = '/';
-}
-
-// Initialize on page load
-if (typeof document !== 'undefined') {
-    document.addEventListener('DOMContentLoaded', function() {
-        initializeProjectSidebar();
-        setActiveMenuItem();
-        loadProjectSwitcher();
-        
-        // Re-initialize feather icons after DOM changes
-        if (typeof feather !== 'undefined') {
-            feather.replace();
-        }
-    });
 }
 </script>

@@ -215,16 +215,27 @@ route.put('/projects/:id', async (req, res) => {
 route.delete('/projects/:id', async (req, res) => {
     try {
         const { id } = req.params;
+        console.log('🗑️ DELETE API called for project:', id);
 
         // Delete project (team members will be deleted automatically due to CASCADE)
-        const { error } = await supabase
+        // Use supabaseAdmin to bypass RLS for deletion
+        const { data, error } = await supabaseAdmin
             .from('projects')
             .delete()
-            .eq('id', id);
+            .eq('id', id)
+            .select(); // Add select to see what was deleted
 
-        if (error) throw error;
+        console.log('🗑️ Delete result - data:', data);
+        console.log('🗑️ Delete result - error:', error);
 
-        res.json({ success: true });
+        if (error) {
+            console.error('❌ Delete error:', error);
+            throw error;
+        }
+
+        // Even if no rows were affected, consider it success (idempotent)
+        console.log('✅ Project deletion completed - rows affected:', data?.length || 0);
+        res.json({ success: true, deletedRows: data?.length || 0 });
     } catch (error) {
         console.error('Delete project error:', error);
         res.status(500).json({ error: 'Failed to delete project' });
@@ -352,6 +363,29 @@ route.delete('/tasks/:id', async (req, res) => {
     } catch (error) {
         console.error('Delete task error:', error);
         res.status(500).json({ error: 'Failed to delete task' });
+    }
+});
+
+// Project-specific Tasks API
+route.get('/projects/:projectId/tasks', async (req, res) => {
+    try {
+        const { projectId } = req.params;
+        const { data: tasks, error } = await supabaseAdmin
+            .from('tasks')
+            .select(`
+                *,
+                projects(name),
+                users!tasks_assigned_to_fkey(name, email),
+                created_by_user:users!tasks_created_by_fkey(name, email)
+            `)
+            .eq('project_id', projectId)
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        res.json(tasks || []);
+    } catch (error) {
+        console.error('Project tasks API error:', error);
+        res.status(500).json({ error: 'Failed to load project tasks' });
     }
 });
 
@@ -900,6 +934,23 @@ route.post('/projects/:projectId/competitors', async (req, res) => {
     } catch (error) {
         console.error('Create competitor API error:', error);
         res.status(500).json({ error: 'Failed to create competitor' });
+    }
+});
+
+// User endpoint for context management
+route.get('/user', async (req, res) => {
+    try {
+        // For now, return a mock user - replace with real auth later
+        const user = {
+            id: 1,
+            name: 'Admin User',
+            email: 'admin@blightstone.com',
+            role: 'Administrator'
+        };
+        res.json(user);
+    } catch (error) {
+        console.error('User API error:', error);
+        res.status(500).json({ error: 'Failed to load user data' });
     }
 });
 

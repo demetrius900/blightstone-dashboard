@@ -276,17 +276,36 @@
 <%- contentFor('extra_javascript') %>
 
 <script>
-// Task management - data loaded from API
+// Task management - data loaded from API with caching
 let tasks = [];
 let projects = [];
-// Data will be loaded from API
-
 let users = [];
+
+// Task caching
+let tasksCache = new Map();
+
+// Cache utilities
+function isCacheValid(cacheObj, ttl = 2 * 60 * 1000) { // 2 minutes default
+    return cacheObj && cacheObj.timestamp && 
+           (Date.now() - cacheObj.timestamp) < ttl;
+}
+
+function setCacheData(key, data, ttl = 2 * 60 * 1000) {
+    tasksCache.set(key, {
+        data: data,
+        timestamp: Date.now(),
+        ttl: ttl
+    });
+}
+
+// Invalidate task caches
+function invalidateTaskCaches() {
+    tasksCache.clear();
+}
 // Users will be loaded from API
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('📋 Task Management loaded');
     loadTasks();
     loadProjects();
     loadUsers();
@@ -294,19 +313,40 @@ document.addEventListener('DOMContentLoaded', function() {
     setupProjectContext();
 });
 
-// Load tasks from API
+// Load tasks from API with caching
 async function loadTasks() {
     try {
-        console.log('🔄 Loading tasks from API...');
-        const response = await fetch('/api/tasks');
-        console.log('📡 API Response status:', response.status);
+        // Check if we're in project context
+        const urlParams = new URLSearchParams(window.location.search);
+        const projectId = urlParams.get('id');
+        
+        // Build cache key and API URL based on context
+        const cacheKey = projectId ? `project_${projectId}_tasks` : 'all_tasks';
+        let apiUrl = '/api/tasks';
+        if (projectId) {
+            apiUrl = `/api/projects/${projectId}/tasks`;
+        }
+        
+        // Check cache first
+        const cached = tasksCache.get(cacheKey);
+        if (cached && isCacheValid(cached)) {
+            tasks = cached.data;
+            renderTasks();
+            return;
+        }
+        
+        // Show loading state
+        renderTasks([], true);
+        const response = await fetch(apiUrl);
         
         if (response.ok) {
             const tasksData = await response.json();
-            console.log('📋 Tasks data received:', tasksData);
+            
+            // Cache the data
+            setCacheData(cacheKey, tasksData);
+            
             tasks = tasksData;
             renderTasks();
-            console.log('✅ Tasks loaded:', tasks.length);
         } else {
             console.error('❌ Failed to load tasks, status:', response.status);
             const errorText = await response.text();
@@ -320,8 +360,22 @@ async function loadTasks() {
 }
 
 // Render tasks in table
-function renderTasks(tasksToRender = tasks) {
+function renderTasks(tasksToRender = tasks, isLoading = false) {
     const tbody = document.getElementById('tasksTableBody');
+    
+    if (isLoading) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Loading tasks...</p>
+                </td>
+            </tr>
+        `;
+        return;
+    }
     
     if (tasksToRender.length === 0) {
         tbody.innerHTML = `
@@ -439,19 +493,26 @@ async function loadUsers() {
 }
 
 // Setup project context (for back button, etc.)
-function setupProjectContext() {
+async function setupProjectContext() {
     const urlParams = new URLSearchParams(window.location.search);
     const projectId = urlParams.get('id');
     
     if (projectId) {
         // Show back button and set project context
         document.getElementById('back-button-container').style.display = 'block';
-        document.getElementById('task-context').textContent = 'Project Tasks';
         
-        // Filter tasks by project
-        if (tasks.length > 0) {
-            const projectTasks = tasks.filter(task => task.project_id === projectId);
-            renderTasks(projectTasks);
+        // Get project info to update context
+        try {
+            const response = await fetch(`/api/projects/${projectId}`);
+            if (response.ok) {
+                const project = await response.json();
+                document.getElementById('task-context').textContent = `${project.name} Tasks`;
+            } else {
+                document.getElementById('task-context').textContent = 'Project Tasks';
+            }
+        } catch (error) {
+            console.error('Error loading project info:', error);
+            document.getElementById('task-context').textContent = 'Project Tasks';
         }
     }
 }
@@ -525,7 +586,8 @@ async function handleAddTask(e) {
             throw new Error('Failed to create task');
         }
 
-        // Reload tasks from API
+        // Invalidate caches and reload tasks
+        invalidateTaskCaches();
         await loadTasks();
         
         // Close modal and reset form
@@ -571,24 +633,45 @@ function handleEditTask(e) {
 }
 
 // Handle delete task
-function handleDeleteTask() {
+async function handleDeleteTask() {
     const modal = document.getElementById('deleteTaskModal');
     const taskId = modal.dataset.taskId;
     if (!taskId) return;
     
-    if (taskId === 'bulk') {
-        // Handle bulk delete
-        const bulkIds = modal.dataset.bulkIds.split(',');
-        tasks = tasks.filter(task => !bulkIds.includes(task.id));
-        updateBulkActions();
-        showSuccess(`${bulkIds.length} tasks deleted successfully!`);
-    } else {
-        // Handle single delete
-        tasks = tasks.filter(t => t.id !== taskId);
-        showSuccess('Task deleted successfully!');
+    try {
+        if (taskId === 'bulk') {
+            // Handle bulk delete
+            const bulkIds = modal.dataset.bulkIds.split(',');
+            
+            // Delete each task via API
+            const deletePromises = bulkIds.map(id => 
+                fetch(`/api/tasks/${id}`, { method: 'DELETE' })
+            );
+            
+            await Promise.all(deletePromises);
+            showSuccess(`${bulkIds.length} tasks deleted successfully!`);
+            updateBulkActions();
+        } else {
+            // Handle single delete
+            const response = await fetch(`/api/tasks/${taskId}`, {
+                method: 'DELETE'
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to delete task');
+            }
+            
+            showSuccess('Task deleted successfully!');
+        }
+        
+        // Invalidate caches and reload
+        invalidateTaskCaches();
+        await loadTasks();
+        
+    } catch (error) {
+        console.error('Error deleting task(s):', error);
+        showError('Failed to delete task(s)');
     }
-    
-    renderTasks();
     
     // Close modal
     bootstrap.Modal.getInstance(modal).hide();
@@ -734,26 +817,5 @@ document.addEventListener('change', function(e) {
     }
 });
 
-// Initialize project context on page load
-document.addEventListener('DOMContentLoaded', function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const projectId = urlParams.get('id');
-    
-    if (projectId) {
-        // Show back button and project context
-        document.getElementById('back-button-container').style.display = 'block';
-        
-        // Update context text
-        // Project loaded from API
-        const project = projects.find(p => p.id === projectId);
-        const contextElement = document.getElementById('task-context');
-        if (contextElement && project) {
-            contextElement.textContent = `Project: ${project.name}`;
-        }
-        
-        console.log('📋 Tasks page loaded for project:', project ? project.name : projectId);
-    } else {
-        console.log('📋 Tasks page loaded (organization level)');
-    }
-});
+// Project context is handled by setupProjectContext() in the main DOMContentLoaded listener
 </script>

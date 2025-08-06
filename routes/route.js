@@ -14,7 +14,7 @@ const checkAuth = async (req, res, next) => {
     
     // For now, temporarily disable auth check to test login flow
     // TODO: Implement proper Supabase session verification from cookies/headers
-    console.log('🔐 Auth check temporarily disabled for testing');
+    // Auth check temporarily disabled for testing
     next();
 };
 

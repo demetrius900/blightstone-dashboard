@@ -1,5 +1,32 @@
 <%- contentFor('html_attribute') %>
 <%- contentFor('extra_css') %>
+
+<style>
+/* Fix dropdown overflow in tables */
+.table-responsive {
+    overflow: visible !important;
+}
+
+.dropdown-menu {
+    z-index: 1050 !important;
+    position: absolute !important;
+}
+
+.table .dropdown {
+    position: static;
+}
+
+.table .dropdown-menu {
+    position: absolute;
+    z-index: 1050;
+    transform: translate3d(0px, 0px, 0px) !important;
+}
+
+/* Ensure dropdowns don't get clipped */
+.card-body {
+    overflow: visible;
+}
+</style>
 <%- contentFor('body_attribute') %>
 <%- contentFor('content') %>
 
@@ -427,6 +454,76 @@
     </div>
 </div>
 
+<!-- View Creative Details Modal -->
+<div class="modal fade" id="viewCreativeModal" tabindex="-1" aria-labelledby="viewCreativeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewCreativeModalLabel">Creative Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Batch</label>
+                            <p id="viewCreativeBatch" class="form-control-plaintext"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Brand</label>
+                            <p id="viewCreativeBrand" class="form-control-plaintext"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Status</label>
+                            <p id="viewCreativeStatus" class="form-control-plaintext"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Ad Concept</label>
+                            <p id="viewCreativeAdConcept" class="form-control-plaintext"></p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Persona</label>
+                            <p id="viewCreativePersona" class="form-control-plaintext"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Positioning Concept</label>
+                            <p id="viewCreativePositioningConcept" class="form-control-plaintext"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Hook Pattern</label>
+                            <p id="viewCreativeHookPattern" class="form-control-plaintext"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Brief Link</label>
+                            <p id="viewCreativeBriefLink" class="form-control-plaintext"></p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Positioning How</label>
+                            <p id="viewCreativePositioningHow" class="form-control-plaintext"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Results</label>
+                            <p id="viewCreativeResults" class="form-control-plaintext"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Winning Ads</label>
+                            <p id="viewCreativeWinningAds" class="form-control-plaintext"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="editCreativeFromView()">Edit Creative</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Delete Creative Modal -->
 <div class="modal fade" id="deleteCreativeModal" tabindex="-1">
     <div class="modal-dialog">
@@ -700,44 +797,7 @@ function filterCreatives() {
     renderCreatives(filtered);
 }
 
-// Add creative
-document.getElementById('addCreativeForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    const formData = new FormData(e.target);
-    const creativeData = Object.fromEntries(formData.entries());
-    
-    try {
-        showButtonLoading('addCreativeBtnText', 'addCreativeSpinner');
-        
-        creativeData.id = Date.now().toString();
-        creativeData.project_id = projectId;
-        creativeData.created_at = new Date().toISOString();
-        
-        // Save creative to API
-        const response = await fetch(`/api/projects/${projectId}/creatives`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(creativeData)
-        });
-        
-        if (!response.ok) {
-            throw new Error('Failed to save creative');
-        }
-        
-        hideButtonLoading('addCreativeBtnText', 'addCreativeSpinner', 'Add Creative');
-        bootstrap.Modal.getInstance(document.getElementById('addCreativeModal')).hide();
-        e.target.reset();
-        
-        loadCreatives();
-        showSuccess('Creative added successfully!');
-    } catch (error) {
-        hideButtonLoading('addCreativeBtnText', 'addCreativeSpinner', 'Add Creative');
-        showError('Failed to add creative');
-    }
-});
+// Add creative handler is set up in setupEventListeners() - removed duplicate
 
 // Show/hide button loading
 function showButtonLoading(textId, spinnerId) {
@@ -1105,6 +1165,85 @@ function showError(message) {
         window.toast.error(message);
     } else {
         console.log('Error:', message);
+    }
+}
+
+// View creative details
+function viewCreativeDetails(id) {
+    const creative = allCreatives.find(c => c.id === id);
+    if (!creative) return;
+    
+    // Populate modal with creative data
+    document.getElementById('viewCreativeBatch').textContent = creative.batch_number || 'N/A';
+    document.getElementById('viewCreativeBrand').textContent = creative.brand || 'N/A';
+    document.getElementById('viewCreativeStatus').textContent = creative.status || 'N/A';
+    document.getElementById('viewCreativeAdConcept').textContent = creative.ad_concept || 'N/A';
+    document.getElementById('viewCreativePersona').textContent = creative.persona || 'N/A';
+    document.getElementById('viewCreativePositioningConcept').textContent = creative.positioning_concept || 'N/A';
+    document.getElementById('viewCreativeHookPattern').textContent = creative.hook_pattern || 'N/A';
+    document.getElementById('viewCreativeBriefLink').textContent = creative.brief_link || 'N/A';
+    document.getElementById('viewCreativePositioningHow').textContent = creative.positioning_how || 'N/A';
+    document.getElementById('viewCreativeResults').textContent = creative.results || 'N/A';
+    document.getElementById('viewCreativeWinningAds').textContent = creative.winning_ads || 'N/A';
+    
+    // Store creative ID for potential edit action
+    document.getElementById('viewCreativeModal').dataset.creativeId = id;
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('viewCreativeModal'));
+    modal.show();
+}
+
+// Edit creative from view modal
+function editCreativeFromView() {
+    const viewModal = bootstrap.Modal.getInstance(document.getElementById('viewCreativeModal'));
+    const creativeId = document.getElementById('viewCreativeModal').dataset.creativeId;
+    
+    if (viewModal) {
+        viewModal.hide();
+    }
+    
+    // Wait for view modal to close, then open edit modal
+    setTimeout(() => {
+        editCreative(creativeId);
+    }, 300);
+}
+
+// Delete creative
+let deleteCreativeId = null;
+
+function deleteCreative(id) {
+    const creative = allCreatives.find(c => c.id === id);
+    if (!creative) return;
+    
+    deleteCreativeId = id;
+    document.getElementById('deleteCreativeName').textContent = `${creative.batch_number} - ${creative.brand}`;
+    
+    const modal = new bootstrap.Modal(document.getElementById('deleteCreativeModal'));
+    modal.show();
+}
+
+// Confirm delete creative
+async function confirmDeleteCreative() {
+    if (!deleteCreativeId) return;
+    
+    try {
+        const response = await fetch(`/api/projects/${projectId}/creatives/${deleteCreativeId}`, {
+            method: 'DELETE'
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to delete creative');
+        }
+        
+        bootstrap.Modal.getInstance(document.getElementById('deleteCreativeModal')).hide();
+        await loadCreatives();
+        showSuccess('Creative deleted successfully!');
+        
+        deleteCreativeId = null;
+    } catch (error) {
+        console.error('Error deleting creative:', error);
+        showError('Failed to delete creative');
     }
 }
 

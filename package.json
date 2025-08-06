@@ -7,7 +7,9 @@
     "start": "node app.js",
     "gulp": "gulp",
     "build": "gulp build",
-    "dev": "npm-run-all preview",
+    "dev": "npm-run-all --parallel server browser-sync",
+    "server": "nodemon app.js",
+    "browser-sync": "browser-sync start --proxy localhost:8000 --files 'views/**/*.ejs, public/**/*.css, public/**/*.js' --reload-delay 500",
     "preview": "nodemon app.js"
   },
   "author": "Blightstone",

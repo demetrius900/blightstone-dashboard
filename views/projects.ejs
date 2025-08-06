@@ -350,17 +350,33 @@ function setupEventListeners() {
 // Load projects from API
 async function loadProjects() {
     try {
-        const response = await fetch('/api/projects');
+        console.log('🔄 Loading projects from API...');
+        // Add cache-busting parameter to ensure fresh data
+        const response = await fetch(`/api/projects?t=${Date.now()}`, {
+            cache: 'no-cache',
+            headers: {
+                'Cache-Control': 'no-cache',
+                'Pragma': 'no-cache'
+            }
+        });
+        
         if (response.ok) {
-            projects = await response.json();
+            const newProjects = await response.json();
+            console.log('📊 Raw API response:', newProjects);
+            
+            // Filter out any null/undefined projects
+            projects = (newProjects || []).filter(p => p && p.id);
+            console.log('✅ Projects loaded and filtered:', projects.length);
+            
             renderProjects();
-            console.log('✅ Projects loaded:', projects.length);
         } else {
-            console.error('Failed to load projects');
+            console.error('❌ Failed to load projects - Status:', response.status);
+            const errorText = await response.text();
+            console.error('❌ Error response:', errorText);
             showError('Failed to load projects');
         }
     } catch (error) {
-        console.error('Error loading projects:', error);
+        console.error('❌ Error loading projects:', error);
         showError('Failed to load projects');
     }
 }

@@ -1,5 +1,32 @@
 <%- contentFor('html_attribute') %>
 <%- contentFor('extra_css') %>
+
+<style>
+/* Fix dropdown overflow in tables */
+.table-responsive {
+    overflow: visible !important;
+}
+
+.dropdown-menu {
+    z-index: 1050 !important;
+    position: absolute !important;
+}
+
+.table .dropdown {
+    position: static;
+}
+
+.table .dropdown-menu {
+    position: absolute;
+    z-index: 1050;
+    transform: translate3d(0px, 0px, 0px) !important;
+}
+
+/* Ensure dropdowns don't get clipped */
+.card-body {
+    overflow: visible;
+}
+</style>
 <%- contentFor('body_attribute') %>
 <%- contentFor('content') %>
 
@@ -71,21 +98,25 @@
                         <table class="table table-hover" id="competitorsTable">
                             <thead class="table-light">
                                 <tr>
-                                    <th width="5%">
+                                    <th width="3%">
                                         <input type="checkbox" id="selectAll" class="form-check-input">
                                     </th>
-                                    <th width="20%">Competitor</th>
-                                    <th width="15%">Market</th>
-                                    <th width="12%">Competition Level</th>
-                                    <th width="12%">Threat Level</th>
-                                    <th width="15%">Strengths</th>
-                                    <th width="11%">Website</th>
-                                    <th width="10%">Actions</th>
+                                    <th width="12%">Competitor</th>
+                                    <th width="8%">Industry</th>
+                                    <th width="8%">Position</th>
+                                    <th width="10%">Strengths</th>
+                                    <th width="10%">Weaknesses</th>
+                                    <th width="8%">Pricing</th>
+                                    <th width="10%">Marketing</th>
+                                    <th width="10%">Target Audience</th>
+                                    <th width="8%">Website</th>
+                                    <th width="8%">Notes</th>
+                                    <th width="5%">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="competitorsTableBody">
                                 <tr>
-                                    <td colspan="8" class="text-center py-4">
+                                    <td colspan="12" class="text-center py-4">
                                         <div class="spinner-border text-primary" role="status">
                                             <span class="visually-hidden">Loading...</span>
                                         </div>
@@ -219,6 +250,72 @@
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+</div>
+
+<!-- View Competitor Details Modal -->
+<div class="modal fade" id="viewCompetitorModal" tabindex="-1" aria-labelledby="viewCompetitorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewCompetitorModalLabel">Competitor Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Competitor Name</label>
+                            <p id="viewCompetitorName" class="form-control-plaintext"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Industry</label>
+                            <p id="viewCompetitorIndustry" class="form-control-plaintext"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Market Position</label>
+                            <p id="viewCompetitorPosition" class="form-control-plaintext"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Website</label>
+                            <p id="viewCompetitorWebsite" class="form-control-plaintext"></p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Strengths</label>
+                            <p id="viewCompetitorStrengths" class="form-control-plaintext"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Weaknesses</label>
+                            <p id="viewCompetitorWeaknesses" class="form-control-plaintext"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Pricing Strategy</label>
+                            <p id="viewCompetitorPricing" class="form-control-plaintext"></p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Marketing Strategy</label>
+                            <p id="viewCompetitorMarketing" class="form-control-plaintext"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Target Audience</label>
+                            <p id="viewCompetitorTargetAudience" class="form-control-plaintext"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Notes</label>
+                            <p id="viewCompetitorNotes" class="form-control-plaintext"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="editCompetitorFromView()">Edit Competitor</button>
+            </div>
         </div>
     </div>
 </div>
@@ -440,7 +537,7 @@ function renderCompetitors(competitors) {
     if (competitors.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="8" class="text-center py-4">
+                <td colspan="12" class="text-center py-4">
                     <i class="mdi mdi-chart-line fs-48 text-muted"></i>
                     <h5 class="mt-3">No Competitors Yet</h5>
                     <p class="text-muted">Add your first competitor analysis</p>
@@ -461,28 +558,39 @@ function renderCompetitors(competitors) {
             <td>
                 <div class="d-flex align-items-center">
                     <div class="competitor-icon me-2">
-                        <i class="mdi mdi-domain fs-24 text-primary"></i>
+                        <i class="mdi mdi-domain fs-16 text-primary"></i>
                     </div>
                     <div>
-                        <span class="fw-semibold">${competitor.competitor_name}</span>
-                        <div class="text-muted small">${competitor.target_audience ? competitor.target_audience.substring(0, 50) + '...' : ''}</div>
+                        <span class="fw-semibold small">${competitor.competitor_name || ''}</span>
                     </div>
                 </div>
             </td>
             <td>
-                <span class="badge bg-secondary">${competitor.industry || ''}</span>
+                <span class="badge bg-info small">${competitor.industry || '-'}</span>
             </td>
             <td>
-                <span class="badge ${getLevelBadge(competitor.market_position)}">${competitor.market_position || ''}</span>
+                <span class="badge ${getLevelBadge(competitor.market_position)} small">${competitor.market_position || '-'}</span>
             </td>
             <td>
-                <span class="badge ${getThreatBadge(competitor.threat_level)}">${competitor.threat_level || ''}</span>
+                <span class="text-truncate d-inline-block small" style="max-width: 120px;" title="${competitor.strengths || ''}">${competitor.strengths || '-'}</span>
             </td>
             <td>
-                <span class="text-truncate d-inline-block" style="max-width: 150px;" title="${competitor.strengths || ''}">${competitor.strengths || ''}</span>
+                <span class="text-truncate d-inline-block small" style="max-width: 120px;" title="${competitor.weaknesses || ''}">${competitor.weaknesses || '-'}</span>
             </td>
             <td>
-                ${competitor.website ? `<a href="${competitor.website}" target="_blank" class="btn btn-sm btn-outline-primary">Visit</a>` : ''}
+                <span class="text-truncate d-inline-block small" style="max-width: 100px;" title="${competitor.pricing_model || ''}">${competitor.pricing_model || '-'}</span>
+            </td>
+            <td>
+                <span class="text-truncate d-inline-block small" style="max-width: 120px;" title="${competitor.marketing_channels || ''}">${competitor.marketing_channels || '-'}</span>
+            </td>
+            <td>
+                <span class="text-truncate d-inline-block small" style="max-width: 120px;" title="${competitor.target_audience || ''}">${competitor.target_audience || '-'}</span>
+            </td>
+            <td>
+                ${competitor.website ? `<a href="${competitor.website}" target="_blank" class="btn btn-sm btn-outline-primary btn-xs">Visit</a>` : '-'}
+            </td>
+            <td>
+                <span class="text-truncate d-inline-block small" style="max-width: 100px;" title="${competitor.notes || ''}">${competitor.notes || '-'}</span>
             </td>
             <td>
                 <div class="dropdown">
@@ -694,18 +802,83 @@ function viewCompetitorDetails(id) {
     const competitor = allCompetitors.find(c => c.id === id);
     if (!competitor) return;
     
-    console.log('View competitor details:', competitor);
-    // TODO: Add view modal
+    // Ensure Bootstrap is loaded
+    if (typeof bootstrap === 'undefined') {
+        console.error('❌ Bootstrap not loaded yet, retrying...');
+        setTimeout(() => viewCompetitorDetails(id), 100);
+        return;
+    }
+    
+    // Populate modal with competitor data
+    document.getElementById('viewCompetitorName').textContent = competitor.name || 'N/A';
+    document.getElementById('viewCompetitorIndustry').textContent = competitor.industry || 'N/A';
+    document.getElementById('viewCompetitorPosition').textContent = competitor.market_position || 'N/A';
+    document.getElementById('viewCompetitorWebsite').textContent = competitor.website || 'N/A';
+    document.getElementById('viewCompetitorStrengths').textContent = competitor.strengths || 'N/A';
+    document.getElementById('viewCompetitorWeaknesses').textContent = competitor.weaknesses || 'N/A';
+    document.getElementById('viewCompetitorPricing').textContent = competitor.pricing_strategy || 'N/A';
+    document.getElementById('viewCompetitorMarketing').textContent = competitor.marketing_strategy || 'N/A';
+    document.getElementById('viewCompetitorTargetAudience').textContent = competitor.target_audience || 'N/A';
+    document.getElementById('viewCompetitorNotes').textContent = competitor.notes || 'N/A';
+    
+    // Store competitor ID for potential edit action
+    document.getElementById('viewCompetitorModal').dataset.competitorId = id;
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('viewCompetitorModal'));
+    modal.show();
 }
 
-// Delete competitor
+// Edit competitor from view modal
+function editCompetitorFromView() {
+    const viewModal = bootstrap.Modal.getInstance(document.getElementById('viewCompetitorModal'));
+    const competitorId = document.getElementById('viewCompetitorModal').dataset.competitorId;
+    
+    if (viewModal) {
+        viewModal.hide();
+    }
+    
+    // Wait for view modal to close, then open edit modal
+    setTimeout(() => {
+        editCompetitor(competitorId);
+    }, 300);
+}
+
+// Delete competitor - show modal
+let deleteCompetitorId = null;
+
 function deleteCompetitor(id) {
     const competitor = allCompetitors.find(c => c.id === id);
     if (!competitor) return;
     
-    if (confirm(`Are you sure you want to delete "${competitor.competitor_name}"?`)) {
-        // TODO: Add delete API call
-        console.log('Delete competitor:', id);
+    deleteCompetitorId = id;
+    document.getElementById('deleteCompetitorName').textContent = competitor.competitor_name;
+    
+    const modal = new bootstrap.Modal(document.getElementById('deleteCompetitorModal'));
+    modal.show();
+}
+
+// Confirm delete competitor
+async function confirmDeleteCompetitor() {
+    if (!deleteCompetitorId) return;
+    
+    try {
+        const response = await fetch(`/api/projects/${projectId}/competitors/${deleteCompetitorId}`, {
+            method: 'DELETE'
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to delete competitor');
+        }
+        
+        bootstrap.Modal.getInstance(document.getElementById('deleteCompetitorModal')).hide();
+        await loadCompetitors();
+        showSuccess('Competitor deleted successfully!');
+        
+        deleteCompetitorId = null;
+    } catch (error) {
+        console.error('Error deleting competitor:', error);
+        showError('Failed to delete competitor');
     }
 }
 

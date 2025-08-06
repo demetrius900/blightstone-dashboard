@@ -1,5 +1,32 @@
 <%- contentFor('html_attribute') %>
 <%- contentFor('extra_css') %>
+
+<style>
+/* Fix dropdown overflow in tables */
+.table-responsive {
+    overflow: visible !important;
+}
+
+.dropdown-menu {
+    z-index: 1050 !important;
+    position: absolute !important;
+}
+
+.table .dropdown {
+    position: static;
+}
+
+.table .dropdown-menu {
+    position: absolute;
+    z-index: 1050;
+    transform: translate3d(0px, 0px, 0px) !important;
+}
+
+/* Ensure dropdowns don't get clipped */
+.card-body {
+    overflow: visible;
+}
+</style>
 <%- contentFor('body_attribute') %>
 <%- contentFor('content') %>
 
@@ -366,6 +393,70 @@
     </div>
 </div>
 
+<!-- View Avatar Details Modal -->
+<div class="modal fade" id="viewAvatarModal" tabindex="-1" aria-labelledby="viewAvatarModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewAvatarModalLabel">Customer Avatar Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Avatar Name</label>
+                            <p id="viewAvatarName" class="form-control-plaintext"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Age Range</label>
+                            <p id="viewAvatarAge" class="form-control-plaintext"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Location</label>
+                            <p id="viewAvatarLocation" class="form-control-plaintext"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Occupation</label>
+                            <p id="viewAvatarOccupation" class="form-control-plaintext"></p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Income Range</label>
+                            <p id="viewAvatarIncome" class="form-control-plaintext"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Pain Points</label>
+                            <p id="viewAvatarPainPoints" class="form-control-plaintext"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Goals</label>
+                            <p id="viewAvatarGoals" class="form-control-plaintext"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Interests</label>
+                            <p id="viewAvatarInterests" class="form-control-plaintext"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Additional Notes</label>
+                            <p id="viewAvatarNotes" class="form-control-plaintext"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="editAvatarFromView()">Edit Avatar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Delete Avatar Modal -->
 <div class="modal fade" id="deleteAvatarModal" tabindex="-1">
     <div class="modal-dialog">
@@ -604,6 +695,13 @@ function editAvatar(id) {
         return;
     }
     
+    // Ensure Bootstrap is loaded
+    if (typeof bootstrap === 'undefined') {
+        console.error('❌ Bootstrap not loaded yet, retrying...');
+        setTimeout(() => editAvatar(id), 100);
+        return;
+    }
+    
     // Populate edit form
     document.getElementById('editAvatarName').value = avatar.name || '';
     document.getElementById('editAgeGroup').value = avatar.age_group || '';
@@ -838,14 +936,51 @@ function viewAvatarDetails(id) {
         console.error('❌ Avatar not found for view');
         return;
     }
-    // TODO: Implement view details modal
-    console.log('Avatar details:', avatar);
-    if (window.toast) {
-        window.toast.info('View details functionality coming soon!');
+    
+    // Ensure Bootstrap is loaded
+    if (typeof bootstrap === 'undefined') {
+        console.error('❌ Bootstrap not loaded yet, retrying...');
+        setTimeout(() => viewAvatarDetails(id), 100);
+        return;
     }
+    
+    // Populate modal with avatar data
+    document.getElementById('viewAvatarName').textContent = avatar.name || 'N/A';
+    document.getElementById('viewAvatarAge').textContent = avatar.age_range || 'N/A';
+    document.getElementById('viewAvatarLocation').textContent = avatar.location || 'N/A';
+    document.getElementById('viewAvatarOccupation').textContent = avatar.occupation || 'N/A';
+    document.getElementById('viewAvatarIncome').textContent = avatar.income_range || 'N/A';
+    document.getElementById('viewAvatarPainPoints').textContent = avatar.pain_points || 'N/A';
+    document.getElementById('viewAvatarGoals').textContent = avatar.goals || 'N/A';
+    document.getElementById('viewAvatarInterests').textContent = avatar.interests || 'N/A';
+    document.getElementById('viewAvatarNotes').textContent = avatar.notes || 'N/A';
+    
+    // Store avatar ID for potential edit action
+    document.getElementById('viewAvatarModal').dataset.avatarId = id;
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('viewAvatarModal'));
+    modal.show();
 }
 
-// Delete avatar
+// Edit avatar from view modal
+function editAvatarFromView() {
+    const viewModal = bootstrap.Modal.getInstance(document.getElementById('viewAvatarModal'));
+    const avatarId = document.getElementById('viewAvatarModal').dataset.avatarId;
+    
+    if (viewModal) {
+        viewModal.hide();
+    }
+    
+    // Wait for view modal to close, then open edit modal
+    setTimeout(() => {
+        editAvatar(avatarId);
+    }, 300);
+}
+
+// Delete avatar - show modal
+let deleteAvatarId = null;
+
 function deleteAvatar(id) {
     console.log('🗑️ deleteAvatar called with id:', id);
     const avatar = allAvatars.find(a => a.id === id);
@@ -854,12 +989,41 @@ function deleteAvatar(id) {
         return;
     }
     
-    if (confirm(`Are you sure you want to delete "${avatar.name}"?`)) {
-        // TODO: Implement delete functionality
-        console.log('Delete confirmed for:', avatar.name);
-        if (window.toast) {
-            window.toast.info('Delete functionality coming soon!');
+    // Ensure Bootstrap is loaded
+    if (typeof bootstrap === 'undefined') {
+        console.error('❌ Bootstrap not loaded yet, retrying...');
+        setTimeout(() => deleteAvatar(id), 100);
+        return;
+    }
+    
+    deleteAvatarId = id;
+    document.getElementById('deleteAvatarName').textContent = avatar.name;
+    
+    const modal = new bootstrap.Modal(document.getElementById('deleteAvatarModal'));
+    modal.show();
+}
+
+// Confirm delete avatar
+async function confirmDeleteAvatar() {
+    if (!deleteAvatarId) return;
+    
+    try {
+        const response = await fetch(`/api/projects/${projectId}/avatars/${deleteAvatarId}`, {
+            method: 'DELETE'
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to delete avatar');
         }
+        
+        bootstrap.Modal.getInstance(document.getElementById('deleteAvatarModal')).hide();
+        await loadAvatars();
+        showSuccess('Customer avatar deleted successfully!');
+        
+        deleteAvatarId = null;
+    } catch (error) {
+        console.error('Error deleting avatar:', error);
+        showError('Failed to delete customer avatar');
     }
 }
 
