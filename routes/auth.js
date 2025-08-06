@@ -37,6 +37,7 @@ router.post('/login', async (req, res) => {
         }
 
         const result = await authService.login({ email, password });
+        console.log('🔐 Auth service result:', JSON.stringify(result, null, 2));
 
         if (result.success) {
             console.log('🔐 Login successful, setting session for user:', result.user.email);
@@ -56,15 +57,24 @@ router.post('/login', async (req, res) => {
             console.log('✅ Session set with user:', req.session.user.email);
             console.log('🔍 Session ID:', req.session.id);
             
-            res.json({
-                success: true,
-                user: {
-                    id: result.user.id,
-                    email: result.user.email,
-                    name: result.user.profile.name,
-                    role: result.user.profile.role
-                },
-                message: 'Login successful'
+            // Force save session
+            req.session.save((err) => {
+                if (err) {
+                    console.error('❌ Session save error:', err);
+                    return res.status(500).json({ success: false, error: 'Session save failed' });
+                }
+                
+                console.log('✅ Session saved successfully');
+                res.json({
+                    success: true,
+                    user: {
+                        id: result.user.id,
+                        email: result.user.email,
+                        name: result.user.profile.name,
+                        role: result.user.profile.role
+                    },
+                    message: 'Login successful'
+                });
             });
         } else {
             console.log('❌ Login failed:', result.error);
