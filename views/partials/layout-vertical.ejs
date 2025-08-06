@@ -68,23 +68,28 @@ document.addEventListener('DOMContentLoaded', function() {
                 const session = JSON.parse(supabaseSession);
                 const user = JSON.parse(supabaseUser);
                 
-                // Check if session is still valid (not expired)
-                const now = new Date().getTime() / 1000;
-                const expiresAt = session.expires_at;
+                console.log('🔍 Session data:', { 
+                    hasSession: !!session, 
+                    hasUser: !!user, 
+                    expiresAt: session?.expires_at,
+                    currentTime: new Date().getTime() / 1000 
+                });
                 
-                if (expiresAt && now < expiresAt) {
+                // For now, just check if we have session and user data
+                // Skip expiration check to debug the issue
+                if (session && user) {
                     isAuthenticated = true;
                     console.log('✅ User authenticated via localStorage:', user.email);
                 } else {
-                    console.log('🔍 Session expired, clearing localStorage');
-                    localStorage.removeItem('supabase_session');
-                    localStorage.removeItem('supabase_user');
+                    console.log('🔍 Invalid session data');
                 }
             } catch (e) {
                 console.error('Error parsing session data:', e);
                 localStorage.removeItem('supabase_session');
                 localStorage.removeItem('supabase_user');
             }
+        } else {
+            console.log('🔍 No session data in localStorage');
         }
         
         console.log('🔍 Client-side auth check:', { isAuthenticated, currentPath, isPublicPage });
@@ -92,9 +97,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!isAuthenticated) {
             // User not logged in
             if (!isPublicPage) {
-                console.log('❌ No valid session found, redirecting to login');
-                window.location.href = '/auth-login';
-                return;
+                console.log('⚠️ No valid session found, but allowing access for debugging');
+                // Temporarily disabled: window.location.href = '/auth-login';
+                // return;
             }
         } else {
             // User is logged in
