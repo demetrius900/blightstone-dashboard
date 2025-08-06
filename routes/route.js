@@ -12,9 +12,14 @@ const checkAuth = async (req, res, next) => {
         return next();
     }
     
-    // For now, temporarily disable auth check to test login flow
-    // TODO: Implement proper Supabase session verification from cookies/headers
-    // Auth check temporarily disabled for testing
+    // Simple session-based auth check
+    // Check if user is logged in via express session
+    if (!req.session || !req.session.user) {
+        // No session found, redirect to login
+        return res.redirect('/auth-login');
+    }
+    
+    // User is authenticated, continue
     next();
 };
 
