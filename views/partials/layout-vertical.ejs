@@ -54,23 +54,47 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add a small delay to avoid race conditions
     setTimeout(() => {
         // Check if we're on a public page (auth pages)
-        const publicPages = ['/auth-login', '/auth-register', '/auth-recoverpw'];
+        const publicPages = ['/auth-login', '/auth-register', '/auth-recoverpw', '/auth-forgot-password', '/auth-lock-screen'];
         const currentPath = window.location.pathname;
         const isPublicPage = publicPages.includes(currentPath);
         
-        // Check if user is logged in
-        const user = <%-JSON.stringify(user || null)%>;
-        const session = user ? { user } : null;
+        // Check Supabase session from localStorage (client-side auth)
+        const supabaseSession = localStorage.getItem('supabase_session');
+        const supabaseUser = localStorage.getItem('supabase_user');
         
-        console.log('Auth check:', { user: !!user, session: !!session, currentPath, isPublicPage });
+        let isAuthenticated = false;
+        if (supabaseSession && supabaseUser) {
+            try {
+                const session = JSON.parse(supabaseSession);
+                const user = JSON.parse(supabaseUser);
+                
+                // Check if session is still valid (not expired)
+                const now = new Date().getTime() / 1000;
+                const expiresAt = session.expires_at;
+                
+                if (expiresAt && now < expiresAt) {
+                    isAuthenticated = true;
+                    console.log('✅ User authenticated via localStorage:', user.email);
+                } else {
+                    console.log('🔍 Session expired, clearing localStorage');
+                    localStorage.removeItem('supabase_session');
+                    localStorage.removeItem('supabase_user');
+                }
+            } catch (e) {
+                console.error('Error parsing session data:', e);
+                localStorage.removeItem('supabase_session');
+                localStorage.removeItem('supabase_user');
+            }
+        }
         
-        if (!user || !session) {
+        console.log('🔍 Client-side auth check:', { isAuthenticated, currentPath, isPublicPage });
+        
+        if (!isAuthenticated) {
             // User not logged in
             if (!isPublicPage) {
-                console.log('No user found, but showing dashboard anyway for now...');
-                // Temporarily commented out redirect for testing
-                // window.location.href = '/auth-login';
-                // return;
+                console.log('❌ No valid session found, redirecting to login');
+                window.location.href = '/auth-login';
+                return;
             }
         } else {
             // User is logged in
@@ -139,7 +163,7 @@ function updateUserInterface(user) {
 
 async function logout() {
     try {
-        // Call logout API
+        // Call logout API (optional - mainly for server-side cleanup)
         await fetch('/api/auth/logout', {
             method: 'POST',
             headers: {
@@ -149,9 +173,15 @@ async function logout() {
     } catch (error) {
         console.error('Logout error:', error);
     } finally {
-        // Clear local storage
+        // Clear Supabase session data from localStorage
+        localStorage.removeItem('supabase_session');
+        localStorage.removeItem('supabase_user');
+        
+        // Also clear any legacy session data
         localStorage.removeItem('blightstone_user');
         localStorage.removeItem('blightstone_session');
+        
+        console.log('✅ Logged out, session data cleared');
         
         // Redirect to login
         window.location.href = '/auth-login';

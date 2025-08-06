@@ -12,44 +12,12 @@ const checkAuth = async (req, res, next) => {
         return next();
     }
     
-    try {
-        // Get Supabase access token from cookies
-        const { supabase } = require('../utils/supabase');
-        
-        // Check for Supabase session cookies
-        const accessToken = req.cookies['sb-access-token'] || 
-                           req.cookies['supabase-auth-token'] ||
-                           req.headers.authorization?.replace('Bearer ', '');
-        
-        if (!accessToken) {
-            console.log('🔍 No access token found, redirecting to login');
-            return res.redirect('/auth-login');
-        }
-        
-        // Verify token with Supabase
-        const { data: { user }, error } = await supabase.auth.getUser(accessToken);
-        
-        if (error || !user) {
-            console.log('🔍 Invalid token or user not found, redirecting to login');
-            return res.redirect('/auth-login');
-        }
-        
-        // Get user profile from database
-        const { data: profile } = await supabase
-            .from('users')
-            .select('*')
-            .eq('id', user.id)
-            .single();
-        
-        // Store user in request for templates
-        req.user = { ...user, profile };
-        console.log('✅ User authenticated:', user.email);
-        
-        next();
-    } catch (error) {
-        console.error('Auth check error:', error);
-        return res.redirect('/auth-login');
-    }
+    // For now, let client-side handle auth and redirect
+    // Server-side auth verification can be added later for API routes
+    console.log('🔍 Auth check: Allowing access, client-side will handle auth state');
+    
+    // Continue to page - let client-side JavaScript handle auth redirects
+    next();
 };
 
 // Apply auth middleware to all routes

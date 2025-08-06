@@ -42,23 +42,8 @@ router.post('/login', async (req, res) => {
         if (result.success) {
             console.log('🔐 Login successful for user:', result.user.email);
             
-            // Set Supabase auth cookies
-            res.cookie('sb-access-token', result.session.access_token, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: 'lax',
-                maxAge: 24 * 60 * 60 * 1000 // 24 hours
-            });
-            
-            res.cookie('sb-refresh-token', result.session.refresh_token, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: 'lax',
-                maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
-            });
-            
-            console.log('✅ Supabase auth cookies set');
-            
+            // Let Supabase handle auth state on the client side
+            // Return session data so client can store it properly
             res.json({
                 success: true,
                 user: {
@@ -66,6 +51,11 @@ router.post('/login', async (req, res) => {
                     email: result.user.email,
                     name: result.user.profile.name,
                     role: result.user.profile.role
+                },
+                session: {
+                    access_token: result.session.access_token,
+                    refresh_token: result.session.refresh_token,
+                    expires_at: result.session.expires_at
                 },
                 message: 'Login successful'
             });
@@ -214,13 +204,10 @@ router.get('/me', requireAuth, (req, res) => {
 // Logout
 router.post('/logout', async (req, res) => {
     try {
+        // Let Supabase client handle logout - server just confirms
         await authService.logout();
         
-        // Clear Supabase auth cookies
-        res.clearCookie('sb-access-token');
-        res.clearCookie('sb-refresh-token');
-        
-        console.log('✅ User logged out, cookies cleared');
+        console.log('✅ User logged out');
         res.json({ success: true });
     } catch (error) {
         console.error('Logout error:', error);
