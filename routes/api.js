@@ -393,13 +393,20 @@ route.get('/projects/:projectId/tasks', async (req, res) => {
 route.get('/projects/:projectId/creatives', async (req, res) => {
     try {
         const { projectId } = req.params;
+        console.log('🔍 Loading creatives for project:', projectId);
+        
         const { data: creatives, error } = await supabaseAdmin
             .from('creative_entries')
             .select('*')
             .eq('project_id', projectId)
             .order('created_at', { ascending: false });
 
-        if (error) throw error;
+        if (error) {
+            console.error('❌ Supabase error:', error);
+            throw error;
+        }
+        
+        console.log('✅ Creatives loaded:', creatives?.length || 0);
         res.json(creatives || []);
     } catch (error) {
         console.error('Creative entries API error:', error);
@@ -523,13 +530,20 @@ route.delete('/projects/:projectId/creatives/:id', async (req, res) => {
 route.get('/projects/:projectId/avatars', async (req, res) => {
     try {
         const { projectId } = req.params;
+        console.log('🔍 Loading avatars for project:', projectId);
+        
         const { data: avatars, error } = await supabaseAdmin
             .from('customer_avatars')
             .select('*')
             .eq('project_id', projectId)
             .order('created_at', { ascending: false });
 
-        if (error) throw error;
+        if (error) {
+            console.error('❌ Supabase error:', error);
+            throw error;
+        }
+        
+        console.log('✅ Avatars loaded:', avatars?.length || 0);
         res.json(avatars || []);
     } catch (error) {
         console.error('Customer avatars API error:', error);
@@ -649,13 +663,20 @@ route.delete('/projects/:projectId/avatars/:id', async (req, res) => {
 route.get('/projects/:projectId/competitors', async (req, res) => {
     try {
         const { projectId } = req.params;
+        console.log('🔍 Loading competitors for project:', projectId);
+        
         const { data: competitors, error } = await supabaseAdmin
             .from('competitor_analysis')
             .select('*')
             .eq('project_id', projectId)
             .order('created_at', { ascending: false });
 
-        if (error) throw error;
+        if (error) {
+            console.error('❌ Supabase error:', error);
+            throw error;
+        }
+        
+        console.log('✅ Competitors loaded:', competitors?.length || 0);
         res.json(competitors || []);
     } catch (error) {
         console.error('Competitor analysis API error:', error);
@@ -819,45 +840,6 @@ route.delete('/users/:email', async (req, res) => {
     } catch (error) {
         console.error('Delete user API error:', error);
         res.status(500).json({ error: 'Failed to delete user' });
-    }
-});
-
-// Project-specific APIs
-// Creative Tracker
-route.get('/projects/:projectId/creatives', async (req, res) => {
-    try {
-        const { data, error } = await supabase
-            .from('creative_tracker')
-            .select('*')
-            .eq('project_id', req.params.projectId)
-            .order('created_at', { ascending: false });
-
-        if (error) throw error;
-        res.json(data || []);
-    } catch (error) {
-        console.error('Creatives API error:', error);
-        res.status(500).json({ error: 'Failed to load creatives' });
-    }
-});
-
-route.post('/projects/:projectId/creatives', async (req, res) => {
-    try {
-        const creativeData = {
-            ...req.body,
-            project_id: req.params.projectId
-        };
-
-        const { data, error } = await supabase
-            .from('creative_tracker')
-            .insert([creativeData])
-            .select()
-            .single();
-
-        if (error) throw error;
-        res.json(data);
-    } catch (error) {
-        console.error('Create creative API error:', error);
-        res.status(500).json({ error: 'Failed to create creative' });
     }
 });
 
