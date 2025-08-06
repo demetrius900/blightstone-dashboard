@@ -12,19 +12,44 @@ const checkAuth = async (req, res, next) => {
         return next();
     }
     
-    // Temporarily disable auth check to test login process
-    console.log('🔍 Auth check - Session exists:', !!req.session);
-    console.log('🔍 Auth check - User in session:', !!req.session?.user);
-    console.log('🔍 Auth check - Session ID:', req.session?.id);
-    
-    if (req.session?.user) {
-        console.log('✅ User authenticated:', req.session.user.email);
-    } else {
-        console.log('⚠️ No user in session, but allowing access for debugging');
+    try {
+        // Get Supabase access token from cookies
+        const { supabase } = require('../utils/supabase');
+        
+        // Check for Supabase session cookies
+        const accessToken = req.cookies['sb-access-token'] || 
+                           req.cookies['supabase-auth-token'] ||
+                           req.headers.authorization?.replace('Bearer ', '');
+        
+        if (!accessToken) {
+            console.log('🔍 No access token found, redirecting to login');
+            return res.redirect('/auth-login');
+        }
+        
+        // Verify token with Supabase
+        const { data: { user }, error } = await supabase.auth.getUser(accessToken);
+        
+        if (error || !user) {
+            console.log('🔍 Invalid token or user not found, redirecting to login');
+            return res.redirect('/auth-login');
+        }
+        
+        // Get user profile from database
+        const { data: profile } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', user.id)
+            .single();
+        
+        // Store user in request for templates
+        req.user = { ...user, profile };
+        console.log('✅ User authenticated:', user.email);
+        
+        next();
+    } catch (error) {
+        console.error('Auth check error:', error);
+        return res.redirect('/auth-login');
     }
-    
-    // Continue without redirecting for now
-    next();
 };
 
 // Apply auth middleware to all routes
@@ -32,8 +57,8 @@ route.use(checkAuth);
 
 // Middleware to pass user context to all templates
 route.use((req, res, next) => {
-    res.locals.user = req.session.user || null;
-    res.locals.isAuthenticated = !!req.session.user;
+    res.locals.user = req.user || null;
+    res.locals.isAuthenticated = !!req.user;
     next();
 });
 

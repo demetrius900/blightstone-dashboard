@@ -40,41 +40,34 @@ router.post('/login', async (req, res) => {
         console.log('🔐 Auth service result:', JSON.stringify(result, null, 2));
 
         if (result.success) {
-            console.log('🔐 Login successful, setting session for user:', result.user.email);
+            console.log('🔐 Login successful for user:', result.user.email);
             
-            // Store user session in express session
-            req.session.user = {
-                id: result.user.id,
-                email: result.user.email,
-                name: result.user.profile.name,
-                role: result.user.profile.role
-            };
+            // Set Supabase auth cookies
+            res.cookie('sb-access-token', result.session.access_token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'lax',
+                maxAge: 24 * 60 * 60 * 1000 // 24 hours
+            });
             
-            // Also store tokens for API calls
-            req.session.accessToken = result.session.access_token;
-            req.session.refreshToken = result.session.refresh_token;
+            res.cookie('sb-refresh-token', result.session.refresh_token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'lax',
+                maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+            });
             
-            console.log('✅ Session set with user:', req.session.user.email);
-            console.log('🔍 Session ID:', req.session.id);
+            console.log('✅ Supabase auth cookies set');
             
-            // Force save session
-            req.session.save((err) => {
-                if (err) {
-                    console.error('❌ Session save error:', err);
-                    return res.status(500).json({ success: false, error: 'Session save failed' });
-                }
-                
-                console.log('✅ Session saved successfully');
-                res.json({
-                    success: true,
-                    user: {
-                        id: result.user.id,
-                        email: result.user.email,
-                        name: result.user.profile.name,
-                        role: result.user.profile.role
-                    },
-                    message: 'Login successful'
-                });
+            res.json({
+                success: true,
+                user: {
+                    id: result.user.id,
+                    email: result.user.email,
+                    name: result.user.profile.name,
+                    role: result.user.profile.role
+                },
+                message: 'Login successful'
             });
         } else {
             console.log('❌ Login failed:', result.error);
@@ -222,12 +215,13 @@ router.get('/me', requireAuth, (req, res) => {
 router.post('/logout', async (req, res) => {
     try {
         await authService.logout();
-        req.session.destroy((err) => {
-            if (err) {
-                console.error('Session destroy error:', err);
-            }
-            res.json({ success: true });
-        });
+        
+        // Clear Supabase auth cookies
+        res.clearCookie('sb-access-token');
+        res.clearCookie('sb-refresh-token');
+        
+        console.log('✅ User logged out, cookies cleared');
+        res.json({ success: true });
     } catch (error) {
         console.error('Logout error:', error);
         res.status(500).json({ success: false, error: 'Logout failed' });
