@@ -954,4 +954,25 @@ route.get('/user', async (req, res) => {
     }
 });
 
+// Diagnostic endpoint for debugging production issues
+route.get('/debug', (req, res) => {
+    const isProduction = process.env.NODE_ENV === 'production';
+    const diagnostics = {
+        environment: process.env.NODE_ENV || 'undefined',
+        isProduction: isProduction,
+        supabaseUrl: isProduction 
+            ? (process.env.SUPABASE_URL_PROD ? 'SET' : 'MISSING')
+            : (process.env.SUPABASE_URL ? 'SET' : 'MISSING'),
+        supabaseAnonKey: isProduction 
+            ? (process.env.SUPABASE_ANON_KEY_PROD ? 'SET' : 'MISSING')
+            : (process.env.SUPABASE_ANON_KEY ? 'SET' : 'MISSING'),
+        supabaseServiceKey: isProduction 
+            ? (process.env.SUPABASE_SERVICE_ROLE_KEY_PROD ? 'SET' : 'MISSING')
+            : (process.env.SUPABASE_SERVICE_ROLE_KEY ? 'SET' : 'MISSING'),
+        timestamp: new Date().toISOString()
+    };
+    
+    res.json(diagnostics);
+});
+
 module.exports = route; 
