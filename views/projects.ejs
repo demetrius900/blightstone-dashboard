@@ -429,7 +429,7 @@ function renderProjects() {
                                         <i class="mdi mdi-format-list-checks me-2"></i>View Tasks
                                     </a></li>
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item text-danger" href="#" onclick="deleteProject('${project.id}')">
+                                    <li><a class="dropdown-item text-danger" href="#" onclick="event.preventDefault(); deleteProject('${project.id}'); return false;">
                                         <i class="mdi mdi-delete me-2"></i>Delete
                                     </a></li>
                                 </ul>
@@ -654,13 +654,22 @@ function editProject(projectId) {
 
 // Delete project - show modal
 function deleteProject(projectId) {
-    const project = projects.find(p => p.id === projectId);
-    if (!project) return;
+    console.log('🗑️ Delete project clicked:', projectId);
+    console.log('🗑️ Available projects:', projects);
     
+    const project = projects.find(p => p.id === projectId);
+    if (!project) {
+        console.error('❌ Project not found:', projectId);
+        return;
+    }
+    
+    console.log('🗑️ Found project to delete:', project.name);
     document.getElementById('deleteProjectName').textContent = project.name;
     document.getElementById('deleteProjectModal').dataset.projectId = projectId;
     
-    new bootstrap.Modal(document.getElementById('deleteProjectModal')).show();
+    const modal = new bootstrap.Modal(document.getElementById('deleteProjectModal'));
+    console.log('🗑️ Showing delete modal...');
+    modal.show();
 }
 
 // View project tasks (redirect to tasks page with filter)
