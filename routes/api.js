@@ -266,6 +266,7 @@ route.get('/tasks', async (req, res) => {
 route.post('/tasks', async (req, res) => {
     try {
         const { title, description, project_id, assigned_to, priority, due_date } = req.body;
+        console.log('🔍 Creating task with data:', { title, description, project_id, assigned_to, priority, due_date });
 
         if (!title) {
             return res.status(400).json({ error: 'Task title is required' });
@@ -278,10 +279,12 @@ route.post('/tasks', async (req, res) => {
             .limit(1);
 
         if (!users || users.length === 0) {
+            console.error('❌ No users found in database');
             return res.status(400).json({ error: 'No users found' });
         }
 
         const created_by = users[0].id;
+        console.log('✅ Using created_by user:', created_by);
 
         // Clean up empty UUID fields and dates
         const taskData = {
@@ -306,13 +309,19 @@ route.post('/tasks', async (req, res) => {
             taskData.due_date = due_date;
         }
 
+        console.log('📝 Inserting task data:', taskData);
         const { data: task, error } = await supabaseAdmin
             .from('tasks')
             .insert(taskData)
             .select()
             .single();
 
-        if (error) throw error;
+        if (error) {
+            console.error('❌ Task insert error:', error);
+            throw error;
+        }
+        
+        console.log('✅ Task created successfully:', task);
         res.json({ success: true, task });
     } catch (error) {
         console.error('Create task error:', error);
