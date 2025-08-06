@@ -188,6 +188,9 @@ document.getElementById("loginForm").addEventListener("submit", async (event) =>
                 window.toast.success("Login successful! Welcome back.");
             }
             
+            // Set flag to indicate we just logged in
+            sessionStorage.setItem('just_logged_in', 'true');
+            
             // Redirect to dashboard after short delay
             console.log('🔄 Redirecting to dashboard in 1 second...');
             setTimeout(() => {

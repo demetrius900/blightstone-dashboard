@@ -51,8 +51,16 @@ document.addEventListener('DOMContentLoaded', function() {
     // Light mode setup
             // console.log('✅ Loading dashboard in light mode...');
     
-    // Add a small delay to avoid race conditions
+    // Add a longer delay to ensure localStorage is properly set after login
     setTimeout(() => {
+        // Check if we just logged in (skip auth check briefly after login)
+        const justLoggedIn = sessionStorage.getItem('just_logged_in');
+        if (justLoggedIn) {
+            console.log('🔄 Just logged in, skipping auth check briefly');
+            sessionStorage.removeItem('just_logged_in');
+            return;
+        }
+        
         // Check if we're on a public page (auth pages)
         const publicPages = ['/auth-login', '/auth-register', '/auth-recoverpw', '/auth-forgot-password', '/auth-lock-screen'];
         const currentPath = window.location.pathname;
@@ -105,7 +113,10 @@ document.addEventListener('DOMContentLoaded', function() {
             // User is logged in
             if (isPublicPage) {
                 console.log('User logged in, redirecting to dashboard...');
-                window.location.href = '/';
+                // Prevent redirect loops by checking if we're already redirecting
+                if (!window.location.href.includes('redirecting')) {
+                    window.location.href = '/?redirecting=true';
+                }
                 return;
             }
             
