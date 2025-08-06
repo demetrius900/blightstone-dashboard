@@ -14,11 +14,17 @@ const checkAuth = async (req, res, next) => {
     
     // Simple session-based auth check
     // Check if user is logged in via express session
+    console.log('🔍 Auth check - Session exists:', !!req.session);
+    console.log('🔍 Auth check - User in session:', !!req.session?.user);
+    console.log('🔍 Auth check - Session ID:', req.session?.id);
+    
     if (!req.session || !req.session.user) {
+        console.log('❌ No session or user found, redirecting to login');
         // No session found, redirect to login
         return res.redirect('/auth-login');
     }
     
+    console.log('✅ User authenticated:', req.session.user.email);
     // User is authenticated, continue
     next();
 };

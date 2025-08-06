@@ -39,6 +39,8 @@ router.post('/login', async (req, res) => {
         const result = await authService.login({ email, password });
 
         if (result.success) {
+            console.log('🔐 Login successful, setting session for user:', result.user.email);
+            
             // Store user session in express session
             req.session.user = {
                 id: result.user.id,
@@ -51,6 +53,9 @@ router.post('/login', async (req, res) => {
             req.session.accessToken = result.session.access_token;
             req.session.refreshToken = result.session.refresh_token;
             
+            console.log('✅ Session set with user:', req.session.user.email);
+            console.log('🔍 Session ID:', req.session.id);
+            
             res.json({
                 success: true,
                 user: {
@@ -62,6 +67,7 @@ router.post('/login', async (req, res) => {
                 message: 'Login successful'
             });
         } else {
+            console.log('❌ Login failed:', result.error);
             res.status(401).json(result);
         }
     } catch (error) {
