@@ -507,6 +507,8 @@ async function setupProjectContext() {
             if (response.ok) {
                 const project = await response.json();
                 document.getElementById('task-context').textContent = `${project.name} Tasks`;
+                
+                // Project will be auto-selected in populateDropdowns()
             } else {
                 document.getElementById('task-context').textContent = 'Project Tasks';
             }
@@ -519,6 +521,10 @@ async function setupProjectContext() {
 
 // Populate dropdowns
 function populateDropdowns() {
+    // Get current project ID from URL if we're in project context
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentProjectId = urlParams.get('id');
+    
     // Project dropdowns
     const projectSelects = ['#taskProject', '#editTaskProject', '#projectFilter'];
     projectSelects.forEach(selector => {
@@ -529,6 +535,10 @@ function populateDropdowns() {
                 select.innerHTML = '<option value="">All Projects</option>' + options;
             } else {
                 select.innerHTML = '<option value="">Select Project</option>' + options;
+                // Auto-select current project in task creation form
+                if (currentProjectId && selector === '#taskProject') {
+                    select.value = currentProjectId;
+                }
             }
         }
     });

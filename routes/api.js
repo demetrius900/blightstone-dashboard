@@ -266,7 +266,7 @@ route.get('/tasks', async (req, res) => {
 route.post('/tasks', async (req, res) => {
     try {
         const { title, description, project_id, assigned_to, priority, due_date } = req.body;
-        console.log('🔍 Creating task with data:', { title, description, project_id, assigned_to, priority, due_date });
+        // console.log('🔍 Creating task with data:', { title, description, project_id, assigned_to, priority, due_date });
 
         if (!title) {
             return res.status(400).json({ error: 'Task title is required' });
@@ -284,7 +284,7 @@ route.post('/tasks', async (req, res) => {
         }
 
         const created_by = users[0].id;
-        console.log('✅ Using created_by user:', created_by);
+        // console.log('✅ Using created_by user:', created_by);
 
         // Clean up empty UUID fields and dates
         const taskData = {
@@ -309,7 +309,7 @@ route.post('/tasks', async (req, res) => {
             taskData.due_date = due_date;
         }
 
-        console.log('📝 Inserting task data:', taskData);
+        // console.log('📝 Inserting task data:', taskData);
         const { data: task, error } = await supabaseAdmin
             .from('tasks')
             .insert(taskData)
@@ -321,7 +321,7 @@ route.post('/tasks', async (req, res) => {
             throw error;
         }
         
-        console.log('✅ Task created successfully:', task);
+        // console.log('✅ Task created successfully:', task);
         res.json({ success: true, task });
     } catch (error) {
         console.error('Create task error:', error);
