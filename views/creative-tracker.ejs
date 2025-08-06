@@ -829,11 +829,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (projectId) {
         document.getElementById('back-button-container').style.display = 'block';
         
-        // Project loaded from API
-        const project = projects.find(p => p.id === projectId);
-        if (project) {
-            document.getElementById('projectContext').textContent = `Project: ${project.name}`;
-        }
+        // Project context will be handled by the project switcher
+        // No need to fetch projects array here since we're already in project context
         
         loadCreatives();
     } else {
@@ -1153,10 +1150,12 @@ function handleSelectAll(e) {
 
 // Utility functions
 function showSuccess(message) {
-    if (window.toast) {
+    if (window.toast && window.toast.success) {
         window.toast.success(message);
     } else {
         console.log('Success:', message);
+        // Fallback to browser alert if toast is not available
+        // alert(message);
     }
 }
 

@@ -791,11 +791,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (projectId) {
         document.getElementById('back-button-container').style.display = 'block';
         
-        // Project loaded from API
-        const project = projects.find(p => p.id === projectId);
-        if (project) {
-            document.getElementById('projectContext').textContent = `Project: ${project.name}`;
-        }
+        // Project context will be handled by the project switcher
+        // No need to fetch projects array here since we're already in project context
         
         loadAvatars();
     } else {

@@ -721,10 +721,12 @@ function hideButtonLoading(textId, spinnerId, originalText) {
 }
 
 function showSuccess(message) {
-    if (window.toast) {
+    if (window.toast && window.toast.success) {
         window.toast.success(message);
     } else {
         console.log('Success:', message);
+        // Fallback to browser alert if toast is not available
+        // alert(message);
     }
 }
 
@@ -897,12 +899,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (projectId) {
         document.getElementById('back-button-container').style.display = 'block';
         
-        // Projects loaded from API
-        const projects = [];
-        const project = projects.find(p => p.id === projectId);
-        if (project) {
-            document.getElementById('projectContext').textContent = `Project: ${project.name}`;
-        }
+        // Project context will be handled by the project switcher
+        // No need to fetch projects array here since we're already in project context
         
         loadCompetitors();
     } else {
