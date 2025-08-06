@@ -18,14 +18,18 @@ app.use(upload());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+// Configure session for serverless (Vercel) environment
 app.use(session({ 
-    resave: false, 
+    resave: true, // Changed to true for serverless
     saveUninitialized: false, 
     secret: process.env.SESSION_SECRET || 'blightstone-super-secret-key-change-in-production',
     cookie: {
-        secure: process.env.NODE_ENV === 'production',
-        maxAge: 24 * 60 * 60 * 1000 // 24 hours
-    }
+        secure: false, // Temporarily disable for debugging
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+        sameSite: 'lax'
+    },
+    name: 'blightstone.sid'
 }));
 app.use(cookieParser());
 
