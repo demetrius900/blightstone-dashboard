@@ -417,19 +417,19 @@ function renderProjects() {
                                 <h5 class="card-title mb-1">${project.name}</h5>
                                 <span class="badge ${getProjectTypeBadge(project.type)}">${project.type}</span>
                             </div>
-                            <div class="dropdown">
+                            <div class="dropdown" onclick="event.stopPropagation()">
                                 <button class="btn btn-sm btn-light" data-bs-toggle="dropdown" onclick="event.stopPropagation()">
                                     <i class="mdi mdi-dots-vertical"></i>
                                 </button>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#" onclick="editProject('${project.id}')">
+                                    <li><a class="dropdown-item" href="#" onclick="event.preventDefault(); event.stopPropagation(); editProject('${project.id}'); return false;">
                                         <i class="mdi mdi-pencil me-2"></i>Edit
                                     </a></li>
-                                    <li><a class="dropdown-item" href="#" onclick="viewProjectTasks('${project.id}')">
+                                    <li><a class="dropdown-item" href="#" onclick="event.preventDefault(); event.stopPropagation(); viewProjectTasks('${project.id}'); return false;">
                                         <i class="mdi mdi-format-list-checks me-2"></i>View Tasks
                                     </a></li>
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item text-danger" href="#" onclick="event.preventDefault(); deleteProject('${project.id}'); return false;">
+                                    <li><a class="dropdown-item text-danger" href="#" onclick="event.preventDefault(); event.stopPropagation(); deleteProject('${project.id}'); return false;">
                                         <i class="mdi mdi-delete me-2"></i>Delete
                                     </a></li>
                                 </ul>
