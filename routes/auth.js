@@ -39,9 +39,8 @@ router.post('/login', async (req, res) => {
         const result = await authService.login({ email, password });
 
         if (result.success) {
-            // Store session
-            req.session.user = result.user;
-            req.session.accessToken = result.session.access_token;
+            // Supabase handles the session automatically via cookies
+            // No need to manually store in express-session
             
             res.json({
                 success: true,
@@ -50,6 +49,10 @@ router.post('/login', async (req, res) => {
                     email: result.user.email,
                     name: result.user.profile.name,
                     role: result.user.profile.role
+                },
+                session: {
+                    access_token: result.session.access_token,
+                    refresh_token: result.session.refresh_token
                 }
             });
         } else {

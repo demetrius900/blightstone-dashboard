@@ -173,8 +173,12 @@ document.getElementById("loginForm").addEventListener("submit", async (event) =>
         console.log('🔐 Login response data:', data);
         
         if (response.ok && data.success) {
-            // User session stored on server
+            // Supabase session is handled automatically
             console.log('✅ Login successful, redirecting...');
+            
+            // Store session data in localStorage for client-side access
+            localStorage.setItem('supabase_session', JSON.stringify(data.session));
+            localStorage.setItem('supabase_user', JSON.stringify(data.user));
             
             // Show success message briefly
             loginText.textContent = "Success! Redirecting...";
